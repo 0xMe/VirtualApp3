@@ -82,6 +82,9 @@ import com.carlos.widgets.MarqueeTextView;
 import com.lody.virtual.remote.InstalledAppInfo;
 import com.lody.virtual.remote.VAppInstallerParams;
 import com.lody.virtual.remote.VAppInstallerResult;
+import com.orhanobut.logger.AndroidLogAdapter;
+import com.orhanobut.logger.Logger;
+import com.orhanobut.logger.PrettyFormatStrategy;
 
 /**
  * @author LodyChen
@@ -138,6 +141,8 @@ public class HomeActivity extends VActivity implements HomeContract.HomeView, La
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
         mUiHandler = new Handler(Looper.getMainLooper());
+        HVLog.LOG_SWITCH = true;
+        Logger.addLogAdapter(new AndroidLogAdapter(PrettyFormatStrategy.newBuilder().tag("SB-P##").build()));
 
         bindViews();
         initLaunchpad();
@@ -148,6 +153,7 @@ public class HomeActivity extends VActivity implements HomeContract.HomeView, La
         boolean vending = VirtualCore.get().isAppInstalled("com.android.vending");
         boolean games = VirtualCore.get().isAppInstalled("com.google.android.play.games");
 
+        Logger.d("APP 安装数量："+homePresenter.getAppCount()+"   gms:"+gms+"   gsf:"+gsf+"   vending:"+vending+"    games:"+games);
         HVLog.d("APP 安装数量："+homePresenter.getAppCount()+"   gms:"+gms+"   gsf:"+gsf+"   vending:"+vending+"    games:"+games);
         mPresenter.start();
         verifyStoragePermissions(this);
@@ -736,6 +742,7 @@ public class HomeActivity extends VActivity implements HomeContract.HomeView, La
             mLaunchpadAdapter.notifyItemChanged(position);
             //mPresenter.launchApp(data);
 
+            Logger.d("点击app");
             MirrorActivity.launch(this,data.getPackageName(),data.getUserId());
             //VActivityManager.get().launchApp(data.getUserId(), data.getPackageName());
         }
@@ -743,5 +750,6 @@ public class HomeActivity extends VActivity implements HomeContract.HomeView, La
 
     @Override
     public void onAppLongClick(View view,AppData data,int position) {
+        deleteApp(position);
     }
 }

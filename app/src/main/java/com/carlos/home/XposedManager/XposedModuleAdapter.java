@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -23,6 +24,7 @@ import com.carlos.home.models.AppData;
 import com.carlos.home.models.MultiplePackageAppData;
 import com.carlos.home.models.PackageAppData;
 import com.carlos.home.repo.AppRepository;
+import com.lody.virtual.client.core.VirtualCore;
 
 public class XposedModuleAdapter extends RecyclerView.Adapter<XposedModuleAdapter.ViewHolder> {
 
@@ -182,16 +184,16 @@ public class XposedModuleAdapter extends RecyclerView.Adapter<XposedModuleAdapte
         return false;
     }*/
     private void launchApp(int userId, String packageName) {
-/*        if (VirtualCore.get().isRun64BitProcess(packageName)) {
-            if (!VirtualCore.get().is64BitEngineInstalled()) {
-                Toast.makeText(context, "Please install 64bit engine.", Toast.LENGTH_SHORT).show();
-                return;
-            }
-            if (!V64BitHelper.has64BitEngineStartPermission()) {
-                Toast.makeText(context, "No Permission to start 64bit engine.", Toast.LENGTH_SHORT).show();
-                return;
-            }
-        }*/
-        //LoadingActivity.launch(context,packageName,userId);
+//        if (VirtualCore.get().isRun64BitProcess(packageName)) {
+//            if (!VirtualCore.get().is64BitEngineInstalled()) {
+//                Toast.makeText(context, "Please install 64bit engine.", Toast.LENGTH_SHORT).show();
+//                return;
+//            }
+//            if (!V64BitHelper.has64BitEngineStartPermission()) {
+//                Toast.makeText(context, "No Permission to start 64bit engine.", Toast.LENGTH_SHORT).show();
+//                return;
+//            }
+//        }
+//        LoadingActivity.launch(context,packageName,userId);
     }
 }
