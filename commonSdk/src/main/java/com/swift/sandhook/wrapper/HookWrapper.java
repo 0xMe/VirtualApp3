@@ -292,44 +292,40 @@ public class HookWrapper {
     }
 
     private static Class classNameToClass(String name, ClassLoader classLoader) throws ClassNotFoundException {
-        Class<Comparable<Boolean>> clazz;
+        Class clazz;
         switch (name) {
-            case "boolean": {
+            case "boolean":
                 clazz = Boolean.TYPE;
                 break;
-            }
-            case "byte": {
+            case "byte":
                 clazz = Byte.TYPE;
                 break;
-            }
-            case "char": {
+            case "char":
                 clazz = Character.TYPE;
                 break;
-            }
-            case "double": {
+            case "double":
                 clazz = Double.TYPE;
                 break;
-            }
-            case "float": {
+            case "float":
                 clazz = Float.TYPE;
                 break;
-            }
-            case "int": {
+            case "int":
                 clazz = Integer.TYPE;
                 break;
-            }
-            case "long": {
+            case "long":
                 clazz = Long.TYPE;
                 break;
-            }
-            case "short": {
+            case "short":
                 clazz = Short.TYPE;
                 break;
-            }
-            default: {
-                clazz = classLoader == null ? Class.forName(name) : Class.forName(name, true, classLoader);
-            }
+            default:
+                if (classLoader == null) {
+                    clazz = Class.forName(name);
+                } else {
+                    clazz = Class.forName(name, true, classLoader);
+                }
         }
+
         return clazz;
     }
 

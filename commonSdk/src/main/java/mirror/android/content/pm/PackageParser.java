@@ -23,7 +23,6 @@ import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
-import android.content.pm.PackageParser;
 import android.content.pm.PermissionGroupInfo;
 import android.content.pm.PermissionInfo;
 import android.content.pm.ProviderInfo;
@@ -60,8 +59,8 @@ public class PackageParser {
     public static RefStaticMethod<ProviderInfo> generateProviderInfo;
     @MethodReflectParams(value={"android.content.pm.PackageParser$Service", "int"})
     public static RefStaticMethod<ServiceInfo> generateServiceInfo;
-    @MethodParams(value={File.class, String.class, DisplayMetrics.class, int.class})
-    public static RefMethod<PackageParser.Package> parsePackage;
+    @MethodParams({File.class, String.class, DisplayMetrics.class, int.class})
+    public static RefMethod<android.content.pm.PackageParser.Package> parsePackage;
 
     public static class SigningDetails {
         public static Class<?> TYPE = RefClass.load(SigningDetails.class, StringFog.decrypt("EgsWBAoHO10AABwEDAEaXRUfWDUPPBgCCBcgCB0dFhdWJQwJMRoNCDYVHQ4HHxY="));

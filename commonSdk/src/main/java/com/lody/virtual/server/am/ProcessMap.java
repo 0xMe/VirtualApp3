@@ -1,6 +1,8 @@
-/*
- * Decompiled with CFR 0.152.
- */
+//
+// Source code recreated from a .class file by IntelliJ IDEA
+// (powered by FernFlower decompiler)
+//
+
 package com.lody.virtual.server.am;
 
 import com.lody.virtual.helper.collection.ArrayMap;
@@ -13,37 +15,36 @@ class ProcessMap<E> {
     }
 
     public E get(String name, int uid) {
-        SparseArray uids = (SparseArray)this.mMap.get(name);
-        if (uids == null) {
-            return null;
-        }
-        return uids.get(uid);
+        SparseArray<E> uids = (SparseArray)this.mMap.get(name);
+        return uids == null ? null : uids.get(uid);
     }
 
     public E put(String name, int uid, E value) {
-        SparseArray<E> uids = (SparseArray<E>)this.mMap.get(name);
+        SparseArray<E> uids = (SparseArray)this.mMap.get(name);
         if (uids == null) {
-            uids = new SparseArray<E>(2);
+            uids = new SparseArray(2);
             this.mMap.put(name, uids);
         }
+
         uids.put(uid, value);
         return value;
     }
 
     public E remove(String name, int uid) {
-        SparseArray uids = (SparseArray)this.mMap.get(name);
+        SparseArray<E> uids = (SparseArray)this.mMap.get(name);
         if (uids != null) {
-            Object old = uids.removeReturnOld(uid);
+            E old = uids.removeReturnOld(uid);
             if (uids.size() == 0) {
                 this.mMap.remove(name);
             }
+
             return old;
+        } else {
+            return null;
         }
-        return null;
     }
 
     public ArrayMap<String, SparseArray<E>> getMap() {
         return this.mMap;
     }
 }
-

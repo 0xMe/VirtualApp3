@@ -1,15 +1,8 @@
-/*
- * Decompiled with CFR 0.152.
- * 
- * Could not load the following classes:
- *  android.annotation.SuppressLint
- *  android.content.SharedPreferences
- *  android.content.SharedPreferences$Editor
- *  android.content.SharedPreferences$OnSharedPreferenceChangeListener
- *  android.os.Environment
- *  android.util.Log
- *  org.xmlpull.v1.XmlPullParserException
- */
+//
+// Source code recreated from a .class file by IntelliJ IDEA
+// (powered by FernFlower decompiler)
+//
+
 package de.robv.android.xposed;
 
 import android.annotation.SuppressLint;
@@ -17,7 +10,6 @@ import android.content.SharedPreferences;
 import android.os.Environment;
 import android.util.Log;
 import com.android.internal.util.XmlUtils;
-import de.robv.android.xposed.SELinuxHelper;
 import de.robv.android.xposed.services.FileResult;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -27,17 +19,17 @@ import java.util.Map;
 import java.util.Set;
 import org.xmlpull.v1.XmlPullParserException;
 
-public final class XSharedPreferences
-implements SharedPreferences {
+public final class XSharedPreferences implements SharedPreferences {
     private static final String TAG = "XSharedPreferences";
     private final File mFile;
     private final String mFilename;
     private Map<String, Object> mMap;
-    private boolean mLoaded = false;
+    private boolean mLoaded;
     private long mLastModified;
     private long mFileSize;
 
     public XSharedPreferences(File prefFile) {
+        this.mLoaded = false;
         this.mFile = prefFile;
         this.mFilename = this.mFile.getAbsolutePath();
         this.startLoadFromDisk();
@@ -48,233 +40,188 @@ implements SharedPreferences {
     }
 
     public XSharedPreferences(String packageName, String prefFileName) {
+        this.mLoaded = false;
         this.mFile = new File(Environment.getDataDirectory(), "data/" + packageName + "/shared_prefs/" + prefFileName + ".xml");
         this.mFilename = this.mFile.getAbsolutePath();
         this.startLoadFromDisk();
     }
 
-    @SuppressLint(value={"SetWorldReadable"})
+    @SuppressLint({"SetWorldReadable"})
     public boolean makeWorldReadable() {
         if (!SELinuxHelper.getAppDataFileService().hasDirectFileAccess()) {
             return false;
+        } else {
+            return !this.mFile.exists() ? false : this.mFile.setReadable(true, false);
         }
-        if (!this.mFile.exists()) {
-            return false;
-        }
-        return this.mFile.setReadable(true, false);
     }
 
     public File getFile() {
         return this.mFile;
     }
 
-    /*
-     * WARNING - Removed try catching itself - possible behaviour change.
-     */
     private void startLoadFromDisk() {
-        XSharedPreferences xSharedPreferences = this;
-        synchronized (xSharedPreferences) {
+        synchronized(this) {
             this.mLoaded = false;
         }
-        new Thread("XSharedPreferences-load"){
 
-            /*
-             * WARNING - Removed try catching itself - possible behaviour change.
-             */
-            @Override
+        (new Thread("XSharedPreferences-load") {
             public void run() {
-                XSharedPreferences xSharedPreferences = XSharedPreferences.this;
-                synchronized (xSharedPreferences) {
+                synchronized(XSharedPreferences.this) {
                     XSharedPreferences.this.loadFromDiskLocked();
                 }
             }
-        }.start();
+        }).start();
     }
 
-    /*
-     * WARNING - Removed try catching itself - possible behaviour change.
-     */
     private void loadFromDiskLocked() {
-        if (this.mLoaded) {
-            return;
-        }
-        Map<String, Object> map = null;
-        FileResult result = null;
-        try {
-            result = SELinuxHelper.getAppDataFileService().getFileInputStream(this.mFilename, this.mFileSize, this.mLastModified);
-            if (result.stream != null) {
-                map = XmlUtils.readMapXml(result.stream);
-                result.stream.close();
-            } else {
-                map = this.mMap;
-            }
-        }
-        catch (XmlPullParserException e) {
-            Log.w((String)TAG, (String)"getSharedPreferences", (Throwable)e);
-        }
-        catch (FileNotFoundException rethrown) {
-        }
-        catch (IOException e) {
-            Log.w((String)TAG, (String)"getSharedPreferences", (Throwable)e);
-        }
-        finally {
-            if (result != null && result.stream != null) {
-                try {
+        if (!this.mLoaded) {
+            Map map = null;
+            FileResult result = null;
+
+            try {
+                result = SELinuxHelper.getAppDataFileService().getFileInputStream(this.mFilename, this.mFileSize, this.mLastModified);
+                if (result.stream != null) {
+                    map = XmlUtils.readMapXml(result.stream);
                     result.stream.close();
+                } else {
+                    map = this.mMap;
                 }
-                catch (RuntimeException rethrown) {
-                    throw rethrown;
+            } catch (XmlPullParserException var22) {
+                Log.w("XSharedPreferences", "getSharedPreferences", var22);
+            } catch (FileNotFoundException var23) {
+            } catch (IOException var24) {
+                Log.w("XSharedPreferences", "getSharedPreferences", var24);
+            } finally {
+                if (result != null && result.stream != null) {
+                    try {
+                        result.stream.close();
+                    } catch (RuntimeException var20) {
+                        throw var20;
+                    } catch (Exception var21) {
+                    }
                 }
-                catch (Exception rethrown) {}
+
             }
+
+            this.mLoaded = true;
+            if (map != null) {
+                this.mMap = (Map)map;
+                this.mLastModified = result.mtime;
+                this.mFileSize = result.size;
+            } else {
+                this.mMap = new HashMap();
+            }
+
+            this.notifyAll();
         }
-        this.mLoaded = true;
-        if (map != null) {
-            this.mMap = map;
-            this.mLastModified = result.mtime;
-            this.mFileSize = result.size;
-        } else {
-            this.mMap = new HashMap<String, Object>();
-        }
-        this.notifyAll();
     }
 
     public synchronized void reload() {
         if (this.hasFileChanged()) {
             this.startLoadFromDisk();
         }
+
     }
 
     public synchronized boolean hasFileChanged() {
         try {
             FileResult result = SELinuxHelper.getAppDataFileService().statFile(this.mFilename);
             return this.mLastModified != result.mtime || this.mFileSize != result.size;
-        }
-        catch (FileNotFoundException ignored) {
+        } catch (FileNotFoundException var2) {
             return true;
-        }
-        catch (IOException e) {
-            Log.w((String)TAG, (String)"hasFileChanged", (Throwable)e);
+        } catch (IOException var3) {
+            Log.w("XSharedPreferences", "hasFileChanged", var3);
             return true;
         }
     }
 
     private void awaitLoadedLocked() {
-        while (!this.mLoaded) {
+        while(!this.mLoaded) {
             try {
                 this.wait();
+            } catch (InterruptedException var2) {
             }
-            catch (InterruptedException interruptedException) {}
         }
+
     }
 
-    /*
-     * WARNING - Removed try catching itself - possible behaviour change.
-     */
     public Map<String, ?> getAll() {
-        XSharedPreferences xSharedPreferences = this;
-        synchronized (xSharedPreferences) {
+        synchronized(this) {
             this.awaitLoadedLocked();
-            return new HashMap<String, Object>(this.mMap);
+            return new HashMap(this.mMap);
         }
     }
 
-    /*
-     * WARNING - Removed try catching itself - possible behaviour change.
-     */
     public String getString(String key, String defValue) {
-        XSharedPreferences xSharedPreferences = this;
-        synchronized (xSharedPreferences) {
+        synchronized(this) {
             this.awaitLoadedLocked();
             String v = (String)this.mMap.get(key);
             return v != null ? v : defValue;
         }
     }
 
-    /*
-     * WARNING - Removed try catching itself - possible behaviour change.
-     */
     public Set<String> getStringSet(String key, Set<String> defValues) {
-        XSharedPreferences xSharedPreferences = this;
-        synchronized (xSharedPreferences) {
+        synchronized(this) {
             this.awaitLoadedLocked();
-            Set<String> v = (Set<String>)this.mMap.get(key);
+            Set<String> v = (Set)this.mMap.get(key);
             return v != null ? v : defValues;
         }
     }
 
-    /*
-     * WARNING - Removed try catching itself - possible behaviour change.
-     */
     public int getInt(String key, int defValue) {
-        XSharedPreferences xSharedPreferences = this;
-        synchronized (xSharedPreferences) {
+        synchronized(this) {
             this.awaitLoadedLocked();
             Integer v = (Integer)this.mMap.get(key);
             return v != null ? v : defValue;
         }
     }
 
-    /*
-     * WARNING - Removed try catching itself - possible behaviour change.
-     */
     public long getLong(String key, long defValue) {
-        XSharedPreferences xSharedPreferences = this;
-        synchronized (xSharedPreferences) {
+        synchronized(this) {
             this.awaitLoadedLocked();
             Long v = (Long)this.mMap.get(key);
             return v != null ? v : defValue;
         }
     }
 
-    /*
-     * WARNING - Removed try catching itself - possible behaviour change.
-     */
     public float getFloat(String key, float defValue) {
-        XSharedPreferences xSharedPreferences = this;
-        synchronized (xSharedPreferences) {
+        synchronized(this) {
             this.awaitLoadedLocked();
             Float v = (Float)this.mMap.get(key);
-            return v != null ? v.floatValue() : defValue;
+            return v != null ? v : defValue;
         }
     }
 
-    /*
-     * WARNING - Removed try catching itself - possible behaviour change.
-     */
     public boolean getBoolean(String key, boolean defValue) {
-        XSharedPreferences xSharedPreferences = this;
-        synchronized (xSharedPreferences) {
+        synchronized(this) {
             this.awaitLoadedLocked();
             Boolean v = (Boolean)this.mMap.get(key);
             return v != null ? v : defValue;
         }
     }
 
-    /*
-     * WARNING - Removed try catching itself - possible behaviour change.
-     */
     public boolean contains(String key) {
-        XSharedPreferences xSharedPreferences = this;
-        synchronized (xSharedPreferences) {
+        synchronized(this) {
             this.awaitLoadedLocked();
             return this.mMap.containsKey(key);
         }
     }
 
+    /** @deprecated */
     @Deprecated
     public SharedPreferences.Editor edit() {
         throw new UnsupportedOperationException("read-only implementation");
     }
 
+    /** @deprecated */
     @Deprecated
     public void registerOnSharedPreferenceChangeListener(SharedPreferences.OnSharedPreferenceChangeListener listener) {
         throw new UnsupportedOperationException("listeners are not supported in this implementation");
     }
 
+    /** @deprecated */
     @Deprecated
     public void unregisterOnSharedPreferenceChangeListener(SharedPreferences.OnSharedPreferenceChangeListener listener) {
         throw new UnsupportedOperationException("listeners are not supported in this implementation");
     }
 }
-

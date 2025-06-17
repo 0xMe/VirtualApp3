@@ -11,7 +11,6 @@
  */
 package mirror.android.app;
 
-import android.app.Instrumentation;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -29,6 +28,6 @@ public class Instrumentation {
     public static RefMethod basicInit;
     public static RefObject mThread;
     @MethodParams(value={Context.class, IBinder.class, IBinder.class, Activity.class, Intent.class, int.class, Bundle.class})
-    public static RefMethod<Instrumentation.ActivityResult> execStartActivity;
+    public static RefMethod<android.app.Instrumentation.ActivityResult> execStartActivity;
 }
 

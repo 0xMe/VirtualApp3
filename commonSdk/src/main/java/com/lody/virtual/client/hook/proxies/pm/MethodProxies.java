@@ -94,47 +94,46 @@ class MethodProxies {
         }
     }
 
-    @TargetApi(value=19)
-    static class QueryIntentContentProviders
-    extends MethodProxy {
+    @TargetApi(19)
+    static class QueryIntentContentProviders extends MethodProxy {
         QueryIntentContentProviders() {
         }
 
-        @Override
         public String getMethodName() {
             return StringFog.decrypt(com.kook.librelease.StringFog.decrypt("KgcuM28gAglgNwo/Kj42EW8FMAZrARo/IQcMKWYwGi9uASg8"));
         }
 
-        @Override
-        public Object call(Object who, Method method, Object ... args) throws Throwable {
+        public Object call(Object who, Method method, Object... args) throws Throwable {
             boolean slice = ParceledListSliceCompat.isReturnParceledListSlice(method);
             int userId = VUserHandle.myUserId();
             int flags = (int)this.getIntOrLongValue(args[2]);
             List<ResolveInfo> appResult = VPackageManager.get().queryIntentContentProviders((Intent)args[0], (String)args[1], flags, userId);
-            QueryIntentContentProviders.replaceLastUserId(args);
-            List<?> _hostResult = method.invoke(who, args);
-            List hostResult = slice ? ParceledListSlice.getList.call(_hostResult, new Object[0]) : _hostResult;
+            replaceLastUserId(args);
+            Object _hostResult = method.invoke(who, args);
+            List<ResolveInfo> hostResult = (List)(slice ? ParceledListSlice.getList.call(_hostResult, new Object[0]) : _hostResult);
             if (hostResult != null) {
-                Iterator iterator = hostResult.iterator();
-                while (iterator.hasNext()) {
-                    ResolveInfo info = (ResolveInfo)iterator.next();
-                    if (info == null || info.providerInfo == null || !QueryIntentContentProviders.isOutsidePackage(info.providerInfo.packageName)) {
-                        iterator.remove();
-                        continue;
+                Iterator<ResolveInfo> iterator = hostResult.iterator();
+
+                while(true) {
+                    while(iterator.hasNext()) {
+                        ResolveInfo info = (ResolveInfo)iterator.next();
+                        if (info != null && info.providerInfo != null && isOutsidePackage(info.providerInfo.packageName)) {
+                            ComponentFixer.fixOutsideComponentInfo(info.providerInfo);
+                        } else {
+                            iterator.remove();
+                        }
                     }
-                    ComponentFixer.fixOutsideComponentInfo((ComponentInfo)info.providerInfo);
+
+                    appResult.addAll(hostResult);
+                    break;
                 }
-                appResult.addAll(hostResult);
             }
-            if (ParceledListSliceCompat.isReturnParceledListSlice(method)) {
-                return ParceledListSliceCompat.create(appResult);
-            }
-            return appResult;
+
+            return ParceledListSliceCompat.isReturnParceledListSlice(method) ? ParceledListSliceCompat.create(appResult) : appResult;
         }
 
-        @Override
         public boolean isEnable() {
-            return QueryIntentContentProviders.isAppProcess();
+            return isAppProcess();
         }
     }
 
@@ -221,114 +220,113 @@ class MethodProxies {
         }
     }
 
-    static class QueryIntentReceivers
-    extends MethodProxy {
+
+    static class QueryIntentReceivers extends MethodProxy {
         QueryIntentReceivers() {
         }
 
-        @Override
         public String getMethodName() {
             return StringFog.decrypt(com.kook.librelease.StringFog.decrypt("KgcuM28gAglgNwo/Kj42AmkjAitqDiQgKS02Vg=="));
         }
 
-        @Override
-        public Object call(Object who, Method method, Object ... args) throws Throwable {
+        public Object call(Object who, Method method, Object... args) throws Throwable {
             boolean slice = ParceledListSliceCompat.isReturnParceledListSlice(method);
             int userId = VUserHandle.myUserId();
             int flags = (int)this.getIntOrLongValue(args[2]);
             List<ResolveInfo> appResult = VPackageManager.get().queryIntentReceivers((Intent)args[0], (String)args[1], flags, userId);
-            List<?> _hostResult = method.invoke(who, args);
-            List hostResult = slice ? ParceledListSlice.getList.call(_hostResult, new Object[0]) : _hostResult;
+            Object _hostResult = method.invoke(who, args);
+            List<ResolveInfo> hostResult = (List)(slice ? ParceledListSlice.getList.call(_hostResult, new Object[0]) : _hostResult);
             if (hostResult != null) {
-                Iterator iterator = hostResult.iterator();
-                while (iterator.hasNext()) {
-                    ResolveInfo info = (ResolveInfo)iterator.next();
-                    if (info == null || info.activityInfo == null || this.isAppPkg(info.activityInfo.packageName) || !QueryIntentReceivers.isOutsidePackage(info.activityInfo.packageName)) {
-                        iterator.remove();
-                        continue;
+                Iterator<ResolveInfo> iterator = hostResult.iterator();
+
+                while(true) {
+                    while(iterator.hasNext()) {
+                        ResolveInfo info = (ResolveInfo)iterator.next();
+                        if (info != null && info.activityInfo != null && !this.isAppPkg(info.activityInfo.packageName) && isOutsidePackage(info.activityInfo.packageName)) {
+                            ComponentFixer.fixOutsideComponentInfo(info.activityInfo);
+                        } else {
+                            iterator.remove();
+                        }
                     }
-                    ComponentFixer.fixOutsideComponentInfo((ComponentInfo)info.activityInfo);
+
+                    appResult.addAll(hostResult);
+                    break;
                 }
-                appResult.addAll(hostResult);
             }
-            if (slice) {
-                return ParceledListSliceCompat.create(appResult);
-            }
-            return appResult;
+
+            return slice ? ParceledListSliceCompat.create(appResult) : appResult;
         }
     }
 
-    static class GetInstalledPackages
-    extends MethodProxy {
+
+    static class GetInstalledPackages extends MethodProxy {
         GetInstalledPackages() {
         }
 
-        @Override
         public String getMethodName() {
             return StringFog.decrypt(com.kook.librelease.StringFog.decrypt("LS4uLH0VBgNmHiAoKhcMPmIzQSlqJzguLhc2Vg=="));
         }
 
-        @Override
-        public Object call(Object who, Method method, Object ... args) throws Throwable {
+        public Object call(Object who, Method method, Object... args) throws Throwable {
             boolean slice = ParceledListSliceCompat.isReturnParceledListSlice(method);
             int flags = (int)this.getIntOrLongValue(args[0]);
             int userId = VUserHandle.myUserId();
             List<PackageInfo> packageInfos = VPackageManager.get().getInstalledPackages(flags, userId);
-            GetInstalledPackages.replaceLastUserId(args);
-            List<?> _hostResult = method.invoke(who, args);
-            List hostResult = slice ? ParceledListSlice.getList.call(_hostResult, new Object[0]) : _hostResult;
-            Iterator it = hostResult.iterator();
-            while (it.hasNext()) {
-                PackageInfo info = (PackageInfo)it.next();
-                if (VirtualCore.get().isAppInstalled(info.packageName) || !GetInstalledPackages.isOutsidePackage(info.packageName)) {
+            replaceLastUserId(args);
+            Object _hostResult = method.invoke(who, args);
+            List<PackageInfo> hostResult = (List)(slice ? ParceledListSlice.getList.call(_hostResult, new Object[0]) : _hostResult);
+
+            PackageInfo info;
+            for(Iterator<PackageInfo> it = hostResult.iterator(); it.hasNext(); ComponentFixer.fixOutsideApplicationInfo(info.applicationInfo)) {
+                info = (PackageInfo)it.next();
+                if (VirtualCore.get().isAppInstalled(info.packageName) || !isOutsidePackage(info.packageName)) {
                     it.remove();
                 }
-                ComponentFixer.fixOutsideApplicationInfo(info.applicationInfo);
             }
+
             packageInfos.addAll(hostResult);
             if (ParceledListSliceCompat.isReturnParceledListSlice(method)) {
                 return ParceledListSliceCompat.create(packageInfos);
+            } else {
+                return packageInfos;
             }
-            return packageInfos;
         }
 
-        @Override
         public boolean isEnable() {
-            return GetInstalledPackages.isAppProcess();
+            return isAppProcess();
         }
     }
 
-    static class GetInstalledApplications
-    extends MethodProxy {
+    static class GetInstalledApplications extends MethodProxy {
         GetInstalledApplications() {
         }
 
-        @Override
         public String getMethodName() {
             return StringFog.decrypt(com.kook.librelease.StringFog.decrypt("LS4uLH0VBgNmHiAoKhcMPmYgTQJlER4qLRcqI2AgRTY="));
         }
 
-        @Override
-        public Object call(Object who, Method method, Object ... args) throws Throwable {
+        public Object call(Object who, Method method, Object... args) throws Throwable {
             boolean slice = ParceledListSliceCompat.isReturnParceledListSlice(method);
             int flags = (int)this.getIntOrLongValue(args[0]);
             int userId = VUserHandle.myUserId();
             List<ApplicationInfo> appInfos = VPackageManager.get().getInstalledApplications(flags, userId);
-            List<?> _hostResult = method.invoke(who, args);
-            List hostResult = slice ? ParceledListSlice.getList.call(_hostResult, new Object[0]) : _hostResult;
-            Iterator it = hostResult.iterator();
-            while (it.hasNext()) {
-                ApplicationInfo info = (ApplicationInfo)it.next();
-                if (VirtualCore.get().isAppInstalled(info.packageName) || !GetInstalledApplications.isOutsidePackage(info.packageName)) {
+            Object _hostResult = method.invoke(who, args);
+            List<ApplicationInfo> hostResult = (List)(slice ? ParceledListSlice.getList.call(_hostResult, new Object[0]) : _hostResult);
+
+            ApplicationInfo info;
+            for(Iterator<ApplicationInfo> it = hostResult.iterator(); it.hasNext(); ComponentFixer.fixOutsideApplicationInfo(info)) {
+                info = (ApplicationInfo)it.next();
+                if (VirtualCore.get().isAppInstalled(info.packageName) || !isOutsidePackage(info.packageName)) {
                     it.remove();
                 }
-                ComponentFixer.fixOutsideApplicationInfo(info);
             }
+
             appInfos.addAll(hostResult);
             if (slice) {
                 return ParceledListSliceCompat.create(appInfos);
+            } else {
+                return appInfos;
             }
-            return appInfos;
         }
     }
 
@@ -606,40 +604,36 @@ class MethodProxies {
         }
     }
 
-    static class QueryContentProviders
-    extends MethodProxy {
+    static class QueryContentProviders extends MethodProxy {
         QueryContentProviders() {
         }
 
-        @Override
         public String getMethodName() {
             return StringFog.decrypt(com.kook.librelease.StringFog.decrypt("KgcuM28gAhNgJFkgKAcYLmIwRSVvNx4vLhcMDw=="));
         }
 
-        @Override
-        public Object call(Object who, Method method, Object ... args) throws Throwable {
+        public Object call(Object who, Method method, Object... args) throws Throwable {
             boolean slice = ParceledListSliceCompat.isReturnParceledListSlice(method);
             String processName = (String)args[0];
             int vuid = (Integer)args[1];
             int flags = (int)this.getIntOrLongValue(args[2]);
             List<ProviderInfo> infos = VPackageManager.get().queryContentProviders(processName, vuid, 0);
-            List<?> _hostResult = method.invoke(who, args);
+            Object _hostResult = method.invoke(who, args);
             if (_hostResult != null) {
-                List hostResult = slice ? ParceledListSlice.getList.call(_hostResult, new Object[0]) : _hostResult;
-                Iterator it = hostResult.iterator();
-                while (it.hasNext()) {
-                    ProviderInfo info = (ProviderInfo)it.next();
-                    if (this.isAppPkg(info.packageName) || !QueryContentProviders.isOutsidePackage(info.packageName)) {
+                List<ProviderInfo> hostResult = (List)(slice ? ParceledListSlice.getList.call(_hostResult, new Object[0]) : _hostResult);
+
+                ProviderInfo info;
+                for(Iterator<ProviderInfo> it = hostResult.iterator(); it.hasNext(); ComponentFixer.fixOutsideComponentInfo(info)) {
+                    info = (ProviderInfo)it.next();
+                    if (this.isAppPkg(info.packageName) || !isOutsidePackage(info.packageName)) {
                         it.remove();
                     }
-                    ComponentFixer.fixOutsideComponentInfo((ComponentInfo)info);
                 }
+
                 infos.addAll(hostResult);
             }
-            if (slice) {
-                return ParceledListSliceCompat.create(infos);
-            }
-            return infos;
+
+            return slice ? ParceledListSliceCompat.create(infos) : infos;
         }
     }
 
@@ -997,45 +991,46 @@ class MethodProxies {
         }
     }
 
-    static class QueryIntentActivities
-    extends MethodProxy {
+    static class QueryIntentActivities extends MethodProxy {
         QueryIntentActivities() {
         }
 
-        @Override
         public String getMethodName() {
             return StringFog.decrypt(com.kook.librelease.StringFog.decrypt("KgcuM28gAglgNwo/Kj42E24KBi9vNx4/IxguDw=="));
         }
 
-        @Override
-        public Object call(Object who, Method method, Object ... args) throws Throwable {
-            List hostResult;
+        public Object call(Object who, Method method, Object... args) throws Throwable {
             boolean slice = ParceledListSliceCompat.isReturnParceledListSlice(method);
             int userId = VUserHandle.myUserId();
             List<ResolveInfo> appResult = VPackageManager.get().queryIntentActivities((Intent)args[0], (String)args[1], (int)this.getIntOrLongValue(args[2]), userId);
-            QueryIntentActivities.replaceLastUserId(args);
-            List<?> _hostResult = method.invoke(who, args);
-            if (_hostResult != null && (hostResult = (List)(slice ? ParceledListSlice.getList.call(_hostResult, new Object[0]) : _hostResult)) != null) {
-                Iterator iterator = hostResult.iterator();
-                while (iterator.hasNext()) {
-                    ResolveInfo info = (ResolveInfo)iterator.next();
-                    if (info == null || info.activityInfo == null || !QueryIntentActivities.isOutsidePackage(info.activityInfo.packageName)) {
-                        iterator.remove();
-                        continue;
+            replaceLastUserId(args);
+            Object _hostResult = method.invoke(who, args);
+            if (_hostResult != null) {
+                List<ResolveInfo> hostResult = (List)(slice ? ParceledListSlice.getList.call(_hostResult, new Object[0]) : _hostResult);
+                if (hostResult != null) {
+                    Iterator<ResolveInfo> iterator = hostResult.iterator();
+
+                    while(true) {
+                        while(iterator.hasNext()) {
+                            ResolveInfo info = (ResolveInfo)iterator.next();
+                            if (info != null && info.activityInfo != null && isOutsidePackage(info.activityInfo.packageName)) {
+                                ComponentFixer.fixOutsideComponentInfo(info.activityInfo);
+                            } else {
+                                iterator.remove();
+                            }
+                        }
+
+                        appResult.addAll(hostResult);
+                        break;
                     }
-                    ComponentFixer.fixOutsideComponentInfo((ComponentInfo)info.activityInfo);
                 }
-                appResult.addAll(hostResult);
             }
-            if (slice) {
-                return ParceledListSliceCompat.create(appResult);
-            }
-            return appResult;
+
+            return slice ? ParceledListSliceCompat.create(appResult) : appResult;
         }
 
-        @Override
         public boolean isEnable() {
-            return QueryIntentActivities.isAppProcess();
+            return isAppProcess();
         }
     }
 
@@ -1088,45 +1083,59 @@ class MethodProxies {
         }
     }
 
-    static class QueryIntentServices
-    extends MethodProxy {
+    static class QueryIntentServices extends MethodProxy {
         QueryIntentServices() {
         }
 
-        @Override
         public String getMethodName() {
             return StringFog.decrypt(com.kook.librelease.StringFog.decrypt("KgcuM28gAglgNwo/Kj42AWkgRT5qATAgKT5SVg=="));
         }
 
-        @Override
-        public Object call(Object who, Method method, Object ... args) throws Throwable {
-            List<?> obj;
-            List hostResult;
+        public Object call(Object who, Method method, Object... args) throws Throwable {
             boolean slice = ParceledListSliceCompat.isReturnParceledListSlice(method);
             int userId = VUserHandle.myUserId();
             Intent intent = (Intent)args[0];
             List<ResolveInfo> appResult = VPackageManager.get().queryIntentServices(intent, (String)args[1], (int)this.getIntOrLongValue(args[2]), userId);
-            QueryIntentServices.replaceLastUserId(args);
-            List<?> _hostResult = method.invoke(who, args);
-            if (_hostResult != null && (hostResult = (List)(obj = slice ? ParceledListSlice.getList.call(_hostResult, new Object[0]) : _hostResult)) != null) {
-                Iterator iterator = hostResult.iterator();
-                while (iterator.hasNext()) {
-                    ResolveInfo info = (ResolveInfo)iterator.next();
-                    if (QueryIntentServices.isHostIntent(intent)) break;
-                    if (info != null && info.serviceInfo != null && QueryIntentServices.isOutsidePackage(info.serviceInfo.packageName)) continue;
-                    iterator.remove();
+            replaceLastUserId(args);
+            Object _hostResult = method.invoke(who, args);
+            if (_hostResult != null) {
+                Object obj;
+                if (slice) {
+                    obj = ParceledListSlice.getList.call(_hostResult, new Object[0]);
+                } else {
+                    obj = _hostResult;
                 }
-                appResult.addAll(hostResult);
+
+                List<ResolveInfo> hostResult = (List)obj;
+                if (hostResult != null) {
+                    Iterator<ResolveInfo> iterator = hostResult.iterator();
+
+                    label38:
+                    while(true) {
+                        ResolveInfo info;
+                        do {
+                            if (!iterator.hasNext()) {
+                                break label38;
+                            }
+
+                            info = (ResolveInfo)iterator.next();
+                            if (isHostIntent(intent)) {
+                                break label38;
+                            }
+                        } while(info != null && info.serviceInfo != null && isOutsidePackage(info.serviceInfo.packageName));
+
+                        iterator.remove();
+                    }
+
+                    appResult.addAll(hostResult);
+                }
             }
-            if (slice) {
-                return ParceledListSliceCompat.create(appResult);
-            }
-            return appResult;
+
+            return slice ? ParceledListSliceCompat.create(appResult) : appResult;
         }
 
-        @Override
         public boolean isEnable() {
-            return QueryIntentServices.isAppProcess();
+            return isAppProcess();
         }
     }
 

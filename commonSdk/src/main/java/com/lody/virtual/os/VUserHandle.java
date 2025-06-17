@@ -98,12 +98,13 @@ implements Parcelable {
     }
 
     public static VUserHandle getCallingUserHandle() {
-        int userId = VUserHandle.getUserId(VBinder.getCallingUid());
+        int userId = getUserId(VBinder.getCallingUid());
         VUserHandle userHandle = (VUserHandle)userHandles.get(userId);
         if (userHandle == null) {
             userHandle = new VUserHandle(userId);
-            userHandles.put(userId, (Object)userHandle);
+            userHandles.put(userId, userHandle);
         }
+
         return userHandle;
     }
 

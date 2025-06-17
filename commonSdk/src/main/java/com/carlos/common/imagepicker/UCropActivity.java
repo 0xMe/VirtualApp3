@@ -403,10 +403,11 @@ extends AppCompatActivity {
                     UCropActivity.this.mGestureCropImageView.setTargetAspectRatio(((AspectRatioTextView)((ViewGroup)v).getChildAt(0)).getAspectRatio(v.isSelected()));
                     UCropActivity.this.mGestureCropImageView.setImageToWrapCropBounds();
                     if (!v.isSelected()) {
-                        Iterator iterator = UCropActivity.this.mCropAspectRatioViews.iterator();
-                        while (iterator.hasNext()) {
-                            ViewGroup cropAspectRatioView;
-                            cropAspectRatioView.setSelected((cropAspectRatioView = (ViewGroup)iterator.next()) == v);
+                        Iterator var2 = UCropActivity.this.mCropAspectRatioViews.iterator();
+
+                        while(var2.hasNext()) {
+                            ViewGroup cropAspectRatioView = (ViewGroup)var2.next();
+                            cropAspectRatioView.setSelected(cropAspectRatioView == v);
                         }
                     }
                 }

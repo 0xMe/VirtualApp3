@@ -21,7 +21,7 @@
  */
 package com.lody.virtual.receiver;
 
-import android.content.BroadcastReceiver;
+
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -72,7 +72,7 @@ public class StaticReceiverSystem {
     /*
      * WARNING - Removed try catching itself - possible behaviour change.
      */
-    public boolean handleStaticBroadcast(StaticReceiverSystem staticReceiverSystem, BroadcastIntentData broadcastIntentData, ActivityInfo activityInfo, BroadcastReceiver.PendingResult pendingResult) {
+    public boolean handleStaticBroadcast(StaticReceiverSystem staticReceiverSystem, BroadcastIntentData broadcastIntentData, ActivityInfo activityInfo, android.content.BroadcastReceiver.PendingResult pendingResult) {
         if (broadcastIntentData.targetPackage == null || broadcastIntentData.targetPackage.equals(activityInfo.packageName)) {
             if (broadcastIntentData.userId == -1 || broadcastIntentData.userId == this.mUserId) {
                 ComponentName componentName = ComponentUtils.toComponentName((ComponentInfo)activityInfo);
@@ -116,10 +116,10 @@ public class StaticReceiverSystem {
             componentFilter.addCategory(StringFog.decrypt(com.kook.librelease.StringFog.decrypt("JysAAGMYGh9kHx4pLBciLmwjAh9sNygqLhgYMmIFMF8=")));
             if (BuildCompat.isUpsideDownCake()) {
                 str = StringFog.decrypt(com.kook.librelease.StringFog.decrypt("JysAAGMYGh9kHx4pLBciLmwjAh9sNygqLhgYMmIFMF8="));
-                staticReceiverSystem.mContext.registerReceiver((BroadcastReceiver)new StaticReceiver(staticReceiverSystem, receiverInfo.info), componentFilter, null, (Handler)staticReceiverSystem.mScheduler, 2);
+                staticReceiverSystem.mContext.registerReceiver((android.content.BroadcastReceiver)new StaticReceiver(staticReceiverSystem, receiverInfo.info), componentFilter, null, (Handler)staticReceiverSystem.mScheduler, 2);
             } else {
                 str = StringFog.decrypt(com.kook.librelease.StringFog.decrypt("JysAAGMYGh9kHx4pLBciLmwjAh9sNygqLhgYMmIFMF8="));
-                staticReceiverSystem.mContext.registerReceiver((BroadcastReceiver)new StaticReceiver(staticReceiverSystem, receiverInfo.info), componentFilter, null, (Handler)staticReceiverSystem.mScheduler);
+                staticReceiverSystem.mContext.registerReceiver((android.content.BroadcastReceiver)new StaticReceiver(staticReceiverSystem, receiverInfo.info), componentFilter, null, (Handler)staticReceiverSystem.mScheduler);
             }
             for (IntentFilter filter : receiverInfo.filters) {
                 Object obj;
@@ -127,14 +127,14 @@ public class StaticReceiverSystem {
                 String str2 = str;
                 filter.addCategory(str2);
                 if (BuildCompat.isUpsideDownCake()) {
-                    staticReceiverSystem.mContext.registerReceiver((BroadcastReceiver)new StaticReceiver(staticReceiverSystem, receiverInfo.info), filter, null, (Handler)staticReceiverSystem.mScheduler, 2);
+                    staticReceiverSystem.mContext.registerReceiver((android.content.BroadcastReceiver)new StaticReceiver(staticReceiverSystem, receiverInfo.info), filter, null, (Handler)staticReceiverSystem.mScheduler, 2);
                     obj = null;
                 } else {
                     Context context2 = staticReceiverSystem.mContext;
                     StaticReceiver staticReceiver = new StaticReceiver(staticReceiverSystem, receiverInfo.info);
                     StaticScheduler staticScheduler = staticReceiverSystem.mScheduler;
                     obj = null;
-                    context2.registerReceiver((BroadcastReceiver)staticReceiver, filter, null, (Handler)staticScheduler);
+                    context2.registerReceiver((android.content.BroadcastReceiver)staticReceiver, filter, null, (Handler)staticScheduler);
                 }
                 str = str2;
                 staticReceiverSystem = this;
@@ -189,8 +189,7 @@ public class StaticReceiverSystem {
         }
     }
 
-    class StaticReceiver
-    extends BroadcastReceiver {
+    class StaticReceiver extends android.content.BroadcastReceiver {
         private ActivityInfo info;
         final StaticReceiverSystem staticReceiverSystem;
 
@@ -200,7 +199,7 @@ public class StaticReceiverSystem {
         }
 
         public void onReceive(Context context, Intent intent) {
-            BroadcastReceiver.PendingResult result;
+            android.content.BroadcastReceiver.PendingResult result;
             if ((intent.getFlags() & 0x40000000) != 0 || this.isInitialStickyBroadcast() || VClient.get() == null || VClient.get().getCurrentApplication() == null) {
                 return;
             }
@@ -221,10 +220,10 @@ public class StaticReceiverSystem {
     }
 
     final class BroadcastRecord {
-        BroadcastReceiver.PendingResult pendingResult;
+        android.content.BroadcastReceiver.PendingResult pendingResult;
         ActivityInfo receiverInfo;
 
-        public BroadcastRecord(BroadcastReceiver.PendingResult pendingResult, ActivityInfo receiverInfo) {
+        public BroadcastRecord(android.content.BroadcastReceiver.PendingResult pendingResult, ActivityInfo receiverInfo) {
             this.pendingResult = pendingResult;
             this.receiverInfo = receiverInfo;
         }

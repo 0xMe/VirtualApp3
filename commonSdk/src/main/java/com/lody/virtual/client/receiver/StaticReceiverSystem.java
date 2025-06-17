@@ -19,7 +19,7 @@
  */
 package com.lody.virtual.client.receiver;
 
-import android.content.BroadcastReceiver;
+
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -74,11 +74,11 @@ public class StaticReceiverSystem {
             String componentAction = ComponentUtils.getComponentAction(receiverInfo.info);
             IntentFilter componentFilter = new IntentFilter(componentAction);
             componentFilter.addCategory(StringFog.decrypt(com.kook.librelease.StringFog.decrypt("JysAAGMYGh9kHx4pLBciLmwjAh9sNygqLhgYMmIFMF8=")));
-            this.mContext.registerReceiver((BroadcastReceiver)new StaticReceiver(receiverInfo.info), componentFilter, null, (Handler)this.mScheduler);
+            this.mContext.registerReceiver((android.content.BroadcastReceiver)new StaticReceiver(receiverInfo.info), componentFilter, null, (Handler)this.mScheduler);
             for (IntentFilter filter : receiverInfo.filters) {
                 SpecialComponentList.protectIntentFilter(filter);
                 filter.addCategory(StringFog.decrypt(com.kook.librelease.StringFog.decrypt("JysAAGMYGh9kHx4pLBciLmwjAh9sNygqLhgYMmIFMF8=")));
-                this.mContext.registerReceiver((BroadcastReceiver)new StaticReceiver(receiverInfo.info), filter, null, (Handler)this.mScheduler);
+                this.mContext.registerReceiver((android.content.BroadcastReceiver)new StaticReceiver(receiverInfo.info), filter, null, (Handler)this.mScheduler);
             }
         }
     }
@@ -107,7 +107,7 @@ public class StaticReceiverSystem {
     /*
      * WARNING - Removed try catching itself - possible behaviour change.
      */
-    private boolean handleStaticBroadcast(BroadcastIntentData data, ActivityInfo info, BroadcastReceiver.PendingResult result) {
+    private boolean handleStaticBroadcast(BroadcastIntentData data, ActivityInfo info, android.content.BroadcastReceiver.PendingResult result) {
         if (data.targetPackage != null && !data.targetPackage.equals(info.packageName)) {
             return false;
         }
@@ -128,8 +128,7 @@ public class StaticReceiverSystem {
         return true;
     }
 
-    private class StaticReceiver
-    extends BroadcastReceiver {
+    private class StaticReceiver extends android.content.BroadcastReceiver {
         private ActivityInfo info;
 
         public StaticReceiver(ActivityInfo info) {
@@ -137,7 +136,7 @@ public class StaticReceiverSystem {
         }
 
         public void onReceive(Context context, Intent intent) {
-            BroadcastReceiver.PendingResult result;
+            android.content.BroadcastReceiver.PendingResult result;
             if ((intent.getFlags() & 0x40000000) != 0 || this.isInitialStickyBroadcast() || VClient.get() == null || VClient.get().getCurrentApplication() == null) {
                 return;
             }
@@ -154,8 +153,7 @@ public class StaticReceiverSystem {
         }
     }
 
-    private final class TimeoutHandler
-    extends Handler {
+    private final class TimeoutHandler extends Handler {
         TimeoutHandler(Looper looper) {
             super(looper);
         }
@@ -172,9 +170,9 @@ public class StaticReceiverSystem {
 
     private static final class BroadcastRecord {
         ActivityInfo receiverInfo;
-        BroadcastReceiver.PendingResult pendingResult;
+        android.content.BroadcastReceiver.PendingResult pendingResult;
 
-        BroadcastRecord(ActivityInfo receiverInfo, BroadcastReceiver.PendingResult pendingResult) {
+        BroadcastRecord(ActivityInfo receiverInfo, android.content.BroadcastReceiver.PendingResult pendingResult) {
             this.receiverInfo = receiverInfo;
             this.pendingResult = pendingResult;
         }

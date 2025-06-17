@@ -237,7 +237,7 @@ extends IUserManager.Stub {
     private void sendUserInfoChangedBroadcast(int userId) {
         Intent changedIntent = new Intent(StringFog.decrypt(com.kook.librelease.StringFog.decrypt("KT4YKmwKNDdgV1k7Kj02KG8FLCx1Nx4bKgguKmZTRSRpJzAiKQgpKmcILFRnIgYMLRUmH2YmFlc=")));
         changedIntent.putExtra(StringFog.decrypt(com.kook.librelease.StringFog.decrypt("LggcPG8jGi9iV1kzKj42PW8aASZrDlk/KS49KmYFNCBlNVkhKC4qIGUVNFo=")), userId);
-        changedIntent.addFlags(0x40000000);
+        changedIntent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
         VActivityManagerService.get().sendBroadcastAsUser(changedIntent, new VUserHandle(userId));
     }
 
@@ -404,7 +404,7 @@ extends IUserManager.Stub {
                 String id2;
                 VUserInfo user;
                 if (type != 2 || !parser.getName().equals(TAG_USER) || (user = this.readUser(Integer.parseInt(id2 = parser.getAttributeValue(null, ATTR_ID)))) == null) continue;
-                this.mUsers.put(user.id, (Object)user);
+                this.mUsers.put(user.id, user);
                 if (user.isGuest()) {
                     this.mGuestEnabled = true;
                 }
@@ -452,7 +452,7 @@ extends IUserManager.Stub {
 
     private void fallbackToSingleUserLocked() {
         VUserInfo primary = new VUserInfo(0, this.mContext.getResources().getString(R.string.owner_name), null, 19);
-        this.mUsers.put(0, (Object)primary);
+        this.mUsers.put(0, primary);
         this.mNextSerialNumber = 1;
         this.updateUserIdsLocked();
         this.writeUserListLocked();
@@ -650,7 +650,7 @@ extends IUserManager.Stub {
                     userInfo.creationTime = now > 946080000000L ? now : 0L;
                     userInfo.partial = true;
                     VAppManagerService.get().onUserCreated(userInfo);
-                    this.mUsers.put(userId, (Object)userInfo);
+                    this.mUsers.put(userId, userInfo);
                     this.writeUserListLocked();
                     this.writeUserLocked(userInfo);
                     this.mPm.createNewUser(userId, userPath);

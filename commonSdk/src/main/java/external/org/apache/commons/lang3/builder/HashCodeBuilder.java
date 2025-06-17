@@ -64,17 +64,22 @@ implements Builder<Integer> {
         return HashCodeBuilder.reflectionHashCode(initialNonZeroOddNumber, multiplierNonZeroOddNumber, object, testTransients, null, new String[0]);
     }
 
-    public static <T> int reflectionHashCode(int initialNonZeroOddNumber, int multiplierNonZeroOddNumber, T object, boolean testTransients, Class<? super T> reflectUpToClass, String ... excludeFields) {
-        Class<?> clazz;
+
+    public static <T> int reflectionHashCode(int initialNonZeroOddNumber, int multiplierNonZeroOddNumber, T object, boolean testTransients, Class<? super T> reflectUpToClass, String... excludeFields) {
         if (object == null) {
             throw new IllegalArgumentException("The object to build a hash code for must not be null");
+        } else {
+            HashCodeBuilder builder = new HashCodeBuilder(initialNonZeroOddNumber, multiplierNonZeroOddNumber);
+            Class<?> clazz = object.getClass();
+            reflectionAppend(object, clazz, builder, testTransients, excludeFields);
+
+            while(clazz.getSuperclass() != null && clazz != reflectUpToClass) {
+                clazz = clazz.getSuperclass();
+                reflectionAppend(object, clazz, builder, testTransients, excludeFields);
+            }
+
+            return builder.toHashCode();
         }
-        HashCodeBuilder builder = new HashCodeBuilder(initialNonZeroOddNumber, multiplierNonZeroOddNumber);
-        HashCodeBuilder.reflectionAppend(object, clazz, builder, testTransients, excludeFields);
-        for (clazz = object.getClass(); clazz.getSuperclass() != null && clazz != reflectUpToClass; clazz = clazz.getSuperclass()) {
-            HashCodeBuilder.reflectionAppend(object, clazz, builder, testTransients, excludeFields);
-        }
-        return builder.toHashCode();
     }
 
     public static int reflectionHashCode(Object object, boolean testTransients) {

@@ -8,9 +8,7 @@ import com.android.dx.util.Hex;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-public final class Type
-implements TypeBearer,
-Comparable<Type> {
+public final class Type implements TypeBearer, Comparable<Type> {
     private static final ConcurrentMap<String, Type> internTable = new ConcurrentHashMap<String, Type>(10000, 0.75f);
     public static final int BT_VOID = 0;
     public static final int BT_BOOLEAN = 1;

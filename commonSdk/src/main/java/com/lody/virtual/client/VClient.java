@@ -48,7 +48,6 @@ import android.annotation.SuppressLint;
 import android.app.ActivityManager;
 import android.app.Application;
 import android.app.Instrumentation;
-import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.ContentProviderClient;
 import android.content.ContentResolver;
@@ -155,8 +154,7 @@ import mirror.com.android.internal.content.ReferrerIntent;
 import mirror.dalvik.system.VMRuntime;
 import mirror.java.lang.ThreadGroupN;
 
-public final class VClient
-extends IVClient.Stub {
+public final class VClient extends IVClient.Stub {
     private static final int NEW_INTENT = 11;
     private static final int RECEIVER = 12;
     private static final int FINISH_ACTIVITY = 13;
@@ -667,9 +665,6 @@ extends IVClient.Stub {
         EmuiHelper.disableCache();
     }
 
-    /*
-     * WARNING - Removed try catching itself - possible behaviour change.
-     */
     private void setupUncaughtHandler() {
         ThreadGroup[] groups;
         ThreadGroup root = Thread.currentThread().getThreadGroup();
@@ -816,7 +811,7 @@ extends IVClient.Stub {
     private Context createPackageContext(String packageName) {
         try {
             Context hostContext = VirtualCore.get().getContext();
-            Context packageContext = hostContext.createPackageContext(packageName, 3);
+            Context packageContext = hostContext.createPackageContext(packageName, Context.CONTEXT_INCLUDE_CODE);
             PackageManager packageManager = packageContext.getPackageManager();
             VLog.d(StringFog.decrypt(com.kook.librelease.StringFog.decrypt("JBUhDQ==")), StringFog.decrypt(com.kook.librelease.StringFog.decrypt("PhZfD28wMBNgJFkgKAgALn40IFo=")) + hostContext + StringFog.decrypt(com.kook.librelease.StringFog.decrypt("Pl85OGszGiZmHjAaLBccD2ozOzI=")) + packageContext + StringFog.decrypt(com.kook.librelease.StringFog.decrypt("Pl85OHsKIDd9JA47KC0MQG4jPCt+N1RF")) + packageName, new Object[0]);
             return packageContext;
@@ -873,33 +868,42 @@ extends IVClient.Stub {
 
     private void fixInstalledProviders() {
         this.clearSettingProvider();
-        Map clientMap = ActivityThread.mProviderMap.get(VirtualCore.mainThread());
-        for (Map.Entry e : clientMap.entrySet()) {
-            ProviderInfo info;
-            Object holder;
-            IInterface provider;
+        Map<Object, Object> clientMap = (Map)ActivityThread.mProviderMap.get(VirtualCore.mainThread());
+        Iterator var2 = clientMap.entrySet().iterator();
+
+        while(var2.hasNext()) {
+            Map.Entry<Object, Object> e = (Map.Entry)var2.next();
             Object clientRecord = e.getValue();
+            IInterface provider;
+            Object holder;
+            ProviderInfo info;
             if (BuildCompat.isOreo()) {
-                provider = ActivityThread.ProviderClientRecordJB.mProvider.get(clientRecord);
+                provider = (IInterface) ActivityThread.ProviderClientRecordJB.mProvider.get(clientRecord);
                 holder = ActivityThread.ProviderClientRecordJB.mHolder.get(clientRecord);
-                if (holder == null) continue;
-                info = ContentProviderHolderOreo.info.get(holder);
-                if (info.authority.startsWith(StubManifest.STUB_CP_AUTHORITY)) continue;
-                provider = ProviderHook.createProxy(true, info.authority, provider);
-                ActivityThread.ProviderClientRecordJB.mProvider.set(clientRecord, provider);
-                ContentProviderHolderOreo.provider.set(holder, provider);
-                continue;
+                if (holder != null) {
+                    info = (ProviderInfo)ContentProviderHolderOreo.info.get(holder);
+                    if (!info.authority.startsWith(StubManifest.STUB_CP_AUTHORITY)) {
+                        provider = ProviderHook.createProxy(true, info.authority, provider);
+                        ActivityThread.ProviderClientRecordJB.mProvider.set(clientRecord, provider);
+                        ContentProviderHolderOreo.provider.set(holder, provider);
+                    }
+                }
+            } else {
+                provider = (IInterface) ActivityThread.ProviderClientRecordJB.mProvider.get(clientRecord);
+                holder = ActivityThread.ProviderClientRecordJB.mHolder.get(clientRecord);
+                if (holder != null) {
+                    info = (ProviderInfo) IActivityManager.ContentProviderHolder.info.get(holder);
+                    if (!info.authority.startsWith(StubManifest.STUB_CP_AUTHORITY)) {
+                        provider = ProviderHook.createProxy(true, info.authority, provider);
+                        ActivityThread.ProviderClientRecordJB.mProvider.set(clientRecord, provider);
+                        IActivityManager.ContentProviderHolder.provider.set(holder, provider);
+                    }
+                }
             }
-            provider = ActivityThread.ProviderClientRecordJB.mProvider.get(clientRecord);
-            holder = ActivityThread.ProviderClientRecordJB.mHolder.get(clientRecord);
-            if (holder == null) continue;
-            info = IActivityManager.ContentProviderHolder.info.get(holder);
-            if (info.authority.startsWith(StubManifest.STUB_CP_AUTHORITY)) continue;
-            provider = ProviderHook.createProxy(true, info.authority, provider);
-            ActivityThread.ProviderClientRecordJB.mProvider.set(clientRecord, provider);
-            IActivityManager.ContentProviderHolder.provider.set(holder, provider);
         }
+
     }
+
 
     private void clearSettingProvider() {
         Object cache = Settings.System.sNameValueCache.get();
@@ -939,7 +943,7 @@ extends IVClient.Stub {
         this.sendMessage(11, data);
     }
 
-    public void scheduleReceiver(String processName, ComponentName component, Intent intent, BroadcastReceiver.PendingResult pendingResult) {
+    public void scheduleReceiver(String processName, ComponentName component, Intent intent, android.content.BroadcastReceiver.PendingResult pendingResult) {
         ReceiverData receiverData = new ReceiverData();
         receiverData.pendingResult = pendingResult;
         receiverData.intent = intent;
@@ -949,35 +953,39 @@ extends IVClient.Stub {
         this.sendMessage(12, receiverData);
     }
 
+
     private void handleReceiver(ReceiverData data) {
-        BroadcastReceiver.PendingResult result = data.pendingResult;
+        android.content.BroadcastReceiver.PendingResult result = data.pendingResult;
+
         try {
             Context context = this.mInitialApplication.getBaseContext();
-            Context receiverContext = ContextImpl.getReceiverRestrictedContext.call(context, new Object[0]);
+            Context receiverContext = (Context)ContextImpl.getReceiverRestrictedContext.call(context, new Object[0]);
             ContextFixer.fixContext(receiverContext, data.component.getPackageName());
             String className = data.component.getClassName();
-            ClassLoader classLoader = LoadedApk.getClassLoader.call(this.mBoundApplication.info, new Object[0]);
+            ClassLoader classLoader = (ClassLoader)LoadedApk.getClassLoader.call(this.mBoundApplication.info, new Object[0]);
             android.content.BroadcastReceiver receiver = (android.content.BroadcastReceiver)classLoader.loadClass(className).newInstance();
-            BroadcastReceiver.setPendingResult.call(receiver, result);
+            mirror.android.content.BroadcastReceiver.setPendingResult.call(receiver, new Object[]{result});
             data.intent.setExtrasClassLoader(context.getClassLoader());
             ComponentUtils.unpackFillIn(data.intent, classLoader);
             if (data.intent.getComponent() == null) {
                 data.intent.setComponent(data.component);
             }
+
             FakeIdentityBinder.setSystemIdentity();
             receiver.onReceive(receiverContext, data.intent);
-            if (BroadcastReceiver.getPendingResult.call(receiver, new Object[0]) != null) {
-                IBinder token = BroadcastReceiver.PendingResult.mToken.get(result);
+            if (mirror.android.content.BroadcastReceiver.getPendingResult.call(receiver, new Object[0]) != null) {
+                IBinder token = (IBinder) BroadcastReceiver.PendingResult.mToken.get(result);
                 if (!VActivityManager.get().broadcastFinish(token)) {
                     result.finish();
                 }
             }
-        }
-        catch (Exception e) {
+
+        } catch (Exception var9) {
             data.stacktrace.printStackTrace();
-            throw new RuntimeException(StringFog.decrypt(com.kook.librelease.StringFog.decrypt("IQgcP2sjHitLEQo1PxgqLm4gRQZ4HgogLT4uI2YwLDV5EVRF")) + data.component + StringFog.decrypt(com.kook.librelease.StringFog.decrypt("ODo6Vg==")) + e.toString(), e);
+            throw new RuntimeException(StringFog.decrypt(com.kook.librelease.StringFog.decrypt("IQgcP2sjHitLEQo1PxgqLm4gRQZ4HgogLT4uI2YwLDV5EVRF")) + data.component + StringFog.decrypt(com.kook.librelease.StringFog.decrypt("ODo6Vg==")) + var9.toString(), var9);
         }
     }
+
 
     public ClassLoader getClassLoader() {
         return LoadedApk.getClassLoader.call(this.mBoundApplication.info, new Object[0]);
@@ -994,7 +1002,7 @@ extends IVClient.Stub {
             throw new RuntimeException(StringFog.decrypt(com.kook.librelease.StringFog.decrypt("IQgcP2sjHitLEQo1PxccDmoKBjdlNCwaLRcqJ0sVNCBlNzgiKAgfJA==")) + info.name + StringFog.decrypt(com.kook.librelease.StringFog.decrypt("ODo6Vg==")) + e.toString(), e);
         }
         try {
-            Context context = VirtualCore.get().getContext().createPackageContext(info.packageName, 3);
+            Context context = VirtualCore.get().getContext().createPackageContext(info.packageName, Context.CONTEXT_INCLUDE_CODE);
             ContextImpl.setOuterContext.call(context, service);
             Service.attach.call(service, context, VirtualCore.mainThread(), info.name, token, this.mInitialApplication, ActivityManagerNative.getDefault.call(new Object[0]));
             ContextFixer.fixContext(context, info.packageName);
@@ -1118,7 +1126,7 @@ extends IVClient.Stub {
     }
 
     private static final class ReceiverData {
-        BroadcastReceiver.PendingResult pendingResult;
+        android.content.BroadcastReceiver.PendingResult pendingResult;
         Intent intent;
         ComponentName component;
         String processName;

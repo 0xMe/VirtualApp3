@@ -9,7 +9,7 @@ import mirror.RefObject;
 public class ThreadGroupN {
     public static Class<?> Class = RefClass.load(ThreadGroupN.class, ThreadGroup.class);
     public static RefObject<Integer> ngroups;
-    public static RefObject<ThreadGroup[]> groups;
-    public static RefObject<ThreadGroup> parent;
+    public static RefObject<java.lang.ThreadGroup[]> groups;
+    public static RefObject<java.lang.ThreadGroup> parent;
 }
 

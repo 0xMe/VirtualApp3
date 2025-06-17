@@ -63,7 +63,7 @@ public abstract class IntentResolver<F extends VPackage.IntentInfo, R> {
         if (categories == null) {
             return null;
         }
-        return new FastImmutableArraySet<String>(categories.toArray(new String[categories.size()]));
+        return new FastImmutableArraySet<String>((String[]) categories.toArray(new String[categories.size()]));
     }
 
     public void addFilter(F f) {
@@ -137,13 +137,13 @@ public abstract class IntentResolver<F extends VPackage.IntentInfo, R> {
 
     public ArrayList<F> findFilters(IntentFilter matching) {
         if (matching.countDataSchemes() == 1) {
-            return this.collectFilters((VPackage.IntentInfo[])this.mSchemeToFilter.get(matching.getDataScheme(0)), matching);
+            return this.collectFilters((F[]) this.mSchemeToFilter.get(matching.getDataScheme(0)), matching);
         }
         if (matching.countDataTypes() != 0 && matching.countActions() == 1) {
-            return this.collectFilters((VPackage.IntentInfo[])this.mTypedActionToFilter.get(matching.getAction(0)), matching);
+            return this.collectFilters((F[]) this.mTypedActionToFilter.get(matching.getAction(0)), matching);
         }
         if (matching.countDataTypes() == 0 && matching.countDataSchemes() == 0 && matching.countActions() == 1) {
-            return this.collectFilters((VPackage.IntentInfo[])this.mActionToFilter.get(matching.getAction(0)), matching);
+            return this.collectFilters((F[]) this.mActionToFilter.get(matching.getAction(0)), matching);
         }
         ArrayList<VPackage.IntentInfo> res = null;
         for (VPackage.IntentInfo cur : this.mFilters) {
@@ -153,7 +153,7 @@ public abstract class IntentResolver<F extends VPackage.IntentInfo, R> {
             }
             res.add(cur);
         }
-        return res;
+        return (ArrayList<F>) res;
     }
 
     public void removeFilter(F f) {
@@ -186,7 +186,7 @@ public abstract class IntentResolver<F extends VPackage.IntentInfo, R> {
         String scheme = intent.getScheme();
         int N = listCut.size();
         for (int i = 0; i < N; ++i) {
-            this.buildResolveList(intent, categories, defaultOnly, resolvedType, scheme, (VPackage.IntentInfo[])listCut.get(i), resultList, userId);
+            this.buildResolveList(intent, categories, defaultOnly, resolvedType, scheme, (F[]) listCut.get(i), resultList, userId);
         }
         this.sortResults(resultList);
         return resultList;
@@ -223,16 +223,16 @@ public abstract class IntentResolver<F extends VPackage.IntentInfo, R> {
         }
         FastImmutableArraySet<String> categories = IntentResolver.getFastIntentCategories(intent);
         if (firstTypeCut != null) {
-            this.buildResolveList(intent, categories, defaultOnly, resolvedType, scheme, firstTypeCut, finalList, userId);
+            this.buildResolveList(intent, categories, defaultOnly, resolvedType, scheme, (F[]) firstTypeCut, finalList, userId);
         }
         if (secondTypeCut != null) {
-            this.buildResolveList(intent, categories, defaultOnly, resolvedType, scheme, secondTypeCut, finalList, userId);
+            this.buildResolveList(intent, categories, defaultOnly, resolvedType, scheme, (F[]) secondTypeCut, finalList, userId);
         }
         if (thirdTypeCut != null) {
-            this.buildResolveList(intent, categories, defaultOnly, resolvedType, scheme, thirdTypeCut, finalList, userId);
+            this.buildResolveList(intent, categories, defaultOnly, resolvedType, scheme, (F[]) thirdTypeCut, finalList, userId);
         }
         if (schemeCut != null) {
-            this.buildResolveList(intent, categories, defaultOnly, resolvedType, scheme, schemeCut, finalList, userId);
+            this.buildResolveList(intent, categories, defaultOnly, resolvedType, scheme, (F[]) schemeCut, finalList, userId);
         }
         this.sortResults(finalList);
         return finalList;
@@ -274,26 +274,30 @@ public abstract class IntentResolver<F extends VPackage.IntentInfo, R> {
         out.println(count);
     }
 
+
     private void addFilter(HashMap<String, F[]> map, String name, F filter) {
-        VPackage.IntentInfo[] array2 = (VPackage.IntentInfo[])map.get(name);
-        if (array2 == null) {
-            array2 = this.newArray(2);
-            map.put(name, array2);
-            array2[0] = filter;
+        F[] array = (F[]) map.get(name);
+        if (array == null) {
+            array = this.newArray(2);
+            map.put(name, array);
+            array[0] = filter;
         } else {
-            int N;
+            int N = array.length;
+
             int i;
-            for (i = N = array2.length; i > 0 && array2[i - 1] == null; --i) {
+            for(i = N; i > 0 && array[i - 1] == null; --i) {
             }
+
             if (i < N) {
-                array2[i] = filter;
+                array[i] = filter;
             } else {
-                VPackage.IntentInfo[] newa = this.newArray(N * 3 / 2);
-                System.arraycopy(array2, 0, newa, 0, N);
+                F[] newa = this.newArray(N * 3 / 2);
+                System.arraycopy(array, 0, newa, 0, N);
                 newa[N] = filter;
                 map.put(name, newa);
             }
         }
+
     }
 
     private int register_mime_types(F filter, String prefix) {
@@ -394,7 +398,7 @@ public abstract class IntentResolver<F extends VPackage.IntentInfo, R> {
             } else if (LAST < array2.length / 2) {
                 VPackage.IntentInfo[] newa = this.newArray(LAST + 2);
                 System.arraycopy(array2, 0, newa, 0, LAST + 1);
-                map.put(name, newa);
+                map.put(name, (F[]) newa);
             }
         }
     }
@@ -442,7 +446,7 @@ public abstract class IntentResolver<F extends VPackage.IntentInfo, R> {
 
         @Override
         public F next() {
-            this.mCur = (VPackage.IntentInfo)this.mI.next();
+            this.mCur = (F) this.mI.next();
             return this.mCur;
         }
 

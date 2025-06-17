@@ -189,7 +189,7 @@ public class VServiceRuntime {
          */
         public IBinder onBind(IServiceConnection conn, Intent intent) {
             this.lastActivityTime = SystemClock.uptimeMillis();
-            VServiceRuntime.this.mConnectionCallbackList.register((IInterface)conn);
+            VServiceRuntime.this.mConnectionCallbackList.register(conn);
             Map map = VServiceRuntime.this.mComponentToServiceRecords;
             synchronized (map) {
                 for (ServiceBindRecord binding : this.bindings) {

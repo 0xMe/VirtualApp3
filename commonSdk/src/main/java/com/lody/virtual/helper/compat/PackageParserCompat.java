@@ -16,7 +16,6 @@ package com.lody.virtual.helper.compat;
 import android.content.pm.ActivityInfo;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
-import android.content.pm.PackageParser;
 import android.content.pm.ProviderInfo;
 import android.content.pm.ServiceInfo;
 import android.os.Build;
@@ -76,26 +75,21 @@ public class PackageParserCompat {
         return PackageParser.ctor.newInstance(packageFile.getAbsolutePath());
     }
 
-    public static PackageParser.Package parsePackage(android.content.pm.PackageParser parser, File packageFile, int flags) throws Throwable {
+    public static android.content.pm.PackageParser.Package parsePackage(android.content.pm.PackageParser parser, File packageFile, int flags) throws Throwable {
         if (API_LEVEL >= 33) {
-            return PackageParserTiramisu.parsePackage.callWithException(parser, packageFile, flags);
+            return (android.content.pm.PackageParser.Package)PackageParserTiramisu.parsePackage.callWithException(parser, new Object[]{packageFile, flags});
+        } else if (API_LEVEL >= 23) {
+            return (android.content.pm.PackageParser.Package)PackageParserMarshmallow.parsePackage.callWithException(parser, new Object[]{packageFile, flags});
+        } else if (API_LEVEL >= 22) {
+            return (android.content.pm.PackageParser.Package)PackageParserLollipop22.parsePackage.callWithException(parser, new Object[]{packageFile, flags});
+        } else if (API_LEVEL >= 21) {
+            return (android.content.pm.PackageParser.Package)PackageParserLollipop.parsePackage.callWithException(parser, new Object[]{packageFile, flags});
+        } else if (API_LEVEL >= 17) {
+            return (android.content.pm.PackageParser.Package)PackageParserJellyBean17.parsePackage.callWithException(parser, new Object[]{packageFile, null, new DisplayMetrics(), flags});
+        } else {
+            return API_LEVEL >= 16 ? (android.content.pm.PackageParser.Package)PackageParserJellyBean.parsePackage.callWithException(parser, new Object[]{packageFile, null, new DisplayMetrics(), flags})
+                    : (android.content.pm.PackageParser.Package)mirror.android.content.pm.PackageParser.parsePackage.callWithException(parser, new Object[]{packageFile, null, new DisplayMetrics(), flags});
         }
-        if (API_LEVEL >= 23) {
-            return PackageParserMarshmallow.parsePackage.callWithException(parser, packageFile, flags);
-        }
-        if (API_LEVEL >= 22) {
-            return PackageParserLollipop22.parsePackage.callWithException(parser, packageFile, flags);
-        }
-        if (API_LEVEL >= 21) {
-            return PackageParserLollipop.parsePackage.callWithException(parser, packageFile, flags);
-        }
-        if (API_LEVEL >= 17) {
-            return PackageParserJellyBean17.parsePackage.callWithException(parser, packageFile, null, new DisplayMetrics(), flags);
-        }
-        if (API_LEVEL >= 16) {
-            return PackageParserJellyBean.parsePackage.callWithException(parser, packageFile, null, new DisplayMetrics(), flags);
-        }
-        return PackageParser.parsePackage.callWithException(parser, packageFile, null, new DisplayMetrics(), flags);
     }
 
     public static ServiceInfo generateServiceInfo(PackageParser.Service service, int flags) {
@@ -208,7 +202,7 @@ public class PackageParserCompat {
         return PackageParser.generatePackageInfo.call(p, GIDS, flags, firstInstallTime, lastUpdateTime);
     }
 
-    public static void collectCertificates(android.content.pm.PackageParser parser, PackageParser.Package p, int flags) throws Throwable {
+    public static void collectCertificates(android.content.pm.PackageParser parser, android.content.pm.PackageParser.Package p, int flags) throws Throwable {
         if (BuildCompat.isPie()) {
             PackageParserPie.collectCertificates.callWithException(p, true);
         } else if (API_LEVEL >= 24) {

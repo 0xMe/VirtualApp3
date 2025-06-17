@@ -27,6 +27,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -112,80 +113,97 @@ public final class ProxyBuilder<T> {
     }
 
     public T build() throws IOException {
-        T result;
-        Constructor<T> constructor;
-        ProxyBuilder.check(this.handler != null, "handler == null");
-        ProxyBuilder.check(this.constructorArgTypes.length == this.constructorArgValues.length, "constructorArgValues.length != constructorArgTypes.length");
-        Class<T> proxyClass = this.buildProxyClass();
+        check(this.handler != null, "handler == null");
+        check(this.constructorArgTypes.length == this.constructorArgValues.length, "constructorArgValues.length != constructorArgTypes.length");
+        Class<? extends T> proxyClass = this.buildProxyClass();
+
+        Constructor constructor;
         try {
             constructor = proxyClass.getConstructor(this.constructorArgTypes);
-        }
-        catch (NoSuchMethodException e) {
+        } catch (NoSuchMethodException var8) {
             throw new IllegalArgumentException("No constructor for " + this.baseClass.getName() + " with parameter types " + Arrays.toString(this.constructorArgTypes));
         }
+
+        Object result;
         try {
             result = constructor.newInstance(this.constructorArgValues);
+        } catch (InstantiationException var5) {
+            throw new AssertionError(var5);
+        } catch (IllegalAccessException var6) {
+            throw new AssertionError(var6);
+        } catch (InvocationTargetException var7) {
+            throw launderCause(var7);
         }
-        catch (InstantiationException e) {
-            throw new AssertionError((Object)e);
-        }
-        catch (IllegalAccessException e) {
-            throw new AssertionError((Object)e);
-        }
-        catch (InvocationTargetException e) {
-            throw ProxyBuilder.launderCause(e);
-        }
-        ProxyBuilder.setInvocationHandler(result, this.handler);
-        return result;
+
+        setInvocationHandler(result, this.handler);
+        return (T) result;
     }
 
     public Class<? extends T> buildProxyClass() throws IOException {
-        ClassLoader requestedClassloader = this.sharedClassLoader ? this.baseClass.getClassLoader() : this.parentClassLoader;
-        ProxiedClass cacheKey = new ProxiedClass(this.baseClass, this.interfaces, requestedClassloader, this.sharedClassLoader);
-        Class<Object> proxyClass = generatedProxyClasses.get(cacheKey);
+        ClassLoader requestedClassloader;
+        if (this.sharedClassLoader) {
+            requestedClassloader = this.baseClass.getClassLoader();
+        } else {
+            requestedClassloader = this.parentClassLoader;
+        }
+
+        ProxiedClass<T> cacheKey = new ProxiedClass(this.baseClass, this.interfaces, requestedClassloader, this.sharedClassLoader);
+        Class<? extends T> proxyClass = (Class)generatedProxyClasses.get(cacheKey);
         if (proxyClass != null) {
             return proxyClass;
-        }
-        DexMaker dexMaker = new DexMaker();
-        String generatedName = ProxyBuilder.getMethodNameForProxyOf(this.baseClass, this.interfaces);
-        TypeId generatedType = TypeId.get("L" + generatedName + ";");
-        TypeId<T> superType = TypeId.get(this.baseClass);
-        ProxyBuilder.generateConstructorsAndFields(dexMaker, generatedType, superType, this.baseClass);
-        Method[] methodsToProxy = this.methods == null ? this.getMethodsToProxyRecursive() : this.methods;
-        Arrays.sort(methodsToProxy, new Comparator<Method>(){
-
-            @Override
-            public int compare(Method method1, Method method2) {
-                String m1Signature = method1.getDeclaringClass() + method1.getName() + Arrays.toString(method1.getParameterTypes()) + method1.getReturnType();
-                String m2Signature = method2.getDeclaringClass() + method2.getName() + Arrays.toString(method2.getParameterTypes()) + method2.getReturnType();
-                return m1Signature.compareTo(m2Signature);
+        } else {
+            DexMaker dexMaker = new DexMaker();
+            String generatedName = getMethodNameForProxyOf(this.baseClass, this.interfaces);
+            TypeId<? extends T> generatedType = TypeId.get("L" + generatedName + ";");
+            TypeId<T> superType = TypeId.get(this.baseClass);
+            generateConstructorsAndFields(dexMaker, generatedType, superType, this.baseClass);
+            Method[] methodsToProxy;
+            if (this.methods == null) {
+                methodsToProxy = this.getMethodsToProxyRecursive();
+            } else {
+                methodsToProxy = this.methods;
             }
-        });
-        ProxyBuilder.generateCodeForAllMethods(dexMaker, generatedType, methodsToProxy, superType);
-        dexMaker.declare(generatedType, generatedName + ".generated", 1, superType, this.getInterfacesAsTypeIds());
-        if (this.sharedClassLoader) {
-            dexMaker.setSharedClassLoader(requestedClassloader);
+
+            Arrays.sort(methodsToProxy, new Comparator<Method>() {
+                public int compare(Method method1, Method method2) {
+                    String m1Signature = method1.getDeclaringClass() + method1.getName() + Arrays.toString(method1.getParameterTypes()) + method1.getReturnType();
+                    String m2Signature = method2.getDeclaringClass() + method2.getName() + Arrays.toString(method2.getParameterTypes()) + method2.getReturnType();
+                    return m1Signature.compareTo(m2Signature);
+                }
+            });
+            generateCodeForAllMethods(dexMaker, generatedType, methodsToProxy, superType);
+            dexMaker.declare(generatedType, generatedName + ".generated", 1, superType, this.getInterfacesAsTypeIds());
+            if (this.sharedClassLoader) {
+                dexMaker.setSharedClassLoader(requestedClassloader);
+            }
+
+            if (this.markTrusted) {
+                dexMaker.markAsTrusted();
+            }
+
+            ClassLoader classLoader;
+            if (this.sharedClassLoader) {
+                classLoader = dexMaker.generateAndLoad((ClassLoader)null, this.dexCache);
+            } else {
+                classLoader = dexMaker.generateAndLoad(this.parentClassLoader, this.dexCache);
+            }
+
+            try {
+                proxyClass = this.loadClass(classLoader, generatedName);
+            } catch (IllegalAccessError var11) {
+                throw new UnsupportedOperationException("cannot proxy inaccessible class " + this.baseClass, var11);
+            } catch (ClassNotFoundException var12) {
+                throw new AssertionError(var12);
+            }
+
+            setMethodsStaticField(proxyClass, methodsToProxy);
+            generatedProxyClasses.put(cacheKey, proxyClass);
+            return proxyClass;
         }
-        if (this.markTrusted) {
-            dexMaker.markAsTrusted();
-        }
-        ClassLoader classLoader = this.sharedClassLoader ? dexMaker.generateAndLoad(null, this.dexCache) : dexMaker.generateAndLoad(this.parentClassLoader, this.dexCache);
-        try {
-            proxyClass = this.loadClass(classLoader, generatedName);
-        }
-        catch (IllegalAccessError e) {
-            throw new UnsupportedOperationException("cannot proxy inaccessible class " + this.baseClass, e);
-        }
-        catch (ClassNotFoundException e) {
-            throw new AssertionError((Object)e);
-        }
-        ProxyBuilder.setMethodsStaticField(proxyClass, methodsToProxy);
-        generatedProxyClasses.put(cacheKey, proxyClass);
-        return proxyClass;
     }
 
     private Class<? extends T> loadClass(ClassLoader classLoader, String generatedName) throws ClassNotFoundException {
-        return classLoader.loadClass(generatedName);
+        return (Class<? extends T>) classLoader.loadClass(generatedName);
     }
 
     private static RuntimeException launderCause(InvocationTargetException e) {
@@ -423,7 +441,7 @@ public final class ProxyBuilder<T> {
     }
 
     private static <T> Constructor<T>[] getConstructorsToOverwrite(Class<T> clazz) {
-        return clazz.getDeclaredConstructors();
+        return (Constructor<T>[]) clazz.getDeclaredConstructors();
     }
 
     private TypeId<?>[] getInterfacesAsTypeIds() {
@@ -436,25 +454,38 @@ public final class ProxyBuilder<T> {
     }
 
     private Method[] getMethodsToProxyRecursive() {
+        Set<MethodSetEntry> methodsToProxy = new HashSet();
+        Set<MethodSetEntry> seenFinalMethods = new HashSet();
+
         Class c;
-        HashSet<MethodSetEntry> methodsToProxy = new HashSet<MethodSetEntry>();
-        HashSet<MethodSetEntry> seenFinalMethods = new HashSet<MethodSetEntry>();
-        for (c = this.baseClass; c != null; c = c.getSuperclass()) {
+        for(c = this.baseClass; c != null; c = c.getSuperclass()) {
             this.getMethodsToProxy(methodsToProxy, seenFinalMethods, c);
         }
-        for (c = this.baseClass; c != null; c = c.getSuperclass()) {
-            for (Class<?> i : c.getInterfaces()) {
+
+        for(c = this.baseClass; c != null; c = c.getSuperclass()) {
+            Class[] var4 = c.getInterfaces();
+            int var5 = var4.length;
+
+            for(int var6 = 0; var6 < var5; ++var6) {
+                Class<?> i = var4[var6];
                 this.getMethodsToProxy(methodsToProxy, seenFinalMethods, i);
             }
         }
-        for (Class clazz : this.interfaces) {
-            this.getMethodsToProxy(methodsToProxy, seenFinalMethods, clazz);
+
+        Iterator var8 = this.interfaces.iterator();
+
+        while(var8.hasNext()) {
+            this.getMethodsToProxy(methodsToProxy, seenFinalMethods, (Class)var8.next());
         }
+
         Method[] results = new Method[methodsToProxy.size()];
-        boolean bl = false;
-        for (MethodSetEntry entry : methodsToProxy) {
-            results[++var4_8] = entry.originalMethod;
+        int i = 0;
+
+        MethodSetEntry entry;
+        for(Iterator var12 = methodsToProxy.iterator(); var12.hasNext(); results[i++] = entry.originalMethod) {
+            entry = (MethodSetEntry)var12.next();
         }
+
         return results;
     }
 

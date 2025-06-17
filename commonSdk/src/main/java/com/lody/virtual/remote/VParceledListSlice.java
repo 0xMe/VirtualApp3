@@ -69,7 +69,7 @@ implements Parcelable {
             } else if (parcelable != null) {
                 VParceledListSlice.verifySameType(listElementClass, parcelable.getClass());
             }
-            this.mList.add(parcelable);
+            this.mList.add((T) parcelable);
             if (!DEBUG) continue;
             Log.d((String)TAG, (String)(StringFog.decrypt(com.kook.librelease.StringFog.decrypt("Ij4uP2gJIC9gNFEzKj0LOn4FSFo=")) + i + StringFog.decrypt(com.kook.librelease.StringFog.decrypt("ODo6Vg==")) + this.mList.get(this.mList.size() - 1)));
         }
@@ -96,7 +96,7 @@ implements Parcelable {
                 if (parcelable != null) {
                     VParceledListSlice.verifySameType(listElementClass, parcelable.getClass());
                 }
-                this.mList.add(parcelable);
+                this.mList.add((T) parcelable);
                 if (DEBUG) {
                     Log.d((String)TAG, (String)(StringFog.decrypt(com.kook.librelease.StringFog.decrypt("Ij4uP2gJICtnEQoqLwMlPw==")) + i + StringFog.decrypt(com.kook.librelease.StringFog.decrypt("ODo6Vg==")) + this.mList.get(this.mList.size() - 1)));
                 }

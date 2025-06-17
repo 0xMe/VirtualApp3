@@ -256,7 +256,7 @@ extends Fragment {
         ArrayList aspectRatioList = bundle.getParcelableArrayList(com.carlos.libcommon.StringFog.decrypt(StringFog.decrypt("Li4ADXojLDdhNFE1IykYD2UjOAZqATg7KQQcHWEjOCBpJzARKC0cI2UhGiRsAR46Jj4uVg==")));
         if (aspectRatioX > 0.0f && aspectRatioY > 0.0f) {
             if (this.mWrapperStateAspectRatio != null) {
-                this.mWrapperStateAspectRatio.setVisibility(8);
+                this.mWrapperStateAspectRatio.setVisibility(View.GONE);
             }
             this.mGestureCropImageView.setTargetAspectRatio(aspectRatioX / aspectRatioY);
         } else if (aspectRatioList != null && aspectRationSelectedByDefault < aspectRatioList.size()) {
@@ -322,10 +322,10 @@ extends Fragment {
                     UCropFragment.this.mGestureCropImageView.setTargetAspectRatio(((AspectRatioTextView)((ViewGroup)v).getChildAt(0)).getAspectRatio(v.isSelected()));
                     UCropFragment.this.mGestureCropImageView.setImageToWrapCropBounds();
                     if (!v.isSelected()) {
-                        Iterator iterator = UCropFragment.this.mCropAspectRatioViews.iterator();
-                        while (iterator.hasNext()) {
-                            ViewGroup cropAspectRatioView;
-                            cropAspectRatioView.setSelected((cropAspectRatioView = (ViewGroup)iterator.next()) == v);
+                        Iterator var2 = UCropFragment.this.mCropAspectRatioViews.iterator();
+                        while(var2.hasNext()) {
+                            ViewGroup cropAspectRatioView = (ViewGroup)var2.next();
+                            cropAspectRatioView.setSelected(cropAspectRatioView == v);
                         }
                     }
                 }
@@ -417,7 +417,7 @@ extends Fragment {
 
     private void setInitialState() {
         if (this.mShowBottomControls) {
-            if (this.mWrapperStateAspectRatio.getVisibility() == 0) {
+            if (this.mWrapperStateAspectRatio.getVisibility() == View.VISIBLE) {
                 this.setWidgetState(R.id.state_aspect_ratio);
             } else {
                 this.setWidgetState(R.id.state_scale);
@@ -434,9 +434,9 @@ extends Fragment {
         this.mWrapperStateAspectRatio.setSelected(stateViewId == R.id.state_aspect_ratio);
         this.mWrapperStateRotate.setSelected(stateViewId == R.id.state_rotate);
         this.mWrapperStateScale.setSelected(stateViewId == R.id.state_scale);
-        this.mLayoutAspectRatio.setVisibility(stateViewId == R.id.state_aspect_ratio ? 0 : 8);
-        this.mLayoutRotate.setVisibility(stateViewId == R.id.state_rotate ? 0 : 8);
-        this.mLayoutScale.setVisibility(stateViewId == R.id.state_scale ? 0 : 8);
+        this.mLayoutAspectRatio.setVisibility(stateViewId == R.id.state_aspect_ratio ? View.VISIBLE : View.GONE);
+        this.mLayoutRotate.setVisibility(stateViewId == R.id.state_rotate ? View.VISIBLE : View.GONE);
+        this.mLayoutScale.setVisibility(stateViewId == R.id.state_scale ? View.VISIBLE : View.GONE);
         if (stateViewId == R.id.state_scale) {
             this.setAllowedGestures(0);
         } else if (stateViewId == R.id.state_rotate) {

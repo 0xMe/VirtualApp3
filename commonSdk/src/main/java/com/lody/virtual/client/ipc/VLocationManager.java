@@ -14,7 +14,7 @@ package com.lody.virtual.client.ipc;
 
 import android.app.PendingIntent;
 import android.location.Location;
-import android.location.LocationManager;
+
 import android.os.Build;
 import android.os.Handler;
 import android.os.HandlerThread;
@@ -58,7 +58,7 @@ public class VLocationManager {
     private final Map<Object, UpdateLocationTask> mLocationTaskMap = new HashMap<Object, UpdateLocationTask>();
 
     private VLocationManager() {
-        LocationManager locationManager = (LocationManager)VirtualCore.get().getContext().getSystemService(StringFog.decrypt(com.kook.librelease.StringFog.decrypt("IxgAOWsaMC9gJFlF")));
+        android.location.LocationManager locationManager = (android.location.LocationManager)VirtualCore.get().getContext().getSystemService(StringFog.decrypt(com.kook.librelease.StringFog.decrypt("IxgAOWsaMC9gJFlF")));
         MockLocationHelper.fakeGpsStatus(locationManager);
     }
 

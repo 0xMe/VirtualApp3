@@ -1,28 +1,28 @@
-/*
- * Decompiled with CFR 0.152.
- */
+//
+// Source code recreated from a .class file by IntelliJ IDEA
+// (powered by FernFlower decompiler)
+//
+
 package com.lody.virtual.helper.dedex;
 
 import com.lody.virtual.StringFog;
-import com.lody.virtual.helper.dedex.DataReader;
 import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 
-public class Elf
-implements Closeable {
-    static final char[] ELF_MAGIC;
+public class Elf implements Closeable {
+    static final char[] ELF_MAGIC = new char[]{'\u007f', 'E', 'L', 'F'};
     static final int EI_CLASS = 4;
     static final int EI_DATA = 5;
     static final int EI_NIDENT = 16;
-    final char[] e_ident = new char[16];
-    public static final String SHN_DYNSYM;
-    public static final String SHN_DYNSTR;
-    public static final String SHN_HASH;
-    public static final String SHN_RODATA;
-    public static final String SHN_TEXT;
-    public static final String SHN_DYNAMIC;
-    public static final String SHN_SHSTRTAB;
+    final char[] e_ident;
+    public static final String SHN_DYNSYM = StringFog.decrypt(com.kook.librelease.StringFog.decrypt("Mz4qJ2ogLD9gAVRF"));
+    public static final String SHN_DYNSTR = StringFog.decrypt(com.kook.librelease.StringFog.decrypt("Mz4qJ2ogLAZhN1RF"));
+    public static final String SHN_HASH = StringFog.decrypt(com.kook.librelease.StringFog.decrypt("Mz5fP28zRVo="));
+    public static final String SHN_RODATA = StringFog.decrypt(com.kook.librelease.StringFog.decrypt("Mz0MD2gFJAZ9AVRF"));
+    public static final String SHN_TEXT = StringFog.decrypt(com.kook.librelease.StringFog.decrypt("Mz0qM2kKMFo="));
+    public static final String SHN_DYNAMIC = StringFog.decrypt(com.kook.librelease.StringFog.decrypt("Mz4qJ2ojJCNjDihF"));
+    public static final String SHN_SHSTRTAB = StringFog.decrypt(com.kook.librelease.StringFog.decrypt("Mz02Cm8wMARmHiA6"));
     static final int SHN_UNDEF = 0;
     static final int SHT_PROGBITS = 1;
     static final int SHT_SYMTAB = 2;
@@ -42,7 +42,7 @@ implements Closeable {
     static final int PF_X = 1;
     static final int PF_W = 2;
     static final int PF_R = 4;
-    static final int PF_MASKOS = 0xFF00000;
+    static final int PF_MASKOS = 267386880;
     static final int PF_MASKPROC = -268435456;
     private final DataReader mReader;
     private final Ehdr mHeader;
@@ -67,7 +67,7 @@ implements Closeable {
     }
 
     public final boolean isLittleEndian() {
-        return this.getDataEncoding() == '\u0001';
+        return this.getDataEncoding() == 1;
     }
 
     public DataReader getReader() {
@@ -87,6 +87,7 @@ implements Closeable {
         if (closeNow) {
             this.mReader.close();
         }
+
     }
 
     public Elf(String file) throws Exception {
@@ -94,90 +95,94 @@ implements Closeable {
     }
 
     public Elf(File file) throws Exception {
-        Elf_Shdr strSec;
-        Ehdr header;
+        this.e_ident = new char[16];
         DataReader r = this.mReader = new DataReader(file);
         r.readBytes(this.e_ident);
         if (!this.checkMagic()) {
             throw new IOException(StringFog.decrypt(com.kook.librelease.StringFog.decrypt("JAgcLmsVHi9iVyQ/Khc9Om8jQS1qATMxPQhSVg==")) + file);
-        }
-        r.setLittleEndian(this.isLittleEndian());
-        boolean bl = this.is64bit = this.getFileClass() == '\u0002';
-        if (this.is64bit) {
-            header = new Elf64_Ehdr();
-            header.e_type = r.readShort();
-            header.e_machine = r.readShort();
-            header.e_version = r.readInt();
-            header.e_entry = r.readLong();
-            header.e_phoff = r.readLong();
-            header.e_shoff = r.readLong();
-            this.mHeader = header;
         } else {
-            header = new Elf32_Ehdr();
-            ((Elf32_Ehdr)header).e_type = r.readShort();
-            ((Elf32_Ehdr)header).e_machine = r.readShort();
-            ((Elf32_Ehdr)header).e_version = r.readInt();
-            ((Elf32_Ehdr)header).e_entry = r.readInt();
-            ((Elf32_Ehdr)header).e_phoff = r.readInt();
-            ((Elf32_Ehdr)header).e_shoff = r.readInt();
-            this.mHeader = header;
-        }
-        Ehdr h = this.mHeader;
-        h.e_flags = r.readInt();
-        h.e_ehsize = r.readShort();
-        h.e_phentsize = r.readShort();
-        h.e_phnum = r.readShort();
-        h.e_shentsize = r.readShort();
-        h.e_shnum = r.readShort();
-        h.e_shstrndx = r.readShort();
-        this.mSectionHeaders = new Elf_Shdr[h.e_shnum];
-        for (int i = 0; i < h.e_shnum; ++i) {
-            Elf_Shdr secHeader;
-            long offset = h.getSectionOffset() + (long)(i * h.e_shentsize);
-            r.seek(offset);
+            r.setLittleEndian(this.isLittleEndian());
+            this.is64bit = this.getFileClass() == 2;
             if (this.is64bit) {
-                secHeader = new Elf64_Shdr();
-                secHeader.sh_name = r.readInt();
-                secHeader.sh_type = r.readInt();
-                secHeader.sh_flags = r.readLong();
-                secHeader.sh_addr = r.readLong();
-                secHeader.sh_offset = r.readLong();
-                secHeader.sh_size = r.readLong();
-                secHeader.sh_link = r.readInt();
-                secHeader.sh_info = r.readInt();
-                secHeader.sh_addralign = r.readLong();
-                secHeader.sh_entsize = r.readLong();
-                this.mSectionHeaders[i] = secHeader;
-                continue;
+                Elf64_Ehdr header = new Elf64_Ehdr();
+                header.e_type = r.readShort();
+                header.e_machine = r.readShort();
+                header.e_version = r.readInt();
+                header.e_entry = r.readLong();
+                header.e_phoff = r.readLong();
+                header.e_shoff = r.readLong();
+                this.mHeader = header;
+            } else {
+                Elf32_Ehdr header = new Elf32_Ehdr();
+                header.e_type = r.readShort();
+                header.e_machine = r.readShort();
+                header.e_version = r.readInt();
+                header.e_entry = r.readInt();
+                header.e_phoff = r.readInt();
+                header.e_shoff = r.readInt();
+                this.mHeader = header;
             }
-            secHeader = new Elf32_Shdr();
-            ((Elf32_Shdr)secHeader).sh_name = r.readInt();
-            ((Elf32_Shdr)secHeader).sh_type = r.readInt();
-            ((Elf32_Shdr)secHeader).sh_flags = r.readInt();
-            ((Elf32_Shdr)secHeader).sh_addr = r.readInt();
-            ((Elf32_Shdr)secHeader).sh_offset = r.readInt();
-            ((Elf32_Shdr)secHeader).sh_size = r.readInt();
-            ((Elf32_Shdr)secHeader).sh_link = r.readInt();
-            ((Elf32_Shdr)secHeader).sh_info = r.readInt();
-            ((Elf32_Shdr)secHeader).sh_addralign = r.readInt();
-            ((Elf32_Shdr)secHeader).sh_entsize = r.readInt();
-            this.mSectionHeaders[i] = secHeader;
-        }
-        if (h.e_shstrndx > -1 && h.e_shstrndx < this.mSectionHeaders.length) {
-            strSec = this.mSectionHeaders[h.e_shstrndx];
-            if (strSec.sh_type != 3) {
-                throw new IOException(StringFog.decrypt(com.kook.librelease.StringFog.decrypt("IS0MD2ojPyhhJwoqKQcYM34wAitoJCwaLD4bJGILAjZvESw9LBgqIG5TElo=")) + h.e_shstrndx);
+
+            Ehdr h = this.mHeader;
+            h.e_flags = r.readInt();
+            h.e_ehsize = r.readShort();
+            h.e_phentsize = r.readShort();
+            h.e_phnum = r.readShort();
+            h.e_shentsize = r.readShort();
+            h.e_shnum = r.readShort();
+            h.e_shstrndx = r.readShort();
+            this.mSectionHeaders = new Elf_Shdr[h.e_shnum];
+
+            for(int i = 0; i < h.e_shnum; ++i) {
+                long offset = h.getSectionOffset() + (long)(i * h.e_shentsize);
+                r.seek(offset);
+                if (this.is64bit) {
+                    Elf64_Shdr secHeader = new Elf64_Shdr();
+                    secHeader.sh_name = r.readInt();
+                    secHeader.sh_type = r.readInt();
+                    secHeader.sh_flags = r.readLong();
+                    secHeader.sh_addr = r.readLong();
+                    secHeader.sh_offset = r.readLong();
+                    secHeader.sh_size = r.readLong();
+                    secHeader.sh_link = r.readInt();
+                    secHeader.sh_info = r.readInt();
+                    secHeader.sh_addralign = r.readLong();
+                    secHeader.sh_entsize = r.readLong();
+                    this.mSectionHeaders[i] = secHeader;
+                } else {
+                    Elf32_Shdr secHeader = new Elf32_Shdr();
+                    secHeader.sh_name = r.readInt();
+                    secHeader.sh_type = r.readInt();
+                    secHeader.sh_flags = r.readInt();
+                    secHeader.sh_addr = r.readInt();
+                    secHeader.sh_offset = r.readInt();
+                    secHeader.sh_size = r.readInt();
+                    secHeader.sh_link = r.readInt();
+                    secHeader.sh_info = r.readInt();
+                    secHeader.sh_addralign = r.readInt();
+                    secHeader.sh_entsize = r.readInt();
+                    this.mSectionHeaders[i] = secHeader;
+                }
             }
-        } else {
-            throw new IOException(StringFog.decrypt(com.kook.librelease.StringFog.decrypt("JAgcLmsVHi9iVyQ/Ji4qMmoKBgRlNywzOBhSVg==")) + h.e_shstrndx);
-        }
-        int strSecSize = strSec.getSize();
-        this.mStringTable = new byte[strSecSize];
-        r.seek(strSec.getOffset());
-        r.readBytes(this.mStringTable);
-        if (this.mReadFull) {
-            this.readSymbolTables();
-            this.readProgramHeaders();
+
+            if (h.e_shstrndx > -1 && h.e_shstrndx < this.mSectionHeaders.length) {
+                Elf_Shdr strSec = this.mSectionHeaders[h.e_shstrndx];
+                if (strSec.sh_type == 3) {
+                    int strSecSize = strSec.getSize();
+                    this.mStringTable = new byte[strSecSize];
+                    r.seek(strSec.getOffset());
+                    r.readBytes(this.mStringTable);
+                    if (this.mReadFull) {
+                        this.readSymbolTables();
+                        this.readProgramHeaders();
+                    }
+
+                } else {
+                    throw new IOException(StringFog.decrypt(com.kook.librelease.StringFog.decrypt("IS0MD2ojPyhhJwoqKQcYM34wAitoJCwaLD4bJGILAjZvESw9LBgqIG5TElo=")) + h.e_shstrndx);
+                }
+            } else {
+                throw new IOException(StringFog.decrypt(com.kook.librelease.StringFog.decrypt("JAgcLmsVHi9iVyQ/Ji4qMmoKBgRlNywzOBhSVg==")) + h.e_shstrndx);
+            }
         }
     }
 
@@ -189,10 +194,10 @@ implements Closeable {
             int len = dynsym.getSize() / (this.is64bit ? 24 : 16);
             this.mDynamicSymbols = new Elf_Sym[len];
             char[] cbuf = new char[1];
-            for (int i = 0; i < len; ++i) {
-                Elf_Sym dsym;
+
+            for(int i = 0; i < len; ++i) {
                 if (this.is64bit) {
-                    dsym = new Elf64_Sym();
+                    Elf64_Sym dsym = new Elf64_Sym();
                     dsym.st_name = r.readInt();
                     r.readBytes(cbuf);
                     dsym.st_info = cbuf[0];
@@ -202,36 +207,38 @@ implements Closeable {
                     dsym.st_size = r.readLong();
                     dsym.st_shndx = r.readShort();
                     this.mDynamicSymbols[i] = dsym;
-                    continue;
+                } else {
+                    Elf32_Sym dsym = new Elf32_Sym();
+                    dsym.st_name = r.readInt();
+                    dsym.st_value = r.readInt();
+                    dsym.st_size = r.readInt();
+                    r.readBytes(cbuf);
+                    dsym.st_info = cbuf[0];
+                    r.readBytes(cbuf);
+                    dsym.st_other = cbuf[0];
+                    dsym.st_shndx = r.readShort();
+                    this.mDynamicSymbols[i] = dsym;
                 }
-                dsym = new Elf32_Sym();
-                ((Elf32_Sym)dsym).st_name = r.readInt();
-                ((Elf32_Sym)dsym).st_value = r.readInt();
-                ((Elf32_Sym)dsym).st_size = r.readInt();
-                r.readBytes(cbuf);
-                ((Elf32_Sym)dsym).st_info = cbuf[0];
-                r.readBytes(cbuf);
-                ((Elf32_Sym)dsym).st_other = cbuf[0];
-                ((Elf32_Sym)dsym).st_shndx = r.readShort();
-                this.mDynamicSymbols[i] = dsym;
             }
+
             Elf_Shdr dynLinkSec = this.mSectionHeaders[dynsym.sh_link];
             r.seek(dynLinkSec.getOffset());
             this.mDynStringTable = new byte[dynLinkSec.getSize()];
             r.readBytes(this.mDynStringTable);
         }
+
     }
 
     private void readProgramHeaders() {
         Ehdr h = this.mHeader;
         DataReader r = this.mReader;
         this.mProgHeaders = new Elf_Phdr[h.e_phnum];
-        for (int i = 0; i < h.e_phnum; ++i) {
-            Elf_Phdr progHeader;
+
+        for(int i = 0; i < h.e_phnum; ++i) {
             long offset = h.getProgramOffset() + (long)(i * h.e_phentsize);
             r.seek(offset);
             if (this.is64bit) {
-                progHeader = new Elf64_Phdr();
+                Elf64_Phdr progHeader = new Elf64_Phdr();
                 progHeader.p_type = r.readInt();
                 progHeader.p_offset = r.readInt();
                 progHeader.p_vaddr = r.readLong();
@@ -241,79 +248,81 @@ implements Closeable {
                 progHeader.p_flags = r.readLong();
                 progHeader.p_align = r.readLong();
                 this.mProgHeaders[i] = progHeader;
-                continue;
+            } else {
+                Elf32_Phdr progHeader = new Elf32_Phdr();
+                progHeader.p_type = r.readInt();
+                progHeader.p_offset = r.readInt();
+                progHeader.p_vaddr = r.readInt();
+                progHeader.p_paddr = r.readInt();
+                progHeader.p_filesz = r.readInt();
+                progHeader.p_memsz = r.readInt();
+                progHeader.p_flags = r.readInt();
+                progHeader.p_align = r.readInt();
+                this.mProgHeaders[i] = progHeader;
             }
-            progHeader = new Elf32_Phdr();
-            ((Elf32_Phdr)progHeader).p_type = r.readInt();
-            ((Elf32_Phdr)progHeader).p_offset = r.readInt();
-            ((Elf32_Phdr)progHeader).p_vaddr = r.readInt();
-            ((Elf32_Phdr)progHeader).p_paddr = r.readInt();
-            ((Elf32_Phdr)progHeader).p_filesz = r.readInt();
-            ((Elf32_Phdr)progHeader).p_memsz = r.readInt();
-            ((Elf32_Phdr)progHeader).p_flags = r.readInt();
-            ((Elf32_Phdr)progHeader).p_align = r.readInt();
-            this.mProgHeaders[i] = progHeader;
         }
+
     }
 
     public final Elf_Shdr getSection(String name) {
-        for (Elf_Shdr sec : this.mSectionHeaders) {
-            if (!name.equals(this.getString(sec.sh_name))) continue;
-            return sec;
+        Elf_Shdr[] var2 = this.mSectionHeaders;
+        int var3 = var2.length;
+
+        for(int var4 = 0; var4 < var3; ++var4) {
+            Elf_Shdr sec = var2[var4];
+            if (name.equals(this.getString(sec.sh_name))) {
+                return sec;
+            }
         }
+
         return null;
     }
 
     public final Elf_Sym getSymbolTable(String name) {
         if (this.mDynamicSymbols != null) {
-            for (Elf_Sym sym : this.mDynamicSymbols) {
-                if (!name.equals(this.getDynString(sym.st_name))) continue;
-                return sym;
+            Elf_Sym[] var2 = this.mDynamicSymbols;
+            int var3 = var2.length;
+
+            for(int var4 = 0; var4 < var3; ++var4) {
+                Elf_Sym sym = var2[var4];
+                if (name.equals(this.getDynString(sym.st_name))) {
+                    return sym;
+                }
             }
         }
+
         return null;
     }
 
     public final String getString(int index) {
         if (index == 0) {
             return StringFog.decrypt(com.kook.librelease.StringFog.decrypt("IixfU2Y2NABqHDAU"));
+        } else {
+            int end;
+            for(end = index; this.mStringTable[end] != 0; ++end) {
+            }
+
+            return new String(this.mStringTable, index, end - index);
         }
-        int end = index;
-        while (this.mStringTable[end] != 0) {
-            ++end;
-        }
-        return new String(this.mStringTable, index, end - index);
     }
 
     public final String getDynString(int index) {
         if (index == 0) {
             return StringFog.decrypt(com.kook.librelease.StringFog.decrypt("IixfU2Y2NABqHDAU"));
+        } else {
+            int end;
+            for(end = index; this.mDynStringTable[end] != 0; ++end) {
+            }
+
+            return new String(this.mDynStringTable, index, end - index);
         }
-        int end = index;
-        while (this.mDynStringTable[end] != 0) {
-            ++end;
-        }
-        return new String(this.mDynStringTable, index, end - index);
     }
 
-    @Override
     public void close() {
         this.mReader.close();
     }
 
-    static {
-        SHN_DYNSYM = StringFog.decrypt(com.kook.librelease.StringFog.decrypt("Mz4qJ2ogLD9gAVRF"));
-        SHN_DYNSTR = StringFog.decrypt(com.kook.librelease.StringFog.decrypt("Mz4qJ2ogLAZhN1RF"));
-        SHN_HASH = StringFog.decrypt(com.kook.librelease.StringFog.decrypt("Mz5fP28zRVo="));
-        SHN_RODATA = StringFog.decrypt(com.kook.librelease.StringFog.decrypt("Mz0MD2gFJAZ9AVRF"));
-        SHN_TEXT = StringFog.decrypt(com.kook.librelease.StringFog.decrypt("Mz0qM2kKMFo="));
-        SHN_DYNAMIC = StringFog.decrypt(com.kook.librelease.StringFog.decrypt("Mz4qJ2ojJCNjDihF"));
-        SHN_SHSTRTAB = StringFog.decrypt(com.kook.librelease.StringFog.decrypt("Mz02Cm8wMARmHiA6"));
-        ELF_MAGIC = new char[]{'\u007f', 'E', 'L', 'F'};
-    }
-
-    static class Elf64_Phdr
-    extends Elf_Phdr {
+    static class Elf64_Phdr extends Elf_Phdr {
         long p_vaddr;
         long p_paddr;
         long p_filesz;
@@ -324,14 +333,12 @@ implements Closeable {
         Elf64_Phdr() {
         }
 
-        @Override
         public long getFlags() {
             return this.p_flags;
         }
     }
 
-    static class Elf32_Phdr
-    extends Elf_Phdr {
+    static class Elf32_Phdr extends Elf_Phdr {
         int p_vaddr;
         int p_paddr;
         int p_filesz;
@@ -342,13 +349,12 @@ implements Closeable {
         Elf32_Phdr() {
         }
 
-        @Override
         public long getFlags() {
-            return this.p_flags;
+            return (long)this.p_flags;
         }
     }
 
-    static abstract class Elf_Phdr {
+    abstract static class Elf_Phdr {
         int p_type;
         int p_offset;
 
@@ -363,72 +369,65 @@ implements Closeable {
 
         String programType() {
             switch (this.p_type) {
-                case 0: {
+                case 0:
                     return StringFog.decrypt(com.kook.librelease.StringFog.decrypt("OzsuQGIFSFo="));
-                }
-                case 1: {
+                case 1:
                     return StringFog.decrypt(com.kook.librelease.StringFog.decrypt("OxgAP2gFJCpgHjM8Oy0MM28jGiZvEVRF"));
-                }
-                case 2: {
+                case 2:
                     return StringFog.decrypt(com.kook.librelease.StringFog.decrypt("JRcYCGsVEi99ICQPKAc6D2kjMAY="));
-                }
-                case 3: {
+                case 3:
                     return StringFog.decrypt(com.kook.librelease.StringFog.decrypt("JAgcLGgaFgJhNDAgKAgtOmIzQQZqEVRF"));
-                }
-                case 4: {
+                case 4:
                     return StringFog.decrypt(com.kook.librelease.StringFog.decrypt("Oz4ALGgVSFo="));
-                }
-                case 5: {
+                case 5:
                     return StringFog.decrypt(com.kook.librelease.StringFog.decrypt("IhUqH2cxRQ5rDCxF"));
-                }
-                case 6: {
+                case 6:
                     return StringFog.decrypt(com.kook.librelease.StringFog.decrypt("IhcMD2gwFjdgCiQKKAciPmkgRVo="));
-                }
+                default:
+                    return StringFog.decrypt(com.kook.librelease.StringFog.decrypt("IQgcMWojGj1gMCQPKAcqLmwjNCY="));
             }
-            return StringFog.decrypt(com.kook.librelease.StringFog.decrypt("IQgcMWojGj1gMCQPKAcqLmwjNCY="));
         }
     }
 
-    static class Elf64_Sym
-    extends Elf_Sym {
+    static class Elf64_Sym extends Elf_Sym {
         long st_value;
         long st_size;
 
         Elf64_Sym() {
         }
 
-        @Override
         long getSize() {
             return this.st_size;
         }
     }
 
-    static class Elf32_Sym
-    extends Elf_Sym {
+    static class Elf32_Sym extends Elf_Sym {
         int st_value;
         int st_size;
 
         Elf32_Sym() {
         }
 
-        @Override
         long getSize() {
-            return this.st_size;
+            return (long)this.st_size;
         }
     }
 
-    public static abstract class Elf_Sym {
+    public abstract static class Elf_Sym {
         int st_name;
         char st_info;
         char st_other;
         short st_shndx;
+
+        public Elf_Sym() {
+        }
 
         char getBinding() {
             return (char)(this.st_info >> 4);
         }
 
         char getType() {
-            return (char)(this.st_info & 0xF);
+            return (char)(this.st_info & 15);
         }
 
         void setBinding(char b) {
@@ -440,22 +439,23 @@ implements Closeable {
         }
 
         void setBindingAndType(char b, char t) {
-            this.st_info = (char)((b << 4) + (t & 0xF));
+            this.st_info = (char)((b << 4) + (t & 15));
         }
 
         abstract long getSize();
 
         public long getOffset(Elf elf) {
-            for (int i = 0; i < elf.mSectionHeaders.length; ++i) {
-                if (this.st_shndx != i) continue;
-                return elf.mSectionHeaders[i].getOffset();
+            for(int i = 0; i < elf.mSectionHeaders.length; ++i) {
+                if (this.st_shndx == i) {
+                    return elf.mSectionHeaders[i].getOffset();
+                }
             }
+
             return -1L;
         }
     }
 
-    static class Elf64_Shdr
-    extends Elf_Shdr {
+    static class Elf64_Shdr extends Elf_Shdr {
         long sh_flags;
         long sh_addr;
         long sh_offset;
@@ -466,19 +466,16 @@ implements Closeable {
         Elf64_Shdr() {
         }
 
-        @Override
         public int getSize() {
             return (int)this.sh_size;
         }
 
-        @Override
         public long getOffset() {
             return this.sh_offset;
         }
     }
 
-    static class Elf32_Shdr
-    extends Elf_Shdr {
+    static class Elf32_Shdr extends Elf_Shdr {
         int sh_flags;
         int sh_addr;
         int sh_offset;
@@ -489,30 +486,30 @@ implements Closeable {
         Elf32_Shdr() {
         }
 
-        @Override
         public int getSize() {
             return this.sh_size;
         }
 
-        @Override
         public long getOffset() {
-            return this.sh_offset;
+            return (long)this.sh_offset;
         }
     }
 
-    public static abstract class Elf_Shdr {
+    public abstract static class Elf_Shdr {
         int sh_name;
         int sh_type;
         int sh_link;
         int sh_info;
+
+        public Elf_Shdr() {
+        }
 
         public abstract int getSize();
 
         public abstract long getOffset();
     }
 
-    static class Elf64_Ehdr
-    extends Ehdr {
+    static class Elf64_Ehdr extends Ehdr {
         long e_entry;
         long e_phoff;
         long e_shoff;
@@ -520,19 +517,16 @@ implements Closeable {
         Elf64_Ehdr() {
         }
 
-        @Override
         long getSectionOffset() {
             return this.e_shoff;
         }
 
-        @Override
         long getProgramOffset() {
             return this.e_phoff;
         }
     }
 
-    static class Elf32_Ehdr
-    extends Ehdr {
+    static class Elf32_Ehdr extends Ehdr {
         int e_entry;
         int e_phoff;
         int e_shoff;
@@ -540,18 +534,16 @@ implements Closeable {
         Elf32_Ehdr() {
         }
 
-        @Override
         long getSectionOffset() {
-            return this.e_shoff;
+            return (long)this.e_shoff;
         }
 
-        @Override
         long getProgramOffset() {
-            return this.e_phoff;
+            return (long)this.e_phoff;
         }
     }
 
-    public static abstract class Ehdr {
+    public abstract static class Ehdr {
         short e_type;
         short e_machine;
         int e_version;
@@ -563,9 +555,11 @@ implements Closeable {
         short e_shnum;
         short e_shstrndx;
 
+        public Ehdr() {
+        }
+
         abstract long getSectionOffset();
 
         abstract long getProgramOffset();
     }
 }
-

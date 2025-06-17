@@ -159,7 +159,7 @@ public class UCrop {
     }
 
     public static float getOutputCropAspectRatio(@NonNull Intent intent) {
-        return ((Float)intent.getParcelableExtra(EXTRA_OUTPUT_CROP_ASPECT_RATIO)).floatValue();
+        return (Float) intent.getFloatExtra(EXTRA_OUTPUT_CROP_ASPECT_RATIO, 0);
     }
 
     @Nullable

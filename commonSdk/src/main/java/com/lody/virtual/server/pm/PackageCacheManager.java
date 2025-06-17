@@ -46,7 +46,7 @@ public class PackageCacheManager {
                 VPackageManagerService.get().deletePackageLocked(existOne);
             }
             PackageParserEx.initApplicationInfoBase(ps, pkg);
-            PACKAGE_CACHE.put((Object)pkg.packageName, (Object)pkg);
+            PACKAGE_CACHE.put((String) pkg.packageName, (VPackage) pkg);
             pkg.mExtras = ps;
             VPackageManagerService.get().analyzePackageLocked(pkg);
         }

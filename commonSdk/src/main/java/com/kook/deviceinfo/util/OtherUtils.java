@@ -113,13 +113,14 @@ import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.util.Enumeration;
+import java.util.Iterator;
 import java.util.List;
 
 public class OtherUtils {
     private static final String LINE_SEP = System.getProperty("line.separator");
 
     private static TelephonyManager getTelephonyManager() {
-        return (TelephonyManager)DeviceApplication.getApp().getSystemService("phone");
+        return (TelephonyManager)DeviceApplication.getApp().getSystemService(Context.TELEPHONY_SERVICE);
     }
 
     public static String getBaseband_Ver() {
@@ -140,15 +141,17 @@ public class OtherUtils {
     @RequiresApi(api=17)
     public static String getResolutions() {
         Point outSize = new Point();
-        WindowManager wm = (WindowManager)DeviceApplication.getApp().getSystemService("window");
+        WindowManager wm = (WindowManager)DeviceApplication.getApp().getSystemService(Context.WINDOW_SERVICE);
         wm.getDefaultDisplay().getRealSize(outSize);
         int x = outSize.x;
         int y = outSize.y;
         return x + "*" + y;
     }
 
+    @SuppressLint("MissingPermission")
     public static String getSerialNumbers() {
         String serial = "";
+
         try {
             if (Build.VERSION.SDK_INT >= 28) {
                 serial = Build.getSerial();
@@ -159,17 +162,17 @@ public class OtherUtils {
                 Method get = c.getMethod("get", String.class);
                 serial = (String)get.invoke(c, "ro.serialno");
             }
+        } catch (Exception var3) {
+            var3.printStackTrace();
+            Log.e("e", "读取设备序列号异常：" + var3.toString());
         }
-        catch (Exception e) {
-            e.printStackTrace();
-            Log.e((String)"e", (String)("\u8bfb\u53d6\u8bbe\u5907\u5e8f\u5217\u53f7\u5f02\u5e38\uff1a" + e.toString()));
-        }
+
         return serial;
     }
 
     public static String getScreenSizeOfDevice2() {
         Point point = new Point();
-        WindowManager wm = (WindowManager)DeviceApplication.getApp().getSystemService("window");
+        WindowManager wm = (WindowManager)DeviceApplication.getApp().getSystemService(Context.WINDOW_SERVICE);
         wm.getDefaultDisplay().getRealSize(point);
         DisplayMetrics dm = DeviceApplication.getApp().getResources().getDisplayMetrics();
         double x = Math.pow((float)point.x / dm.xdpi, 2.0);
@@ -198,13 +201,14 @@ public class OtherUtils {
         return 0;
     }
 
-    @SuppressLint(value={"HardwareIds"})
+    @SuppressLint(value={"HardwareIds,MissingPermission"})
     public static String getSimSerialNumbers() {
         if (Build.VERSION.SDK_INT >= 29) {
             return "";
+        } else {
+             String simSerialNumber = getTelephonyManager().getSimSerialNumber();
+            return simSerialNumber;
         }
-        String simSerialNumber = OtherUtils.getTelephonyManager().getSimSerialNumber();
-        return simSerialNumber;
     }
 
     public static String getSimCountryIsos() {
@@ -270,7 +274,7 @@ public class OtherUtils {
             return 1;
         }
         String operatorName = "";
-        TelephonyManager tm = (TelephonyManager)DeviceApplication.getApp().getSystemService("phone");
+        TelephonyManager tm = (TelephonyManager)DeviceApplication.getApp().getSystemService(Context.TELEPHONY_SERVICE);
         if (tm != null && (name = tm.getNetworkOperatorName()) != null) {
             operatorName = name;
         }
@@ -316,7 +320,7 @@ public class OtherUtils {
     }
 
     public static int getPhoneMode() {
-        AudioManager audioManager = (AudioManager)DeviceApplication.getApp().getSystemService("audio");
+        AudioManager audioManager = (AudioManager)DeviceApplication.getApp().getSystemService(Context.AUDIO_SERVICE);
         return audioManager.getRingerMode();
     }
 
@@ -389,35 +393,36 @@ public class OtherUtils {
     @SuppressLint(value={"NewApi"})
     public static String getMobileDbm() {
         String dbm = "";
-        TelephonyManager tm = OtherUtils.getTelephonyManager();
-        if (ActivityCompat.checkSelfPermission((Context)DeviceApplication.getApp(), (String)"android.permission.ACCESS_FINE_LOCATION") != 0) {
+        TelephonyManager tm = getTelephonyManager();
+        if (ActivityCompat.checkSelfPermission(DeviceApplication.getApp(), "android.permission.ACCESS_FINE_LOCATION") != 0) {
+            return dbm;
+        } else {
+            List<CellInfo> cellInfoList = tm.getAllCellInfo();
+            if (Build.VERSION.SDK_INT >= 17 && null != cellInfoList) {
+                Iterator var3 = cellInfoList.iterator();
+
+                while(var3.hasNext()) {
+                    CellInfo cellInfo = (CellInfo)var3.next();
+                    if (cellInfo instanceof CellInfoGsm) {
+                        CellSignalStrengthGsm cellSignalStrengthGsm = ((CellInfoGsm)cellInfo).getCellSignalStrength();
+                        dbm = String.valueOf(cellSignalStrengthGsm.getDbm());
+                    } else if (cellInfo instanceof CellInfoCdma) {
+                        CellSignalStrengthCdma cellSignalStrengthCdma = ((CellInfoCdma)cellInfo).getCellSignalStrength();
+                        dbm = String.valueOf(cellSignalStrengthCdma.getDbm());
+                    } else if (cellInfo instanceof CellInfoWcdma) {
+                        if (Build.VERSION.SDK_INT >= 18) {
+                            CellSignalStrengthWcdma cellSignalStrengthWcdma = ((CellInfoWcdma)cellInfo).getCellSignalStrength();
+                            dbm = String.valueOf(cellSignalStrengthWcdma.getDbm());
+                        }
+                    } else if (cellInfo instanceof CellInfoLte) {
+                        CellSignalStrengthLte cellSignalStrengthLte = ((CellInfoLte)cellInfo).getCellSignalStrength();
+                        dbm = String.valueOf(cellSignalStrengthLte.getDbm());
+                    }
+                }
+            }
+
             return dbm;
         }
-        List cellInfoList = tm.getAllCellInfo();
-        if (Build.VERSION.SDK_INT >= 17 && null != cellInfoList) {
-            for (CellInfo cellInfo : cellInfoList) {
-                if (cellInfo instanceof CellInfoGsm) {
-                    CellSignalStrengthGsm cellSignalStrengthGsm = ((CellInfoGsm)cellInfo).getCellSignalStrength();
-                    dbm = String.valueOf(cellSignalStrengthGsm.getDbm());
-                    continue;
-                }
-                if (cellInfo instanceof CellInfoCdma) {
-                    CellSignalStrengthCdma cellSignalStrengthCdma = ((CellInfoCdma)cellInfo).getCellSignalStrength();
-                    dbm = String.valueOf(cellSignalStrengthCdma.getDbm());
-                    continue;
-                }
-                if (cellInfo instanceof CellInfoWcdma) {
-                    if (Build.VERSION.SDK_INT < 18) continue;
-                    CellSignalStrengthWcdma cellSignalStrengthWcdma = ((CellInfoWcdma)cellInfo).getCellSignalStrength();
-                    dbm = String.valueOf(cellSignalStrengthWcdma.getDbm());
-                    continue;
-                }
-                if (!(cellInfo instanceof CellInfoLte)) continue;
-                CellSignalStrengthLte cellSignalStrengthLte = ((CellInfoLte)cellInfo).getCellSignalStrength();
-                dbm = String.valueOf(cellSignalStrengthLte.getDbm());
-            }
-        }
-        return dbm;
     }
 
     public static int getBrightness() {
@@ -453,7 +458,7 @@ public class OtherUtils {
     }
 
     public static long getAvailMemory() {
-        ActivityManager am = (ActivityManager)DeviceApplication.getApp().getSystemService("activity");
+        ActivityManager am = (ActivityManager)DeviceApplication.getApp().getSystemService(Context.ACTIVITY_SERVICE);
         ActivityManager.MemoryInfo mi = new ActivityManager.MemoryInfo();
         am.getMemoryInfo(mi);
         return mi.availMem;
@@ -584,9 +589,12 @@ public class OtherUtils {
     }
 
     public static SensorData getSensorList(SensorData sensorData) {
-        SensorManager sensorManager = (SensorManager)DeviceApplication.getApp().getSystemService("sensor");
-        List sensors = sensorManager.getSensorList(-1);
-        for (Sensor item : sensors) {
+        SensorManager sensorManager = (SensorManager)DeviceApplication.getApp().getSystemService(Context.SENSOR_SERVICE);
+        List<Sensor> sensors = sensorManager.getSensorList(-1);
+        Iterator var3 = sensors.iterator();
+
+        while(var3.hasNext()) {
+            Sensor item = (Sensor)var3.next();
             SensorData.SensorInfo storageDatas = new SensorData.SensorInfo();
             storageDatas.type = item.getType();
             storageDatas.name = item.getName();
@@ -598,6 +606,7 @@ public class OtherUtils {
             storageDatas.resolution = item.getResolution();
             sensorData.sensor_lists.add(storageDatas);
         }
+
         return sensorData;
     }
 
@@ -622,7 +631,7 @@ public class OtherUtils {
     public static String detectUsbDeviceWithInputManager() {
         int[] devices;
         String name = "";
-        InputManager im = (InputManager)DeviceApplication.getApp().getSystemService("input");
+        InputManager im = (InputManager)DeviceApplication.getApp().getSystemService(Context.INPUT_SERVICE);
         for (int id2 : devices = im.getInputDeviceIds()) {
             InputDevice device = im.getInputDevice(id2);
             name = device.getName();
@@ -640,7 +649,7 @@ public class OtherUtils {
     }
 
     public static int checkVPN() {
-        ConnectivityManager cm = (ConnectivityManager)DeviceApplication.getApp().getSystemService("connectivity");
+        ConnectivityManager cm = (ConnectivityManager)DeviceApplication.getApp().getSystemService(Context.CONNECTIVITY_SERVICE);
         boolean b = cm.getNetworkInfo(17).isConnectedOrConnecting();
         if (b) {
             return 1;
@@ -665,7 +674,7 @@ public class OtherUtils {
     }
 
     public static int isNetState() {
-        ConnectivityManager connectivityManager = (ConnectivityManager)DeviceApplication.getApp().getSystemService("connectivity");
+        ConnectivityManager connectivityManager = (ConnectivityManager)DeviceApplication.getApp().getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
         if (activeNetworkInfo == null) {
             return 0;

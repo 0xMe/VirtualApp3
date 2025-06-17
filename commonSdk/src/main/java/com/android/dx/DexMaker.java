@@ -106,7 +106,7 @@ public final class DexMaker {
     public byte[] generate() {
         if (this.outputDex == null) {
             DexOptions options = new DexOptions();
-            options.minSdkVersion = 13;
+            options.minSdkVersion = 26;
             this.outputDex = new DexFile(options);
         }
         for (TypeDeclaration typeDeclaration : this.types.values()) {

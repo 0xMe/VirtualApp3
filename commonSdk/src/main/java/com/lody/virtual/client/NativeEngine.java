@@ -217,8 +217,7 @@ public class NativeEngine {
         catch (PackageManager.NameNotFoundException e) {
             throw new RuntimeException(e);
         }
-        Collections.sort(REDIRECT_LISTS, new Comparator<Pair<String, String>>(){
-
+        Collections.sort(REDIRECT_LISTS, new Comparator<Pair<String, String>>() {
             @Override
             public int compare(Pair<String, String> o1, Pair<String, String> o2) {
                 String a = (String)o1.first;
@@ -226,11 +225,11 @@ public class NativeEngine {
                 return this.compare(b.length(), a.length());
             }
 
-            @Override
             private int compare(int x, int y) {
                 return Integer.compare(x, y);
             }
         });
+
         for (Pair<String, String> pair : REDIRECT_LISTS) {
             try {
                 NativeEngine.nativeIORedirect((String)pair.first, (String)pair.second);

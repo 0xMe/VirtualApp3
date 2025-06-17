@@ -1,6 +1,6 @@
 /*
  * Decompiled with CFR 0.152.
- * 
+ *
  * Could not load the following classes:
  *  android.os.Handler
  *  android.os.Message
@@ -111,7 +111,7 @@ extends Handler {
         }
         this.isDownloading = true;
         try {
-            this.mHttpUtil.getContentLength(this.mPoint.getUrl(), new Callback(){
+            this.mHttpUtil.getContentLength(this.mPoint.getUrl(), new okhttp3.Callback(){
 
                 public void onFailure(Call call, IOException e) {
                     DownloadTask.this.mListner.onCancel();
@@ -178,7 +178,7 @@ extends Handler {
                 return;
             }
             this.isDownloading = true;
-            this.mHttpUtil.getContentLength(this.mPoint.getUrl(), new Callback(){
+            this.mHttpUtil.getContentLength(this.mPoint.getUrl(), new okhttp3.Callback(){
 
                 public void onResponse(Call call, Response response) throws IOException {
                     HVLog.e(com.carlos.libcommon.StringFog.decrypt(StringFog.decrypt("JRgALWojHiV9DgpLLwgqCQ==")), com.carlos.libcommon.StringFog.decrypt(StringFog.decrypt("Ki0qP28gMzJLEVRF")) + response.code() + com.carlos.libcommon.StringFog.decrypt(StringFog.decrypt("DgQ6CW8xMCVmJFkoKi0iPmwjMC1+N1RF")) + DownloadTask.this.isDownloading + "\t" + DownloadTask.this.mPoint.getUrl());
@@ -244,7 +244,7 @@ extends Handler {
             }
         }
         final long finalStartIndex = newStartIndex;
-        this.mHttpUtil.downloadFileByRange(this.mPoint.getUrl(), finalStartIndex, endIndex, new Callback(){
+        this.mHttpUtil.downloadFileByRange(this.mPoint.getUrl(), finalStartIndex, endIndex, new okhttp3.Callback(){
 
             public void onResponse(Call call, Response response) throws IOException {
                 Log.e((String)com.carlos.libcommon.StringFog.decrypt(StringFog.decrypt("JRgALWojHiV9DgpLLwgqCQ==")), (String)(com.carlos.libcommon.StringFog.decrypt(StringFog.decrypt("LRgALWojHiV9Dg0iPxhSVg==")) + response.code() + com.carlos.libcommon.StringFog.decrypt(StringFog.decrypt("DgQ6CW8xMCVmJFkoKi0iPmwjMC1+N1RF")) + DownloadTask.this.isDownloading + "\t" + DownloadTask.this.mPoint.getUrl()));

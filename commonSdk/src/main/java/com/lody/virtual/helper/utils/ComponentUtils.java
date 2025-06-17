@@ -19,6 +19,7 @@
  */
 package com.lody.virtual.helper.utils;
 
+import android.annotation.SuppressLint;
 import android.content.ClipData;
 import android.content.ComponentName;
 import android.content.Intent;
@@ -48,6 +49,7 @@ import com.lody.virtual.os.VUserHandle;
 import com.lody.virtual.remote.BroadcastIntentData;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Set;
 
 public class ComponentUtils {
@@ -147,32 +149,40 @@ public class ComponentUtils {
         return String.format(StringFog.decrypt(com.kook.librelease.StringFog.decrypt("JysiEWY3NANsIDApJikMLw==")), VirtualCore.get().getHostPkg(), packageName, name);
     }
 
+
     public static Intent proxyBroadcastIntent(Intent intent, int userId) {
         if (intent.getAction() != null && VirtualCore.getConfig().isUnProtectAction(intent.getAction())) {
             return intent;
-        }
-        Intent newIntent = new Intent();
-        newIntent.setDataAndType(intent.getData(), intent.getType());
-        Set categories = intent.getCategories();
-        if (categories != null) {
-            for (String category : categories) {
-                newIntent.addCategory(category);
-            }
-        }
-        ComponentName component = intent.getComponent();
-        String targetPackage = intent.getPackage();
-        if (component != null) {
-            String componentAction = ComponentUtils.getComponentAction(component);
-            newIntent.setAction(componentAction);
-            if (targetPackage == null) {
-                targetPackage = component.getPackageName();
-            }
         } else {
-            newIntent.setAction(SpecialComponentList.protectAction(intent.getAction()));
+            Intent newIntent = new Intent();
+            newIntent.setDataAndType(intent.getData(), intent.getType());
+            Set<String> categories = intent.getCategories();
+            String targetPackage;
+            if (categories != null) {
+                Iterator var4 = categories.iterator();
+
+                while(var4.hasNext()) {
+                    targetPackage = (String)var4.next();
+                    newIntent.addCategory(targetPackage);
+                }
+            }
+
+            ComponentName component = intent.getComponent();
+            targetPackage = intent.getPackage();
+            if (component != null) {
+                String componentAction = getComponentAction(component);
+                newIntent.setAction(componentAction);
+                if (targetPackage == null) {
+                    targetPackage = component.getPackageName();
+                }
+            } else {
+                newIntent.setAction(SpecialComponentList.protectAction(intent.getAction()));
+            }
+
+            BroadcastIntentData data = new BroadcastIntentData(userId, intent, targetPackage);
+            data.saveIntent(newIntent);
+            return newIntent;
         }
-        BroadcastIntentData data = new BroadcastIntentData(userId, intent, targetPackage);
-        data.saveIntent(newIntent);
-        return newIntent;
     }
 
     public static void parcelActivityIntentSender(Intent fillIn, IBinder resultTo, Bundle options) {
@@ -191,38 +201,42 @@ public class ComponentUtils {
         Intent selector = proxyIntent.getSelector();
         if (selector == null) {
             return null;
-        }
-        IntentSenderInfo info = new IntentSenderInfo();
-        info.userId = selector.getIntExtra(StringFog.decrypt(com.kook.librelease.StringFog.decrypt("JysiEWYwHh9mASg/IzxfMWk2NFo=")), -1);
-        info.targetPkg = selector.getStringExtra(StringFog.decrypt(com.kook.librelease.StringFog.decrypt("JysiEWYwHh9mHiAqKC0MLmMKTSFrIgZF")));
-        info.originalType = selector.getStringExtra(StringFog.decrypt(com.kook.librelease.StringFog.decrypt("JysiEWYwHh9gJywzKC0cDm4jOB9vHh47LhUAVg==")));
-        info.type = selector.getStringExtra(StringFog.decrypt(com.kook.librelease.StringFog.decrypt("JysiEWYwHh9mEQYsKAZfVg==")));
-        info.fillIn = proxyIntent.getExtras();
-        Intent realIntent = (Intent)selector.getParcelableExtra(StringFog.decrypt(com.kook.librelease.StringFog.decrypt("JysiEWYwHh9jDlkgKAcYLmMFSFo=")));
-        info.base = realIntent.getExtras();
-        Intent intent = proxyIntent.cloneFilter();
-        intent.setComponent(realIntent.getComponent());
-        intent.setPackage(realIntent.getPackage());
-        intent.setSelector(realIntent.getSelector());
-        intent.setFlags(realIntent.getFlags());
-        if (TextUtils.equals((CharSequence)info.type, (CharSequence)proxyIntent.getType())) {
-            intent.setDataAndType(realIntent.getData(), info.originalType);
-        }
-        if (Build.VERSION.SDK_INT > 15 && realIntent.getClipData() == null && proxyIntent.getClipData() != null) {
-            intent.setClipData(proxyIntent.getClipData());
-            if ((proxyIntent.getFlags() & 0x10000000) != 0) {
-                intent.addFlags(0x10000000);
+        } else {
+            IntentSenderInfo info = new IntentSenderInfo();
+            info.userId = selector.getIntExtra(StringFog.decrypt(com.kook.librelease.StringFog.decrypt("JysiEWYwHh9mASg/IzxfMWk2NFo=")), -1);
+            info.targetPkg = selector.getStringExtra(StringFog.decrypt(com.kook.librelease.StringFog.decrypt("JysiEWYwHh9mHiAqKC0MLmMKTSFrIgZF")));
+            info.originalType = selector.getStringExtra(StringFog.decrypt(com.kook.librelease.StringFog.decrypt("JysiEWYwHh9gJywzKC0cDm4jOB9vHh47LhUAVg==")));
+            info.type = selector.getStringExtra(StringFog.decrypt(com.kook.librelease.StringFog.decrypt("JysiEWYwHh9mEQYsKAZfVg==")));
+            info.fillIn = proxyIntent.getExtras();
+            Intent realIntent = (Intent)selector.getParcelableExtra(StringFog.decrypt(com.kook.librelease.StringFog.decrypt("JysiEWYwHh9jDlkgKAcYLmMFSFo=")));
+            info.base = realIntent.getExtras();
+            Intent intent = proxyIntent.cloneFilter();
+            intent.setComponent(realIntent.getComponent());
+            intent.setPackage(realIntent.getPackage());
+            intent.setSelector(realIntent.getSelector());
+            intent.setFlags(realIntent.getFlags());
+            if (TextUtils.equals(info.type, proxyIntent.getType())) {
+                intent.setDataAndType(realIntent.getData(), info.originalType);
             }
+
+            if (Build.VERSION.SDK_INT > 15 && realIntent.getClipData() == null && proxyIntent.getClipData() != null) {
+                intent.setClipData(proxyIntent.getClipData());
+                if ((proxyIntent.getFlags() & 268435456) != 0) {
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                }
+            }
+
+            if (isActivity) {
+                info.callerActivity = (IBinder)mirror.android.content.Intent.getIBinderExtra.call(proxyIntent, new Object[]{StringFog.decrypt(com.kook.librelease.StringFog.decrypt("JysiEWYwHh99JCAoKhcMKGMFQSlvER49IxcqM2wjSFo="))});
+                info.options = proxyIntent.getBundleExtra(StringFog.decrypt(com.kook.librelease.StringFog.decrypt("JysiEWYwHh9gJyQgKQdfDmoINFo=")));
+                info.fillIn = proxyIntent.getBundleExtra(StringFog.decrypt(com.kook.librelease.StringFog.decrypt("JysiEWYwHh9iNAYoKhZfMW8YNFo=")));
+            }
+
+            intent.putExtra(StringFog.decrypt(com.kook.librelease.StringFog.decrypt("JysiEWYwHh9iNAYoKhZfMW8YNFo=")), info.fillIn);
+            intent.putExtra(StringFog.decrypt(com.kook.librelease.StringFog.decrypt("JysiEWYwHh99NCApKAZfVg==")), info.base);
+            info.intent = intent;
+            return info;
         }
-        if (isActivity) {
-            info.callerActivity = mirror.android.content.Intent.getIBinderExtra.call(proxyIntent, StringFog.decrypt(com.kook.librelease.StringFog.decrypt("JysiEWYwHh99JCAoKhcMKGMFQSlvER49IxcqM2wjSFo=")));
-            info.options = proxyIntent.getBundleExtra(StringFog.decrypt(com.kook.librelease.StringFog.decrypt("JysiEWYwHh9gJyQgKQdfDmoINFo=")));
-            info.fillIn = proxyIntent.getBundleExtra(StringFog.decrypt(com.kook.librelease.StringFog.decrypt("JysiEWYwHh9iNAYoKhZfMW8YNFo=")));
-        }
-        intent.putExtra(StringFog.decrypt(com.kook.librelease.StringFog.decrypt("JysiEWYwHh9iNAYoKhZfMW8YNFo=")), info.fillIn);
-        intent.putExtra(StringFog.decrypt(com.kook.librelease.StringFog.decrypt("JysiEWYwHh99NCApKAZfVg==")), info.base);
-        info.intent = intent;
-        return info;
     }
 
     public static void unpackFillIn(Intent intent, ClassLoader classLoader) {
@@ -254,49 +268,55 @@ public class ComponentUtils {
         }
     }
 
+
+    @SuppressLint("WrongConstant")
     public static Intent getProxyIntentSenderIntent(int userId, int type, String targetPkg, Intent intent) {
-        String proxyIntentType;
         if (type == 3) {
             VLog.printStackTrace(StringFog.decrypt(com.kook.librelease.StringFog.decrypt("IQgcKWwaIAJgJywgKAc1OmQjMAZrARo/IT4uKmIaLDV5ETAyLD4fPngVSFo=")) + type);
             return null;
-        }
-        Intent proxyIntent = intent.cloneFilter();
-        proxyIntent.setSourceBounds(intent.getSourceBounds());
-        if (Build.VERSION.SDK_INT >= 16) {
-            proxyIntent.setClipData(intent.getClipData());
-        }
-        proxyIntent.addFlags(intent.getFlags() & 3);
-        if (Build.VERSION.SDK_INT >= 19) {
-            proxyIntent.addFlags(intent.getFlags() & 0x40);
-        }
-        if (Build.VERSION.SDK_INT >= 21) {
-            proxyIntent.addFlags(intent.getFlags() & 0x80);
-        }
-        String originalType = proxyIntent.getType();
-        ComponentName component = proxyIntent.getComponent();
-        String string2 = proxyIntentType = originalType == null ? targetPkg : originalType + StringFog.decrypt(com.kook.librelease.StringFog.decrypt("OD5SVg==")) + targetPkg;
-        if (component != null) {
-            proxyIntentType = proxyIntentType + StringFog.decrypt(com.kook.librelease.StringFog.decrypt("OD5SVg==")) + component.flattenToString();
-        }
-        proxyIntent.setDataAndType(proxyIntent.getData(), proxyIntentType);
-        if (type == 2) {
-            proxyIntent.setComponent(new ComponentName(VirtualCore.getConfig().getMainPackageName(), ShadowPendingActivity.class.getName()));
-        } else if (type == 4) {
-            proxyIntent.setComponent(new ComponentName(VirtualCore.getConfig().getMainPackageName(), ShadowPendingService.class.getName()));
         } else {
-            proxyIntent.setComponent(new ComponentName(VirtualCore.getConfig().getMainPackageName(), ShadowPendingReceiver.class.getName()));
-        }
-        Intent selector = new Intent();
-        selector.putExtra(StringFog.decrypt(com.kook.librelease.StringFog.decrypt("JysiEWYwHh9mASg/IzxfMWk2NFo=")), userId);
-        selector.putExtra(StringFog.decrypt(com.kook.librelease.StringFog.decrypt("JysiEWYwHh9jDlkgKAcYLmMFSFo=")), (Parcelable)intent);
-        selector.putExtra(StringFog.decrypt(com.kook.librelease.StringFog.decrypt("JysiEWYwHh9mHiAqKC0MLmMKTSFrIgZF")), targetPkg);
-        selector.putExtra(StringFog.decrypt(com.kook.librelease.StringFog.decrypt("JysiEWYwHh9gJywzKC0cDm4jOB9vHh47LhUAVg==")), originalType);
-        selector.putExtra(StringFog.decrypt(com.kook.librelease.StringFog.decrypt("JysiEWYwHh9mEQYsKAZfVg==")), proxyIntentType);
-        proxyIntent.setPackage(null);
-        proxyIntent.setSelector(selector);
-        return proxyIntent;
-    }
+            Intent proxyIntent = intent.cloneFilter();
+            proxyIntent.setSourceBounds(intent.getSourceBounds());
+            if (Build.VERSION.SDK_INT >= 16) {
+                proxyIntent.setClipData(intent.getClipData());
+            }
 
+            proxyIntent.addFlags(intent.getFlags() & 3);
+            if (Build.VERSION.SDK_INT >= 19) {
+                proxyIntent.addFlags(intent.getFlags() & 64);
+            }
+
+            if (Build.VERSION.SDK_INT >= 21) {
+                proxyIntent.addFlags(intent.getFlags() & 128);
+            }
+
+            String originalType = proxyIntent.getType();
+            ComponentName component = proxyIntent.getComponent();
+            String proxyIntentType = originalType == null ? targetPkg : originalType + StringFog.decrypt(com.kook.librelease.StringFog.decrypt("OD5SVg==")) + targetPkg;
+            if (component != null) {
+                proxyIntentType = proxyIntentType + StringFog.decrypt(com.kook.librelease.StringFog.decrypt("OD5SVg==")) + component.flattenToString();
+            }
+
+            proxyIntent.setDataAndType(proxyIntent.getData(), proxyIntentType);
+            if (type == 2) {
+                proxyIntent.setComponent(new ComponentName(VirtualCore.getConfig().getMainPackageName(), ShadowPendingActivity.class.getName()));
+            } else if (type == 4) {
+                proxyIntent.setComponent(new ComponentName(VirtualCore.getConfig().getMainPackageName(), ShadowPendingService.class.getName()));
+            } else {
+                proxyIntent.setComponent(new ComponentName(VirtualCore.getConfig().getMainPackageName(), ShadowPendingReceiver.class.getName()));
+            }
+
+            Intent selector = new Intent();
+            selector.putExtra(StringFog.decrypt(com.kook.librelease.StringFog.decrypt("JysiEWYwHh9mASg/IzxfMWk2NFo=")), userId);
+            selector.putExtra(StringFog.decrypt(com.kook.librelease.StringFog.decrypt("JysiEWYwHh9jDlkgKAcYLmMFSFo=")), intent);
+            selector.putExtra(StringFog.decrypt(com.kook.librelease.StringFog.decrypt("JysiEWYwHh9mHiAqKC0MLmMKTSFrIgZF")), targetPkg);
+            selector.putExtra(StringFog.decrypt(com.kook.librelease.StringFog.decrypt("JysiEWYwHh9gJywzKC0cDm4jOB9vHh47LhUAVg==")), originalType);
+            selector.putExtra(StringFog.decrypt(com.kook.librelease.StringFog.decrypt("JysiEWYwHh9mEQYsKAZfVg==")), proxyIntentType);
+            proxyIntent.setPackage((String)null);
+            proxyIntent.setSelector(selector);
+            return proxyIntent;
+        }
+    }
     public static Intent processOutsideIntent(int userId, boolean isExt, Intent intent) {
         ArrayList<Uri> newList;
         ArrayList list;

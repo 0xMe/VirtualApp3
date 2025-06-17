@@ -1,12 +1,16 @@
-/*
- * Decompiled with CFR 0.152.
- */
+//
+// Source code recreated from a .class file by IntelliJ IDEA
+// (powered by FernFlower decompiler)
+//
+
 package com.carlos.common.imagepicker.util;
 
 public final class CubicEasing {
+    public CubicEasing() {
+    }
+
     public static float easeOut(float time, float start, float end, float duration) {
-        time = time / duration - 1.0f;
-        return end * (time * time * time + 1.0f) + start;
+        return end * ((time = time / duration - 1.0F) * time * time + 1.0F) + start;
     }
 
     public static float easeIn(float time, float start, float end, float duration) {
@@ -14,9 +18,6 @@ public final class CubicEasing {
     }
 
     public static float easeInOut(float time, float start, float end, float duration) {
-        float f;
-        time /= duration / 2.0f;
-        return f < 1.0f ? end / 2.0f * time * time * time + start : end / 2.0f * ((time -= 2.0f) * time * time + 2.0f) + start;
+        return (time /= duration / 2.0F) < 1.0F ? end / 2.0F * time * time * time + start : end / 2.0F * ((time -= 2.0F) * time * time + 2.0F) + start;
     }
 }
-

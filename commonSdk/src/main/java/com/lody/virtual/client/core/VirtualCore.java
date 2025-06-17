@@ -289,15 +289,17 @@ public final class VirtualCore {
         }
     }
 
+
     public void startup(Application application, Context context, SettingConfig config) throws Throwable {
         if (!this.isStartUp) {
-            ApplicationInfo info2;
             if (Looper.myLooper() != Looper.getMainLooper()) {
                 throw new IllegalStateException(StringFog.decrypt(com.kook.librelease.StringFog.decrypt("IT4YKmwKNDdgHCg1Iz0LDmoKBjdsNCwwKQReI0saQTBlJzMpKAhbKGUVNDB7AR45DRdbKG8KDTZlNwobLQg+PHojSFo=")));
             }
+
             if (!context.getPackageName().equals(config.getMainPackageName()) && !context.getPackageName().equals(config.getExtPackageName())) {
                 throw new IllegalArgumentException(StringFog.decrypt(com.kook.librelease.StringFog.decrypt("Oz4uCWwFRSthMCQgKRcLOm8jQS9lMzw7LRg2LX0KJCB5Hh4eLF9XCmoVNzRoHlkZJAdfOm8KRQJ+NFEoLi5bP2gzNyRLEQY1LAMmL2kjGiN4HiwcPQhfO2YwLyNpJFkdLxg2IW8KFj9oDTwZJRc1L2ojNAFvEQE3Khg+OWUzJC1iCiQ2LwdXPX83TStuHjwgLT0qJ2JTOFo=")) + config.getMainPackageName() + StringFog.decrypt(com.kook.librelease.StringFog.decrypt("PhgAKnsFSFo=")) + config.getExtPackageName() + StringFog.decrypt(com.kook.librelease.StringFog.decrypt("M186OmwaMyhiJB4gPxhSVg==")) + context.getPackageName());
             }
+
             this.mInitLock = new ConditionVariable();
             this.mConfig = config;
             String packageName = config.getMainPackageName();
@@ -310,9 +312,11 @@ public final class VirtualCore {
             if (!externalFilesDir.exists()) {
                 externalFilesDir.mkdirs();
             }
+
             if (ext_packageName == null) {
                 ext_packageName = StringFog.decrypt(com.kook.librelease.StringFog.decrypt("OzwAH2AYRVE="));
             }
+
             StubManifest.PACKAGE_NAME = packageName;
             StubManifest.EXT_PACKAGE_NAME = ext_packageName;
             StubManifest.EXT_STUB_CP_AUTHORITY = StringFog.decrypt(com.kook.librelease.StringFog.decrypt("Li4ADXojLDdhNFE1IykYD2UjOAZqATg7KQQcMmMFMD9qDiQbJQcYCm8FFhNoHlkZKi5SVg=="));
@@ -329,52 +333,56 @@ public final class VirtualCore {
                     VLog.e(StringFog.decrypt(com.kook.librelease.StringFog.decrypt("JBUhDQ==")), StringFog.decrypt(com.kook.librelease.StringFog.decrypt("Lgc6KGoFAil9AQozKi0YEW8FMAZrDlk/PQNXVg==")) + application);
                     ActivityThread.mInitialApplication.set(this.mainThread, application);
                 }
+
                 LocalPackageCache.init();
             }
+
+            ApplicationInfo info;
             if (this.isExtPackage()) {
                 try {
-                    info2 = this.getHostPackageManager().getApplicationInfo(packageName, 0L);
-                    if (info2 != null) {
-                        this.remoteUid = info2.uid;
+                    info = this.getHostPackageManager().getApplicationInfo(packageName, 0L);
+                    if (info != null) {
+                        this.remoteUid = info.uid;
                     }
+                } catch (PackageManager.NameNotFoundException var11) {
                 }
-                catch (PackageManager.NameNotFoundException info2) {}
             } else {
                 try {
-                    info2 = this.getHostPackageManager().getApplicationInfo(ext_packageName, 0L);
-                    if (info2 != null) {
-                        this.remoteUid = info2.uid;
+                    info = this.getHostPackageManager().getApplicationInfo(ext_packageName, 0L);
+                    if (info != null) {
+                        this.remoteUid = info.uid;
                     }
-                }
-                catch (PackageManager.NameNotFoundException info3) {
-                    // empty catch block
+                } catch (PackageManager.NameNotFoundException var10) {
                 }
             }
-            if (this.isVAppProcess() || this.isExtHelperProcess()) {
-                ServiceManagerNative.linkToDeath(new IBinder.DeathRecipient(){
 
+            if (this.isVAppProcess() || this.isExtHelperProcess()) {
+                ServiceManagerNative.linkToDeath(new IBinder.DeathRecipient() {
                     public void binderDied() {
-                        VLog.e(TAG, StringFog.decrypt(com.kook.librelease.StringFog.decrypt("Ii4uKmwjNARLETg7IykmPmkjQSx1VjwiIxgEKEsVODVsJCwuLAcXPngVSFo=")) + VirtualCore.this.processType.name());
-                        Process.killProcess((int)Process.myPid());
+                        VLog.e(VirtualCore.TAG, StringFog.decrypt(com.kook.librelease.StringFog.decrypt("Ii4uKmwjNARLETg7IykmPmkjQSx1VjwiIxgEKEsVODVsJCwuLAcXPngVSFo=")) + VirtualCore.this.processType.name());
+                        Process.killProcess(Process.myPid());
                     }
                 });
             }
+
             if (this.isServerProcess() || this.isExtHelperProcess()) {
-                VLog.w(StringFog.decrypt(com.kook.librelease.StringFog.decrypt("JRgALWojHiV9DgoNLwcYOWkFGgQ=")), StringFog.decrypt(com.kook.librelease.StringFog.decrypt("OxgYKWwFNCZjDlk9PxU2DWUFMCRlJzgvJBg+Kn0KJCBlMCAqKAccI2UjATR7AR45DRgiOWwgMDFqDhEtPhhSVg==")) + (Object)((Object)this.processType), new Object[0]);
+                VLog.w(StringFog.decrypt(com.kook.librelease.StringFog.decrypt("JRgALWojHiV9DgoNLwcYOWkFGgQ=")), StringFog.decrypt(com.kook.librelease.StringFog.decrypt("OxgYKWwFNCZjDlk9PxU2DWUFMCRlJzgvJBg+Kn0KJCBlMCAqKAccI2UjATR7AR45DRgiOWwgMDFqDhEtPhhSVg==")) + this.processType, new Object[0]);
                 IntentFilter filter = new IntentFilter(StringFog.decrypt(com.kook.librelease.StringFog.decrypt("LggcPG8jGi9iV1kzKj42PW8aASZoATA/IxgAKk42FhRiIh5AIQZbGmEhLF5iHDwRLAYMBg==")));
+
                 try {
                     context.registerReceiver(this.mDownloadCompleteReceiver, filter);
-                }
-                catch (Throwable e) {
-                    e.printStackTrace();
+                } catch (Throwable var9) {
+                    var9.printStackTrace();
                 }
             }
+
             InvocationStubManager invocationStubManager = InvocationStubManager.getInstance();
             invocationStubManager.init();
             invocationStubManager.injectAll();
             this.isStartUp = true;
             this.mInitLock.open();
         }
+
     }
 
     public void waitForEngine() {
@@ -576,7 +584,7 @@ public final class VirtualCore {
             return null;
         }
         Intent intent = new Intent(intentToResolve);
-        intent.setFlags(0x10000000);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.setClassName(ris.get((int)0).activityInfo.packageName, ris.get((int)0).activityInfo.name);
         return intent;
     }

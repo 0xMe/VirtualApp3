@@ -1,29 +1,28 @@
-/*
- * Decompiled with CFR 0.152.
- */
+//
+// Source code recreated from a .class file by IntelliJ IDEA
+// (powered by FernFlower decompiler)
+//
+
 package com.android.dx;
 
-import com.android.dx.FieldId;
-import com.android.dx.MethodId;
-import com.android.dx.TypeList;
 import com.android.dx.rop.cst.CstType;
 import com.android.dx.rop.type.Type;
 import java.util.HashMap;
 import java.util.Map;
 
 public final class TypeId<T> {
-    public static final TypeId<Boolean> BOOLEAN = new TypeId(Type.BOOLEAN);
-    public static final TypeId<Byte> BYTE = new TypeId(Type.BYTE);
-    public static final TypeId<Character> CHAR = new TypeId(Type.CHAR);
-    public static final TypeId<Double> DOUBLE = new TypeId(Type.DOUBLE);
-    public static final TypeId<Float> FLOAT = new TypeId(Type.FLOAT);
-    public static final TypeId<Integer> INT = new TypeId(Type.INT);
-    public static final TypeId<Long> LONG = new TypeId(Type.LONG);
-    public static final TypeId<Short> SHORT = new TypeId(Type.SHORT);
-    public static final TypeId<Void> VOID = new TypeId(Type.VOID);
-    public static final TypeId<Object> OBJECT = new TypeId(Type.OBJECT);
-    public static final TypeId<String> STRING = new TypeId(Type.STRING);
-    private static final Map<Class<?>, TypeId<?>> PRIMITIVE_TO_TYPE = new HashMap();
+    public static final TypeId<Boolean> BOOLEAN;
+    public static final TypeId<Byte> BYTE;
+    public static final TypeId<Character> CHAR;
+    public static final TypeId<Double> DOUBLE;
+    public static final TypeId<Float> FLOAT;
+    public static final TypeId<Integer> INT;
+    public static final TypeId<Long> LONG;
+    public static final TypeId<Short> SHORT;
+    public static final TypeId<Void> VOID;
+    public static final TypeId<Object> OBJECT;
+    public static final TypeId<String> STRING;
+    private static final Map<Class<?>, TypeId<?>> PRIMITIVE_TO_TYPE;
     final String name;
     final Type ropType;
     final CstType constant;
@@ -33,32 +32,34 @@ public final class TypeId<T> {
     }
 
     TypeId(String name, Type ropType) {
-        if (name == null || ropType == null) {
+        if (name != null && ropType != null) {
+            this.name = name;
+            this.ropType = ropType;
+            this.constant = CstType.intern(ropType);
+        } else {
             throw new NullPointerException();
         }
-        this.name = name;
-        this.ropType = ropType;
-        this.constant = CstType.intern(ropType);
     }
 
     public static <T> TypeId<T> get(String name) {
-        return new TypeId<T>(name, Type.internReturnType(name));
+        return new TypeId(name, Type.internReturnType(name));
     }
 
     public static <T> TypeId<T> get(Class<T> type) {
         if (type.isPrimitive()) {
-            TypeId<?> result = PRIMITIVE_TO_TYPE.get(type);
+            TypeId<T> result = (TypeId)PRIMITIVE_TO_TYPE.get(type);
             return result;
+        } else {
+            String name = type.getName().replace('.', '/');
+            return get(type.isArray() ? name : 'L' + name + ';');
         }
-        String name = type.getName().replace('.', '/');
-        return TypeId.get(type.isArray() ? name : 'L' + name + ';');
     }
 
     public <V> FieldId<T, V> getField(TypeId<V> type, String name) {
         return new FieldId(this, type, name);
     }
 
-    public MethodId<T, Void> getConstructor(TypeId<?> ... parameters) {
+    public MethodId<T, Void> getConstructor(TypeId<?>... parameters) {
         return new MethodId(this, VOID, "<init>", new TypeList(parameters));
     }
 
@@ -66,7 +67,7 @@ public final class TypeId<T> {
         return new MethodId(this, VOID, "<clinit>", new TypeList(new TypeId[0]));
     }
 
-    public <R> MethodId<T, R> getMethod(TypeId<R> returnType, String name, TypeId<?> ... parameters) {
+    public <R> MethodId<T, R> getMethod(TypeId<R> returnType, String name, TypeId<?>... parameters) {
         return new MethodId(this, returnType, name, new TypeList(parameters));
     }
 
@@ -87,6 +88,18 @@ public final class TypeId<T> {
     }
 
     static {
+        BOOLEAN = new TypeId(Type.BOOLEAN);
+        BYTE = new TypeId(Type.BYTE);
+        CHAR = new TypeId(Type.CHAR);
+        DOUBLE = new TypeId(Type.DOUBLE);
+        FLOAT = new TypeId(Type.FLOAT);
+        INT = new TypeId(Type.INT);
+        LONG = new TypeId(Type.LONG);
+        SHORT = new TypeId(Type.SHORT);
+        VOID = new TypeId(Type.VOID);
+        OBJECT = new TypeId(Type.OBJECT);
+        STRING = new TypeId(Type.STRING);
+        PRIMITIVE_TO_TYPE = new HashMap();
         PRIMITIVE_TO_TYPE.put(Boolean.TYPE, BOOLEAN);
         PRIMITIVE_TO_TYPE.put(Byte.TYPE, BYTE);
         PRIMITIVE_TO_TYPE.put(Character.TYPE, CHAR);
@@ -98,4 +111,3 @@ public final class TypeId<T> {
         PRIMITIVE_TO_TYPE.put(Void.TYPE, VOID);
     }
 }
-

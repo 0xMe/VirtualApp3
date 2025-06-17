@@ -79,31 +79,36 @@ public final class SpecialComponentList {
 
     @RequiresApi(api=23)
     public static void protectIntentFilter(IntentFilter filter) {
-        Object collection = new ArraySet();
+        Collection<String> collection = new ArraySet();
         if (filter != null) {
             if (BuildCompat.isUpsideDownCake()) {
                 try {
                     collection = (Collection)IntentFilterU.mActions.get(filter);
+                } catch (Exception var6) {
                 }
-                catch (Exception exception) {}
             } else {
-                collection = mirror.android.content.IntentFilter.mActions.get(filter);
+                collection = (Collection)mirror.android.content.IntentFilter.mActions.get(filter);
             }
-            Iterator iterator = collection.iterator();
-            ArrayList<String> list = new ArrayList<String>();
-            while (iterator.hasNext()) {
+
+            Iterator<String> iterator = ((Collection)collection).iterator();
+            ArrayList<String> list = new ArrayList();
+
+            while(iterator.hasNext()) {
                 String action = (String)iterator.next();
-                if (SpecialComponentList.isActionInBlackList(action)) {
+                if (isActionInBlackList(action)) {
                     iterator.remove();
-                    continue;
+                } else {
+                    String newAction = protectAction(action);
+                    if (newAction != null) {
+                        iterator.remove();
+                        list.add(newAction);
+                    }
                 }
-                String newAction = SpecialComponentList.protectAction(action);
-                if (newAction == null) continue;
-                iterator.remove();
-                list.add(newAction);
             }
-            collection.addAll(list);
+
+            ((Collection)collection).addAll(list);
         }
+
     }
 
     public static void protectIntent(Intent intent) {

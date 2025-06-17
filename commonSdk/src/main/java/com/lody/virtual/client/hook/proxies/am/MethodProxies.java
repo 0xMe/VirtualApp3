@@ -839,14 +839,19 @@ public class MethodProxies {
         }
 
         @Override
-        public Object call(Object who, Method method, Object ... args) throws Throwable {
-            List runningTaskInfos = (List)method.invoke(who, args);
-            for (ActivityManager.RunningTaskInfo info : runningTaskInfos) {
+        public Object call(Object who, Method method, Object... args) throws Throwable {
+            List<ActivityManager.RunningTaskInfo> runningTaskInfos = (List)method.invoke(who, args);
+            Iterator var5 = runningTaskInfos.iterator();
+
+            while(var5.hasNext()) {
+                ActivityManager.RunningTaskInfo info = (ActivityManager.RunningTaskInfo)var5.next();
                 AppTaskInfo taskInfo = VActivityManager.get().getTaskInfo(info.id);
-                if (taskInfo == null) continue;
-                info.topActivity = taskInfo.topActivity;
-                info.baseActivity = taskInfo.baseActivity;
+                if (taskInfo != null) {
+                    info.topActivity = taskInfo.topActivity;
+                    info.baseActivity = taskInfo.baseActivity;
+                }
             }
+
             return runningTaskInfos;
         }
 
@@ -2224,28 +2229,32 @@ public class MethodProxies {
         }
 
         @Override
-        public Object call(Object who, Method method, Object ... args) throws Throwable {
-            GetRecentTasks.replaceFirstUserId(args);
-            List<?> _infos = method.invoke(who, args);
-            List infos = ParceledListSliceCompat.isReturnParceledListSlice(method) ? ParceledListSlice.getList.call(_infos, new Object[0]) : _infos;
-            for (ActivityManager.RecentTaskInfo info : infos) {
+        public Object call(Object who, Method method, Object... args) throws Throwable {
+            replaceFirstUserId(args);
+            Object _infos = method.invoke(who, args);
+            List<ActivityManager.RecentTaskInfo> infos = (List)(ParceledListSliceCompat.isReturnParceledListSlice(method) ? ParceledListSlice.getList.call(_infos, new Object[0]) : _infos);
+            Iterator var6 = infos.iterator();
+
+            while(var6.hasNext()) {
+                ActivityManager.RecentTaskInfo info = (ActivityManager.RecentTaskInfo)var6.next();
                 AppTaskInfo taskInfo = VActivityManager.get().getTaskInfo(info.id);
-                if (taskInfo == null) continue;
-                if (Build.VERSION.SDK_INT >= 23) {
+                if (taskInfo != null) {
+                    if (Build.VERSION.SDK_INT >= 23) {
+                        try {
+                            info.topActivity = taskInfo.topActivity;
+                            info.baseActivity = taskInfo.baseActivity;
+                        } catch (Throwable var10) {
+                        }
+                    }
+
                     try {
-                        info.topActivity = taskInfo.topActivity;
-                        info.baseActivity = taskInfo.baseActivity;
-                    }
-                    catch (Throwable throwable) {
-                        // empty catch block
+                        info.origActivity = taskInfo.baseActivity;
+                        info.baseIntent = taskInfo.baseIntent;
+                    } catch (Throwable var11) {
                     }
                 }
-                try {
-                    info.origActivity = taskInfo.baseActivity;
-                    info.baseIntent = taskInfo.baseIntent;
-                }
-                catch (Throwable throwable) {}
             }
+
             return _infos;
         }
     }

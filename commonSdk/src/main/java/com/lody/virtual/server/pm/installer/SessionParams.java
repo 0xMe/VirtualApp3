@@ -14,7 +14,6 @@
 package com.lody.virtual.server.pm.installer;
 
 import android.annotation.TargetApi;
-import android.content.pm.PackageInstaller;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
@@ -56,9 +55,9 @@ implements Parcelable {
         this.mode = mode;
     }
 
-    public PackageInstaller.SessionParams build() {
+    public android.content.pm.PackageInstaller.SessionParams build() {
         if (Build.VERSION.SDK_INT >= 23) {
-            PackageInstaller.SessionParams params = new PackageInstaller.SessionParams(this.mode);
+            android.content.pm.PackageInstaller.SessionParams params = new android.content.pm.PackageInstaller.SessionParams(this.mode);
             PackageInstaller.SessionParamsMarshmallow.installFlags.set(params, this.installFlags);
             PackageInstaller.SessionParamsMarshmallow.installLocation.set(params, this.installLocation);
             PackageInstaller.SessionParamsMarshmallow.sizeBytes.set(params, this.sizeBytes);
@@ -73,7 +72,7 @@ implements Parcelable {
             PackageInstaller.SessionParamsMarshmallow.grantedRuntimePermissions.set(params, this.grantedRuntimePermissions);
             return params;
         }
-        PackageInstaller.SessionParams params = new PackageInstaller.SessionParams(this.mode);
+        android.content.pm.PackageInstaller.SessionParams params = new android.content.pm.PackageInstaller.SessionParams(this.mode);
         PackageInstaller.SessionParamsLOLLIPOP.installFlags.set(params, this.installFlags);
         PackageInstaller.SessionParamsLOLLIPOP.installLocation.set(params, this.installLocation);
         PackageInstaller.SessionParamsLOLLIPOP.sizeBytes.set(params, this.sizeBytes);
@@ -87,7 +86,7 @@ implements Parcelable {
         return params;
     }
 
-    public static SessionParams create(PackageInstaller.SessionParams sessionParams) {
+    public static SessionParams create(android.content.pm.PackageInstaller.SessionParams sessionParams) {
         if (Build.VERSION.SDK_INT >= 23) {
             SessionParams params = new SessionParams(PackageInstaller.SessionParamsMarshmallow.mode.get(sessionParams));
             params.installFlags = PackageInstaller.SessionParamsMarshmallow.installFlags.get(sessionParams);

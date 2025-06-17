@@ -11,7 +11,7 @@
  */
 package com.lody.virtual.remote;
 
-import android.content.BroadcastReceiver;
+
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.Parcel;
@@ -42,7 +42,7 @@ implements Parcelable {
     public boolean mAbortBroadcast;
     public boolean mFinished;
 
-    public PendingResultData(BroadcastReceiver.PendingResult result) {
+    public PendingResultData(android.content.BroadcastReceiver.PendingResult result) {
         if (BroadcastReceiver.PendingResultMNC.ctor != null) {
             this.mType = BroadcastReceiver.PendingResultMNC.mType.get(result);
             this.mOrderedHint = BroadcastReceiver.PendingResultMNC.mOrderedHint.get(result);
@@ -93,9 +93,9 @@ implements Parcelable {
         this.mFinished = in.readByte() != 0;
     }
 
-    public BroadcastReceiver.PendingResult build() {
+    public android.content.BroadcastReceiver.PendingResult build() {
         if (BroadcastReceiver.PendingResultMNC.ctor != null) {
-            return BroadcastReceiver.PendingResultMNC.ctor.newInstance(this.mResultCode, this.mResultData, this.mResultExtras, this.mType, this.mOrderedHint, this.mInitialStickyHint, this.mToken, this.mSendingUser, this.mFlags);
+            return mirror.android.content.BroadcastReceiver.PendingResultMNC.ctor.newInstance(this.mResultCode, this.mResultData, this.mResultExtras, this.mType, this.mOrderedHint, this.mInitialStickyHint, this.mToken, this.mSendingUser, this.mFlags);
         }
         if (BroadcastReceiver.PendingResultJBMR1.ctor != null) {
             return BroadcastReceiver.PendingResultJBMR1.ctor.newInstance(this.mResultCode, this.mResultData, this.mResultExtras, this.mType, this.mOrderedHint, this.mInitialStickyHint, this.mToken, this.mSendingUser);

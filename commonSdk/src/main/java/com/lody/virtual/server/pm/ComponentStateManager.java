@@ -1,11 +1,8 @@
-/*
- * Decompiled with CFR 0.152.
- * 
- * Could not load the following classes:
- *  android.content.ComponentName
- *  android.content.SharedPreferences
- *  android.util.SparseArray
- */
+//
+// Source code recreated from a .class file by IntelliJ IDEA
+// (powered by FernFlower decompiler)
+//
+
 package com.lody.virtual.server.pm;
 
 import android.content.ComponentName;
@@ -13,17 +10,22 @@ import android.content.SharedPreferences;
 import android.util.SparseArray;
 import com.lody.virtual.StringFog;
 import com.lody.virtual.client.core.VirtualCore;
+import java.util.Iterator;
 import java.util.Map;
 
 public class ComponentStateManager {
     private static SparseArray<UserComponentState> helpers = new SparseArray();
 
+    public ComponentStateManager() {
+    }
+
     public static synchronized UserComponentState user(int userId) {
         UserComponentState state = (UserComponentState)helpers.get(userId);
         if (state == null) {
             state = new UserComponentState(userId);
-            helpers.put(userId, (Object)state);
+            helpers.put(userId, state);
         }
+
         return state;
     }
 
@@ -43,13 +45,17 @@ public class ComponentStateManager {
         }
 
         public void clear(String packageName) {
-            Map all = this.sharedPreferences.getAll();
-            if (all == null) {
-                return;
-            }
-            for (String component : all.keySet()) {
-                if (!component.startsWith(packageName + StringFog.decrypt(com.kook.librelease.StringFog.decrypt("JhhSVg==")))) continue;
-                this.sharedPreferences.edit().remove(component).apply();
+            Map<String, Integer> all = (Map<String, Integer>) this.sharedPreferences.getAll();
+            if (all != null) {
+                Iterator var3 = all.keySet().iterator();
+
+                while(var3.hasNext()) {
+                    String component = (String)var3.next();
+                    if (component.startsWith(packageName + StringFog.decrypt(com.kook.librelease.StringFog.decrypt("JhhSVg==")))) {
+                        this.sharedPreferences.edit().remove(component).apply();
+                    }
+                }
+
             }
         }
 
@@ -62,4 +68,3 @@ public class ComponentStateManager {
         }
     }
 }
-

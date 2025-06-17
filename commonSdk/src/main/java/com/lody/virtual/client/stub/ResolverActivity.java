@@ -123,10 +123,11 @@ implements AdapterView.OnItemClickListener {
     private AlertDialog dialog;
     private boolean mRegistered;
 
+    @SuppressLint("WrongConstant")
     private Intent makeMyIntent() {
         Intent intent = new Intent(this.getIntent());
         intent.setComponent(null);
-        intent.setFlags(intent.getFlags() & 0xFF7FFFFF);
+        intent.setFlags(intent.getFlags() & -8388609);
         return intent;
     }
 
@@ -278,104 +279,126 @@ implements AdapterView.OnItemClickListener {
         this.finish();
     }
 
+
     protected void onIntentSelected(ResolveInfo ri, Intent intent, boolean alwaysCheck) {
         if (this.mAlwaysUseOption && this.mAdapter.mOrigResolveList != null) {
-            String mimeType;
-            Set categories;
             IntentFilter filter = new IntentFilter();
             if (intent.getAction() != null) {
                 filter.addAction(intent.getAction());
             }
-            if ((categories = intent.getCategories()) != null) {
-                for (String cat : categories) {
+
+            Set<String> categories = intent.getCategories();
+            if (categories != null) {
+                Iterator var6 = categories.iterator();
+
+                while(var6.hasNext()) {
+                    String cat = (String)var6.next();
                     filter.addCategory(cat);
                 }
             }
+
             filter.addCategory(StringFog.decrypt(com.kook.librelease.StringFog.decrypt("LggcPG8jGi9iV1kzKj42PW8aASZoJzg/LhgmKWEzBSlmHApKICsAAmcVSFo=")));
-            int cat = ri.match & 0xFFF0000;
+            int cat = ri.match & 268369920;
             Uri data = intent.getData();
-            if (cat == 0x600000 && (mimeType = intent.resolveType((Context)this)) != null) {
-                try {
-                    filter.addDataType(mimeType);
-                }
-                catch (IntentFilter.MalformedMimeTypeException e) {
-                    VLog.w(TAG, StringFog.decrypt(com.kook.librelease.StringFog.decrypt("IwgYDWgYMD9hHjMI")) + VLog.getStackTraceString(e), new Object[0]);
-                    filter = null;
+            if (cat == 6291456) {
+                String mimeType = intent.resolveType(this);
+                if (mimeType != null) {
+                    try {
+                        filter.addDataType(mimeType);
+                    } catch (IntentFilter.MalformedMimeTypeException var14) {
+                        VLog.w(TAG, StringFog.decrypt(com.kook.librelease.StringFog.decrypt("IwgYDWgYMD9hHjMI")) + VLog.getStackTraceString(var14), new Object[0]);
+                        filter = null;
+                    }
                 }
             }
-            if (data != null && data.getScheme() != null && (cat != 0x600000 || !StringFog.decrypt(com.kook.librelease.StringFog.decrypt("LT4YDmgVSFo=")).equals(data.getScheme()) && !StringFog.decrypt(com.kook.librelease.StringFog.decrypt("Li4ACGwFNCZmEVRF")).equals(data.getScheme()))) {
+
+            int port;
+            if (data != null && data.getScheme() != null && (cat != 6291456 || !StringFog.decrypt(com.kook.librelease.StringFog.decrypt("LT4YDmgVSFo=")).equals(data.getScheme()) && !StringFog.decrypt(com.kook.librelease.StringFog.decrypt("Li4ACGwFNCZmEVRF")).equals(data.getScheme()))) {
                 filter.addDataScheme(data.getScheme());
                 if (Build.VERSION.SDK_INT >= 19) {
-                    Iterator aIt;
-                    Iterator pIt = ri.filter.schemeSpecificPartsIterator();
+                    Iterator<PatternMatcher> pIt = ri.filter.schemeSpecificPartsIterator();
                     if (pIt != null) {
                         String ssp = data.getSchemeSpecificPart();
-                        while (ssp != null && pIt.hasNext()) {
+
+                        while(ssp != null && pIt.hasNext()) {
                             PatternMatcher p = (PatternMatcher)pIt.next();
-                            if (!p.match(ssp)) continue;
-                            filter.addDataSchemeSpecificPart(p.getPath(), p.getType());
-                            break;
+                            if (p.match(ssp)) {
+                                filter.addDataSchemeSpecificPart(p.getPath(), p.getType());
+                                break;
+                            }
                         }
                     }
-                    if ((aIt = ri.filter.authoritiesIterator()) != null) {
-                        while (aIt.hasNext()) {
+
+                    Iterator<IntentFilter.AuthorityEntry> aIt = ri.filter.authoritiesIterator();
+                    if (aIt != null) {
+                        while(aIt.hasNext()) {
                             IntentFilter.AuthorityEntry a = (IntentFilter.AuthorityEntry)aIt.next();
-                            if (a.match(data) < 0) continue;
-                            int port = a.getPort();
-                            filter.addDataAuthority(a.getHost(), port >= 0 ? Integer.toString(port) : null);
-                            break;
+                            if (a.match(data) >= 0) {
+                                port = a.getPort();
+                                filter.addDataAuthority(a.getHost(), port >= 0 ? Integer.toString(port) : null);
+                                break;
+                            }
                         }
                     }
-                    if ((pIt = ri.filter.pathsIterator()) != null) {
+
+                    pIt = ri.filter.pathsIterator();
+                    if (pIt != null) {
                         String path = data.getPath();
-                        while (path != null && pIt.hasNext()) {
+
+                        while(path != null && pIt.hasNext()) {
                             PatternMatcher p = (PatternMatcher)pIt.next();
-                            if (!p.match(path)) continue;
-                            filter.addDataPath(p.getPath(), p.getType());
-                            break;
+                            if (p.match(path)) {
+                                filter.addDataPath(p.getPath(), p.getType());
+                                break;
+                            }
                         }
                     }
                 }
             }
+
             if (filter != null) {
                 int N = this.mAdapter.mOrigResolveList.size();
                 ComponentName[] set = new ComponentName[N];
                 int bestMatch = 0;
-                for (int i = 0; i < N; ++i) {
-                    ResolveInfo r = this.mAdapter.mOrigResolveList.get(i);
-                    set[i] = new ComponentName(r.activityInfo.packageName, r.activityInfo.name);
-                    if (r.match <= bestMatch) continue;
-                    bestMatch = r.match;
+
+                for(port = 0; port < N; ++port) {
+                    ResolveInfo r = (ResolveInfo)this.mAdapter.mOrigResolveList.get(port);
+                    set[port] = new ComponentName(r.activityInfo.packageName, r.activityInfo.name);
+                    if (r.match > bestMatch) {
+                        bestMatch = r.match;
+                    }
                 }
+
                 if (alwaysCheck) {
                     this.getPackageManager().addPreferredActivity(filter, bestMatch, set, intent.getComponent());
                 } else {
                     try {
-                        Reflect.on(VClient.get().getCurrentApplication().getPackageManager()).call(StringFog.decrypt(com.kook.librelease.StringFog.decrypt("Ki4uLGIFJANmHCg0Ki4qPW8bQSlvER49IxcqMw==")), intent, intent.resolveTypeIfNeeded(this.getContentResolver()), 65536, filter, bestMatch, intent.getComponent());
-                    }
-                    catch (Exception re) {
-                        VLog.d(TAG, StringFog.decrypt(com.kook.librelease.StringFog.decrypt("JQcMKmowESh9JCAoKhccDmkJTQNrDixTLRc2CmUgBiplJAodIC4YCmoKOAVsDhET")) + VLog.getStackTraceString(re), new Object[0]);
+                        Reflect.on(VClient.get().getCurrentApplication().getPackageManager()).call(StringFog.decrypt(com.kook.librelease.StringFog.decrypt("Ki4uLGIFJANmHCg0Ki4qPW8bQSlvER49IxcqMw==")), new Object[]{intent, intent.resolveTypeIfNeeded(this.getContentResolver()), 65536, filter, bestMatch, intent.getComponent()});
+                    } catch (Exception var13) {
+                        VLog.d(TAG, StringFog.decrypt(com.kook.librelease.StringFog.decrypt("JQcMKmowESh9JCAoKhccDmkJTQNrDixTLRc2CmUgBiplJAodIC4YCmoKOAVsDhET")) + VLog.getStackTraceString(var13), new Object[0]);
                     }
                 }
             }
         }
+
         if (intent != null) {
             intent = ComponentUtils.processOutsideIntent(this.mLaunchedFromUid, VirtualCore.get().isExtPackage(), new Intent(intent));
             ActivityInfo info = VirtualCore.get().resolveActivityInfo(intent, this.mLaunchedFromUid);
             if (info == null) {
                 this.startActivity(intent);
             } else {
-                intent.addFlags(0x2000000);
-                int res = VActivityManager.get().startActivity(intent, info, this.mResultTo, this.mOptions, this.mResultWho, this.mRequestCode, null, this.mLaunchedFromUid);
+                intent.addFlags(Intent.FLAG_ACTIVITY_FORWARD_RESULT);
+                int res = VActivityManager.get().startActivity(intent, info, this.mResultTo, this.mOptions, this.mResultWho, this.mRequestCode, (String)null, this.mLaunchedFromUid);
                 if (res != 0 && this.mResultTo != null && this.mRequestCode > 0) {
                     VActivityManager.get().sendCancelActivityResult(this.mResultTo, this.mResultWho, this.mRequestCode);
                 }
             }
         }
+
     }
 
     void showAppDetails(ResolveInfo ri) {
-        Intent in = new Intent().setAction(StringFog.decrypt(com.kook.librelease.StringFog.decrypt("LggcPG8jGi9iV1kpKAg2LmwjMC1sIxoCIQU6AmsINA5iHBpXIRUuGmMIMB19HwJBKiwuBmIbLFJnHw5B"))).setData(Uri.fromParts((String)StringFog.decrypt(com.kook.librelease.StringFog.decrypt("Khg+OWUzJC1iAVRF")), (String)ri.activityInfo.packageName, null)).addFlags(524288);
+        Intent in = new Intent().setAction(StringFog.decrypt(com.kook.librelease.StringFog.decrypt("LggcPG8jGi9iV1kpKAg2LmwjMC1sIxoCIQU6AmsINA5iHBpXIRUuGmMIMB19HwJBKiwuBmIbLFJnHw5B"))).setData(Uri.fromParts((String)StringFog.decrypt(com.kook.librelease.StringFog.decrypt("Khg+OWUzJC1iAVRF")), (String)ri.activityInfo.packageName, null)).addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
         this.startActivity(in);
     }
 
@@ -446,75 +469,91 @@ implements AdapterView.OnItemClickListener {
         }
 
         private void rebuildList() {
-            int N;
-            List currentResolveList;
             this.mList.clear();
+            List currentResolveList;
             if (this.mBaseResolveList != null) {
                 currentResolveList = this.mBaseResolveList;
                 this.mOrigResolveList = null;
             } else {
-                currentResolveList = this.mOrigResolveList = ResolverActivity.this.mPm.queryIntentActivities(this.mIntent, 0x10000 | (ResolverActivity.this.mAlwaysUseOption ? 64 : 0));
+                currentResolveList = this.mOrigResolveList = ResolverActivity.this.mPm.queryIntentActivities(this.mIntent, 65536 | (ResolverActivity.this.mAlwaysUseOption ? 64 : 0));
             }
+
+            int N;
             if (currentResolveList != null && (N = currentResolveList.size()) > 0) {
-                ResolveInfo ri;
-                int i;
-                ResolveInfo r0 = currentResolveList.get(0);
-                for (i = 1; i < N; ++i) {
-                    ResolveInfo ri2 = (ResolveInfo)currentResolveList.get(i);
-                    if (r0.priority == ri2.priority && r0.isDefault == ri2.isDefault) continue;
-                    while (i < N) {
-                        if (this.mOrigResolveList == currentResolveList) {
-                            this.mOrigResolveList = new ArrayList<ResolveInfo>(this.mOrigResolveList);
+                ResolveInfo r0 = (ResolveInfo)currentResolveList.get(0);
+
+                int start;
+                for(start = 1; start < N; ++start) {
+                    ResolveInfo ri = (ResolveInfo)currentResolveList.get(start);
+                    if (r0.priority != ri.priority || r0.isDefault != ri.isDefault) {
+                        while(start < N) {
+                            if (this.mOrigResolveList == currentResolveList) {
+                                this.mOrigResolveList = new ArrayList(this.mOrigResolveList);
+                            }
+
+                            currentResolveList.remove(start);
+                            --N;
                         }
-                        currentResolveList.remove(i);
-                        --N;
                     }
                 }
+
                 if (N > 1) {
                     ResolveInfo.DisplayNameComparator rComparator = new ResolveInfo.DisplayNameComparator(ResolverActivity.this.mPm);
                     Collections.sort(currentResolveList, rComparator);
                 }
+
+                ResolveInfo rix;
                 if (this.mInitialIntents != null) {
-                    for (i = 0; i < this.mInitialIntents.length; ++i) {
-                        Intent ii = this.mInitialIntents[i];
-                        if (ii == null) continue;
-                        ActivityInfo ai = ii.resolveActivityInfo(ResolverActivity.this.getPackageManager(), 0);
-                        if (ai == null) {
-                            VLog.w(StringFog.decrypt(com.kook.librelease.StringFog.decrypt("Ij4uKWozHj5iASwRLy42MWUVLAZuAVRF")), StringFog.decrypt(com.kook.librelease.StringFog.decrypt("Oz4fOGsVLAZjATwzLBgbOmkVNAVlNy8rLi4ACEsVSFo=")) + ii, new Object[0]);
-                            continue;
+                    for(start = 0; start < this.mInitialIntents.length; ++start) {
+                        Intent ii = this.mInitialIntents[start];
+                        if (ii != null) {
+                            ActivityInfo ai = ii.resolveActivityInfo(ResolverActivity.this.getPackageManager(), 0);
+                            if (ai == null) {
+                                VLog.w(StringFog.decrypt(com.kook.librelease.StringFog.decrypt("Ij4uKWozHj5iASwRLy42MWUVLAZuAVRF")), StringFog.decrypt(com.kook.librelease.StringFog.decrypt("Oz4fOGsVLAZjATwzLBgbOmkVNAVlNy8rLi4ACEsVSFo=")) + ii, new Object[0]);
+                            } else {
+                                rix = new ResolveInfo();
+                                rix.activityInfo = ai;
+                                if (ii instanceof LabeledIntent) {
+                                    LabeledIntent li = (LabeledIntent)ii;
+                                    rix.resolvePackageName = li.getSourcePackage();
+                                    rix.labelRes = li.getLabelResource();
+                                    rix.nonLocalizedLabel = li.getNonLocalizedLabel();
+                                    rix.icon = li.getIconResource();
+                                }
+
+                                this.mList.add(ResolverActivity.this.new DisplayResolveInfo(rix, rix.loadLabel(ResolverActivity.this.getPackageManager()), (CharSequence)null, ii));
+                            }
                         }
-                        ri = new ResolveInfo();
-                        ri.activityInfo = ai;
-                        if (ii instanceof LabeledIntent) {
-                            LabeledIntent li = (LabeledIntent)ii;
-                            ri.resolvePackageName = li.getSourcePackage();
-                            ri.labelRes = li.getLabelResource();
-                            ri.nonLocalizedLabel = li.getNonLocalizedLabel();
-                            ri.icon = li.getIconResource();
-                        }
-                        this.mList.add(new DisplayResolveInfo(ri, ri.loadLabel(ResolverActivity.this.getPackageManager()), null, ii));
                     }
                 }
+
                 r0 = (ResolveInfo)currentResolveList.get(0);
-                int start = 0;
+                start = 0;
                 CharSequence r0Label = r0.loadLabel(ResolverActivity.this.mPm);
                 ResolverActivity.this.mShowExtended = false;
-                for (int i2 = 1; i2 < N; ++i2) {
-                    CharSequence riLabel;
+
+                for(int i = 1; i < N; ++i) {
                     if (r0Label == null) {
                         r0Label = r0.activityInfo.packageName;
                     }
-                    if ((riLabel = (ri = (ResolveInfo)currentResolveList.get(i2)).loadLabel(ResolverActivity.this.mPm)) == null) {
-                        riLabel = ri.activityInfo.packageName;
+
+                    rix = (ResolveInfo)currentResolveList.get(i);
+                    CharSequence riLabel = rix.loadLabel(ResolverActivity.this.mPm);
+                    if (riLabel == null) {
+                        riLabel = rix.activityInfo.packageName;
                     }
-                    if (riLabel.equals(r0Label)) continue;
-                    this.processGroup(currentResolveList, start, i2 - 1, r0, r0Label);
-                    r0 = ri;
-                    r0Label = riLabel;
-                    start = i2;
+
+                    if (!riLabel.equals(r0Label)) {
+                        this.processGroup(currentResolveList, start, i - 1, r0, (CharSequence)r0Label);
+                        r0 = rix;
+                        r0Label = riLabel;
+                        start = i;
+                    }
                 }
-                this.processGroup(currentResolveList, start, N - 1, r0, r0Label);
+
+                this.processGroup(currentResolveList, start, N - 1, r0, (CharSequence)r0Label);
             }
+
         }
 
         private void processGroup(List<ResolveInfo> rList, int start, int end, ResolveInfo ro, CharSequence roLabel) {
@@ -563,10 +602,11 @@ implements AdapterView.OnItemClickListener {
             return this.mList.get((int)position).ri;
         }
 
+        @SuppressLint("WrongConstant")
         public Intent intentForPosition(int position) {
             DisplayResolveInfo dri = this.mList.get(position);
             Intent intent = new Intent(dri.origIntent != null ? dri.origIntent : this.mIntent);
-            intent.addFlags(0x3000000);
+            intent.addFlags(50331648);
             ActivityInfo ai = dri.ri.activityInfo;
             intent.setComponent(new ComponentName(ai.applicationInfo.packageName, ai.name));
             return intent;
@@ -603,10 +643,10 @@ implements AdapterView.OnItemClickListener {
             ViewHolder holder = (ViewHolder)view.getTag();
             holder.text.setText(info.displayLabel);
             if (ResolverActivity.this.mShowExtended) {
-                holder.text2.setVisibility(0);
+                holder.text2.setVisibility(View.VISIBLE);
                 holder.text2.setText(info.extendedInfo);
             } else {
-                holder.text2.setVisibility(8);
+                holder.text2.setVisibility(View.GONE);
             }
             if (info.displayIcon == null) {
                 new LoadIconTask().execute(new DisplayResolveInfo[]{info});

@@ -82,24 +82,29 @@ public class StringUtils {
         return StringUtils.stripEnd(str, stripChars);
     }
 
+
     public static String stripStart(String str, String stripChars) {
-        int start;
         int strLen;
-        if (str == null || (strLen = str.length()) == 0) {
+        if (str != null && (strLen = str.length()) != 0) {
+            int start = 0;
+            if (stripChars == null) {
+                while(start != strLen && Character.isWhitespace(str.charAt(start))) {
+                    ++start;
+                }
+            } else {
+                if (stripChars.length() == 0) {
+                    return str;
+                }
+
+                while(start != strLen && stripChars.indexOf(str.charAt(start)) != -1) {
+                    ++start;
+                }
+            }
+
+            return str.substring(start);
+        } else {
             return str;
         }
-        if (stripChars == null) {
-            for (start = 0; start != strLen && Character.isWhitespace(str.charAt(start)); ++start) {
-            }
-        } else {
-            if (stripChars.length() == 0) {
-                return str;
-            }
-            while (start != strLen && stripChars.indexOf(str.charAt(start)) != -1) {
-                ++start;
-            }
-        }
-        return str.substring(start);
     }
 
     public static String stripEnd(String str, String stripChars) {

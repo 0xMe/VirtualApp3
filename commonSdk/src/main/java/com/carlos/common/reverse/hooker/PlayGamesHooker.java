@@ -1,39 +1,44 @@
-/*
- * Decompiled with CFR 0.152.
- * 
- * Could not load the following classes:
- *  android.os.Bundle
- *  android.util.Log
- */
+//
+// Source code recreated from a .class file by IntelliJ IDEA
+// (powered by FernFlower decompiler)
+//
+
 package com.carlos.common.reverse.hooker;
 
 import android.os.Bundle;
 import android.util.Log;
-import com.kook.librelease.StringFog;
+import com.carlos.libcommon.StringFog;
 import com.swift.sandhook.SandHook;
 import com.swift.sandhook.annotation.HookMethod;
 import com.swift.sandhook.annotation.HookMethodBackup;
 import com.swift.sandhook.annotation.HookReflectClass;
 import com.swift.sandhook.annotation.MethodParams;
 import java.lang.reflect.Method;
+import java.util.Iterator;
 import java.util.Set;
 
-@HookReflectClass(value="com.google.android.gms.games.ui.signin.SignInActivity")
+@HookReflectClass("com.google.android.gms.games.ui.signin.SignInActivity")
 public class PlayGamesHooker {
-    @HookMethodBackup(value="onCreate")
-    @MethodParams(value={Bundle.class})
+    @HookMethodBackup("onCreate")
+    @MethodParams({Bundle.class})
     static Method method_m1;
 
-    @HookMethod(value="onCreate")
-    @MethodParams(value={Bundle.class})
+    public PlayGamesHooker() {
+    }
+
+    @HookMethod("onCreate")
+    @MethodParams({Bundle.class})
     public static void m1(Object thiz, Bundle v1) throws Throwable {
-        Log.d((String)com.carlos.libcommon.StringFog.decrypt(StringFog.decrypt("KT4+LGgaLAY=")), (String)com.carlos.libcommon.StringFog.decrypt(StringFog.decrypt("Ii4YPWohAiZlDiggKQg+MWUwLFo=")));
-        Set keys = v1.keySet();
-        for (String key : keys) {
-            Log.d((String)com.carlos.libcommon.StringFog.decrypt(StringFog.decrypt("KT4+LGgaLAY=")), (String)(com.carlos.libcommon.StringFog.decrypt(StringFog.decrypt("LC4uJ3kjSFo=")) + key));
-            Object object = v1.get(key);
+        Log.d(StringFog.decrypt(com.kook.librelease.StringFog.decrypt("KT4+LGgaLAY=")), StringFog.decrypt(com.kook.librelease.StringFog.decrypt("Ii4YPWohAiZlDiggKQg+MWUwLFo=")));
+        Set<String> keys = v1.keySet();
+        Iterator var3 = keys.iterator();
+
+        while(var3.hasNext()) {
+            String key = (String)var3.next();
+            Log.d(StringFog.decrypt(com.kook.librelease.StringFog.decrypt("KT4+LGgaLAY=")), StringFog.decrypt(com.kook.librelease.StringFog.decrypt("LC4uJ3kjSFo=")) + key);
+            v1.get(key);
         }
-        SandHook.callOriginByBackup(method_m1, thiz, v1);
+
+        SandHook.callOriginByBackup(method_m1, thiz, new Object[]{v1});
     }
 }
-

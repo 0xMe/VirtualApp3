@@ -75,19 +75,22 @@ abstract class MapCollections<K, V> {
         return result;
     }
 
-    public <T> T[] toArrayHelper(T[] array2, int offset) {
+    public <T> T[] toArrayHelper(T[] array, int offset) {
         int N = this.colGetSize();
-        if (array2.length < N) {
-            Object[] newArray = (Object[])Array.newInstance(array2.getClass().getComponentType(), N);
-            array2 = newArray;
+        if (array.length < N) {
+            T[] newArray = (T[]) Array.newInstance(array.getClass().getComponentType(), N);
+            array = newArray;
         }
-        for (int i = 0; i < N; ++i) {
-            array2[i] = this.colGetEntry(i, offset);
+
+        for(int i = 0; i < N; ++i) {
+            array[i] = (T) this.colGetEntry(i, offset);
         }
-        if (array2.length > N) {
-            array2[N] = null;
+
+        if (array.length > N) {
+            array[N] = null;
         }
-        return array2;
+
+        return array;
     }
 
     public Set<Map.Entry<K, V>> getEntrySet() {
@@ -334,9 +337,13 @@ abstract class MapCollections<K, V> {
         @Override
         public boolean addAll(Collection<? extends Map.Entry<K, V>> collection) {
             int oldSize = MapCollections.this.colGetSize();
-            for (Map.Entry entry : collection) {
+            Iterator var3 = collection.iterator();
+
+            while(var3.hasNext()) {
+                Map.Entry<K, V> entry = (Map.Entry)var3.next();
                 MapCollections.this.colPut(entry.getKey(), entry.getValue());
             }
+
             return oldSize != MapCollections.this.colGetSize();
         }
 
@@ -465,16 +472,18 @@ abstract class MapCollections<K, V> {
         public K getKey() {
             if (!this.mEntryValid) {
                 throw new IllegalStateException(StringFog.decrypt(com.kook.librelease.StringFog.decrypt("IRhfCW83IClgJFkgLwccDmkgRChrEQYgKTo6KmAjESNlJwo5LD4uCG9SICZoHiwoJQdfIGwwIzZnJ10dMzwuCGwKFj9LHh46KT0MP2UwAlo=")));
+            } else {
+                return (K) MapCollections.this.colGetEntry(this.mIndex, 0);
             }
-            return MapCollections.this.colGetEntry(this.mIndex, 0);
         }
 
         @Override
         public V getValue() {
             if (!this.mEntryValid) {
                 throw new IllegalStateException(StringFog.decrypt(com.kook.librelease.StringFog.decrypt("IRhfCW83IClgJFkgLwccDmkgRChrEQYgKTo6KmAjESNlJwo5LD4uCG9SICZoHiwoJQdfIGwwIzZnJ10dMzwuCGwKFj9LHh46KT0MP2UwAlo=")));
+            } else {
+                return (V) MapCollections.this.colGetEntry(this.mIndex, 1);
             }
-            return MapCollections.this.colGetEntry(this.mIndex, 1);
         }
 
         @Override

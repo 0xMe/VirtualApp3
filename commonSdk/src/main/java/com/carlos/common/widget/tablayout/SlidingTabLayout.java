@@ -683,7 +683,7 @@ implements ViewPager.OnPageChangeListener {
                 return;
             }
             this.setMsgMargin(position, 4.0f, 2.0f);
-            this.mInitSetMap.put(position, (Object)true);
+            this.mInitSetMap.put(position, true);
         }
     }
 

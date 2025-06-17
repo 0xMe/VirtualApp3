@@ -63,7 +63,7 @@ public class CommonApp {
             Intent intent = new Intent();
             ComponentName component = new ComponentName(this.getMainPackageName(), "io.busniess.va.home.BackHomeActivity");
             intent.setComponent(component);
-            intent.addFlags(0x10000000);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             return intent;
         }
 

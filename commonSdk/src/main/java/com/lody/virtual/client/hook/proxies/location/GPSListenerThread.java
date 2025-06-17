@@ -1,30 +1,27 @@
-/*
- * Decompiled with CFR 0.152.
- * 
- * Could not load the following classes:
- *  android.location.Location
- *  android.os.Build$VERSION
- *  android.os.Handler
- *  android.util.ArrayMap
- */
+//
+// Source code recreated from a .class file by IntelliJ IDEA
+// (powered by FernFlower decompiler)
+//
+
 package com.lody.virtual.client.hook.proxies.location;
 
 import android.location.Location;
 import android.os.Build;
 import android.os.Handler;
+import android.os.Build.VERSION;
 import android.util.ArrayMap;
-import com.lody.virtual.client.hook.proxies.location.MockLocationHelper;
 import com.lody.virtual.client.ipc.VirtualLocationManager;
 import com.lody.virtual.remote.vloc.VLocation;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 import mirror.android.location.LocationManager;
+import mirror.android.location.LocationManager.ListenerTransport;
 
-class GPSListenerThread
-extends TimerTask {
+class GPSListenerThread extends TimerTask {
     private static GPSListenerThread INSTANCE = new GPSListenerThread();
     private Handler handler = new Handler();
     private boolean isRunning = false;
@@ -33,81 +30,94 @@ extends TimerTask {
 
     private void notifyGPSStatus(Map listeners) {
         if (listeners != null && !listeners.isEmpty()) {
-            Set entries = listeners.entrySet();
-            for (Map.Entry entry : entries) {
+            Set<Map.Entry> entries = listeners.entrySet();
+            Iterator var3 = entries.iterator();
+
+            while(var3.hasNext()) {
+                Map.Entry entry = (Map.Entry)var3.next();
+
                 try {
                     Object value = entry.getValue();
-                    if (value == null) continue;
-                    MockLocationHelper.invokeSvStatusChanged(value);
-                }
-                catch (Throwable e) {
-                    e.printStackTrace();
+                    if (value != null) {
+                        MockLocationHelper.invokeSvStatusChanged(value);
+                    }
+                } catch (Throwable var6) {
+                    var6.printStackTrace();
                 }
             }
         }
+
     }
 
     private void notifyLocation(Map listeners) {
         if (listeners != null) {
             try {
-                VLocation vLocation;
-                if (!listeners.isEmpty() && (vLocation = VirtualLocationManager.get().getLocation()) != null) {
-                    Location location = vLocation.toSysLocation();
-                    Set entries = listeners.entrySet();
-                    for (Map.Entry entry : entries) {
-                        Object value = entry.getValue();
-                        if (value == null) continue;
-                        try {
-                            LocationManager.ListenerTransport.onLocationChanged.call(value, location);
-                        }
-                        catch (Throwable e) {
-                            e.printStackTrace();
+                if (!listeners.isEmpty()) {
+                    VLocation vLocation = VirtualLocationManager.get().getLocation();
+                    if (vLocation != null) {
+                        Location location = vLocation.toSysLocation();
+                        Set<Map.Entry> entries = listeners.entrySet();
+                        Iterator var5 = entries.iterator();
+
+                        while(var5.hasNext()) {
+                            Map.Entry entry = (Map.Entry)var5.next();
+                            Object value = entry.getValue();
+                            if (value != null) {
+                                try {
+                                    ListenerTransport.onLocationChanged.call(value, new Object[]{location});
+                                } catch (Throwable var9) {
+                                    var9.printStackTrace();
+                                }
+                            }
                         }
                     }
                 }
-            }
-            catch (Throwable e) {
-                e.printStackTrace();
+            } catch (Throwable var10) {
+                var10.printStackTrace();
             }
         }
+
     }
 
     private void notifyMNmeaListener(Map listeners) {
         if (listeners != null && !listeners.isEmpty()) {
-            Set entries = listeners.entrySet();
-            for (Map.Entry entry : entries) {
+            Set<Map.Entry> entries = listeners.entrySet();
+            Iterator var3 = entries.iterator();
+
+            while(var3.hasNext()) {
+                Map.Entry entry = (Map.Entry)var3.next();
+
                 try {
                     Object value = entry.getValue();
-                    if (value == null) continue;
-                    MockLocationHelper.invokeNmeaReceived(value);
-                }
-                catch (Exception e) {
-                    e.printStackTrace();
+                    if (value != null) {
+                        MockLocationHelper.invokeNmeaReceived(value);
+                    }
+                } catch (Exception var6) {
+                    var6.printStackTrace();
                 }
             }
         }
+
     }
 
-    /*
-     * WARNING - Removed try catching itself - possible behaviour change.
-     */
     public void addListenerTransport(Object transport) {
         this.listeners.put(transport, System.currentTimeMillis());
         if (!this.isRunning) {
-            GPSListenerThread gPSListenerThread = this;
-            synchronized (gPSListenerThread) {
+            synchronized(this) {
                 if (!this.isRunning) {
                     this.isRunning = true;
-                    this.timer.schedule((TimerTask)this, 1000L, 1000L);
+                    this.timer.schedule(this, 1000L, 1000L);
                 }
             }
         }
+
     }
 
     public void removeListenerTransport(Object transport) {
         if (transport != null) {
             this.listeners.remove(transport);
         }
+
     }
 
     @Override
@@ -173,4 +183,3 @@ extends TimerTask {
     private GPSListenerThread() {
     }
 }
-

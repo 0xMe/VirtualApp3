@@ -49,6 +49,7 @@
  */
 package com.carlos.common.ui.activity;
 
+import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
@@ -94,6 +95,7 @@ import com.lody.virtual.client.ipc.VirtualLocationManager;
 import com.lody.virtual.helper.utils.VLog;
 import com.lody.virtual.remote.vloc.VLocation;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 public class GDChooseLocationActivity
@@ -122,6 +124,7 @@ Inputtips.InputtipsListener {
     private boolean mMocking;
     private String mAddress;
 
+    @SuppressLint("ResourceType")
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         VLocation vLocation;
@@ -230,12 +233,12 @@ Inputtips.InputtipsListener {
         menuItem.setOnActionExpandListener(new MenuItem.OnActionExpandListener(){
 
             public boolean onMenuItemActionExpand(MenuItem item) {
-                GDChooseLocationActivity.this.mSearchLayout.setVisibility(0);
+                GDChooseLocationActivity.this.mSearchLayout.setVisibility(View.VISIBLE);
                 return true;
             }
 
             public boolean onMenuItemActionCollapse(MenuItem item) {
-                GDChooseLocationActivity.this.mSearchLayout.setVisibility(8);
+                GDChooseLocationActivity.this.mSearchLayout.setVisibility(View.GONE);
                 return true;
             }
         });
@@ -308,15 +311,15 @@ Inputtips.InputtipsListener {
         this.mMockImg.setSelected(mock);
         if (mock) {
             this.mMockText.setText(R.string.mocking);
-            this.mMockingView.setVisibility(0);
-            this.mMockBtn.setVisibility(8);
+            this.mMockingView.setVisibility(View.VISIBLE);
+            this.mMockBtn.setVisibility(View.GONE);
             if (this.mSearchMenuItem != null) {
                 this.mSearchMenuItem.setEnabled(false);
             }
         } else {
             this.mMockText.setText(R.string.no_mock);
-            this.mMockingView.setVisibility(8);
-            this.mMockBtn.setVisibility(0);
+            this.mMockingView.setVisibility(View.GONE);
+            this.mMockBtn.setVisibility(View.VISIBLE);
             if (this.mSearchMenuItem != null) {
                 this.mSearchMenuItem.setEnabled(true);
             }
@@ -380,24 +383,33 @@ Inputtips.InputtipsListener {
         }
     }
 
+
     public void onGetInputtips(List<Tip> list, int rCode) {
-        HVLog.d(com.carlos.libcommon.StringFog.decrypt(StringFog.decrypt("Iy4cWmgaMAlgNyQvLBg2MWowDSh+N1RF")) + list + com.carlos.libcommon.StringFog.decrypt(StringFog.decrypt("Pl85OHsKFhNgJAo/PT5SVg==")) + rCode);
+        HVLog.d(com.carlos.libcommon.StringFog.decrypt(com.kook.librelease.StringFog.decrypt("Iy4cWmgaMAlgNyQvLBg2MWowDSh+N1RF")) + list + com.carlos.libcommon.StringFog.decrypt(com.kook.librelease.StringFog.decrypt("Pl85OHsKFhNgJAo/PT5SVg==")) + rCode);
         if (rCode == 1000) {
-            if (this.mSearchTip.getVisibility() != 8) {
-                this.runOnUiThread(() -> this.mSearchTip.setVisibility(8));
+            if (this.mSearchTip.getVisibility() != View.GONE) {
+                this.runOnUiThread(() -> {
+                    this.mSearchTip.setVisibility(View.GONE);
+                });
             }
+
             this.mSearchAdapter.clear();
             if (list.size() == 0) {
-                this.mSearchAdapter.add((Object)MapSearchResult.NULL);
+                this.mSearchAdapter.add(GDChooseLocationActivity.MapSearchResult.NULL);
             } else {
-                for (Tip item : list) {
+                Iterator var3 = list.iterator();
+
+                while(var3.hasNext()) {
+                    Tip item = (Tip)var3.next();
                     MapSearchResult result = new MapSearchResult(item.getAddress(), item.getPoint().getLatitude(), item.getPoint().getLongitude());
                     result.setCity(item.getAddress());
-                    this.mSearchAdapter.add((Object)result);
+                    this.mSearchAdapter.add(result);
                 }
             }
+
             this.mSearchAdapter.notifyDataSetChanged();
         }
+
     }
 
     private /* synthetic */ void lambda$showInputWindow$8(Dialog dialog, EditText editText1, EditText editText2, View v2) {

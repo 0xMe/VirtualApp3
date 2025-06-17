@@ -129,7 +129,7 @@ extends IPackageInstaller.Stub {
         }
         sparseArray = this.mSessions;
         synchronized (sparseArray) {
-            this.mSessions.put(sessionId, (Object)session);
+            this.mSessions.put(sessionId, session);
         }
         this.mCallbacks.notifySessionCreated(session.sessionId, session.userId);
         return sessionId;
@@ -418,11 +418,11 @@ extends IPackageInstaller.Stub {
         }
 
         public void register(IPackageInstallerCallback callback, int userId) {
-            this.mCallbacks.register((IInterface)callback, (Object)new VUserHandle(userId));
+            this.mCallbacks.register((IPackageInstallerCallback) callback, (Object)new VUserHandle(userId));
         }
 
         public void unregister(IPackageInstallerCallback callback) {
-            this.mCallbacks.unregister((IInterface)callback);
+            this.mCallbacks.unregister((IPackageInstallerCallback) callback);
         }
 
         public void handleMessage(Message msg) {

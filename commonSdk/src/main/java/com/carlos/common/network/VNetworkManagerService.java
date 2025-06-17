@@ -37,6 +37,7 @@ import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import okhttp3.ResponseBody;
@@ -171,21 +172,25 @@ public class VNetworkManagerService {
     }
 
     private void persistentConfig(StoragePersistenceServices storagePersistenceServices, String data, VPersistent persistent) {
-        if (!TextUtils.isEmpty((CharSequence)data)) {
-            JSONObject jsonObject = JSON.parseObject((String)data);
-            Set entries = jsonObject.entrySet();
-            for (Map.Entry entry : entries) {
+        if (!TextUtils.isEmpty(data)) {
+            JSONObject jsonObject = JSON.parseObject(data);
+            Set<Map.Entry<String, Object>> entries = jsonObject.entrySet();
+            Iterator var6 = entries.iterator();
+
+            while(var6.hasNext()) {
+                Map.Entry<String, Object> entry = (Map.Entry)var6.next();
                 String key = (String)entry.getKey();
                 Object value = entry.getValue();
                 persistent.setBuildConfig(key, String.valueOf(value));
             }
         }
+
         try {
             storagePersistenceServices.updatePersistent(persistent);
+        } catch (Exception var10) {
+            HVLog.printException(var10);
         }
-        catch (Exception e) {
-            HVLog.printException(e);
-        }
+
     }
 
     private boolean configRequestCan(StoragePersistenceServices storagePersistenceServices, VPersistent persistent) {

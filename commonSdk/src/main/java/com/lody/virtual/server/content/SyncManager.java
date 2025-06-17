@@ -84,6 +84,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 
 public class SyncManager {
     private static final String TAG = StringFog.decrypt(com.kook.librelease.StringFog.decrypt("Ii0YCGsxEjdgNCA9KAguVg=="));
@@ -848,141 +849,179 @@ public class SyncManager {
         private long maybeStartNextSyncLocked() {
             boolean isLoggable = true;
             if (isLoggable) {
-                Log.v((String)StringFog.decrypt(com.kook.librelease.StringFog.decrypt("Ii0YCGsxEjdgNCA9KAguVg==")), (String)StringFog.decrypt(com.kook.librelease.StringFog.decrypt("Iwg+J2sjNF5mHiAqLBUYPWgwBl5uARoq")));
+                Log.v(StringFog.decrypt(com.kook.librelease.StringFog.decrypt("Ii0YCGsxEjdgNCA9KAguVg==")), StringFog.decrypt(com.kook.librelease.StringFog.decrypt("Iwg+J2sjNF5mHiAqLBUYPWgwBl5uARoq")));
             }
+
             if (!SyncManager.this.mDataConnectionIsConnected) {
                 if (isLoggable) {
-                    Log.v((String)StringFog.decrypt(com.kook.librelease.StringFog.decrypt("Ii0YCGsxEjdgNCA9KAguVg==")), (String)StringFog.decrypt(com.kook.librelease.StringFog.decrypt("Iwg+J2sjNF5mHiAqLBUYPWgwBl5uARoqPyo6KmAkOC9pATAqOD4YKWUzBj9rNCwwJi1eO3kVMAVsJFEdLAgcPQ==")));
+                    Log.v(StringFog.decrypt(com.kook.librelease.StringFog.decrypt("Ii0YCGsxEjdgNCA9KAguVg==")), StringFog.decrypt(com.kook.librelease.StringFog.decrypt("Iwg+J2sjNF5mHiAqLBUYPWgwBl5uARoqPyo6KmAkOC9pATAqOD4YKWUzBj9rNCwwJi1eO3kVMAVsJFEdLAgcPQ==")));
                 }
+
                 return Long.MAX_VALUE;
-            }
-            if (SyncManager.this.mStorageIsLow) {
+            } else if (SyncManager.this.mStorageIsLow) {
                 if (isLoggable) {
-                    Log.v((String)StringFog.decrypt(com.kook.librelease.StringFog.decrypt("Ii0YCGsxEjdgNCA9KAguVg==")), (String)StringFog.decrypt(com.kook.librelease.StringFog.decrypt("Iwg+J2sjNF5mHiAqLBUYPWgwBl5uARoqPyo6L2IKQSplNx0pKT4uMXVSICVlNx4dJxcAJW4jSFo=")));
+                    Log.v(StringFog.decrypt(com.kook.librelease.StringFog.decrypt("Ii0YCGsxEjdgNCA9KAguVg==")), StringFog.decrypt(com.kook.librelease.StringFog.decrypt("Iwg+J2sjNF5mHiAqLBUYPWgwBl5uARoqPyo6L2IKQSplNx0pKT4uMXVSICVlNx4dJxcAJW4jSFo=")));
                 }
+
                 return Long.MAX_VALUE;
-            }
-            AccountAndUser[] accounts = SyncManager.this.mRunningAccounts;
-            if (accounts == INITIAL_ACCOUNTS_ARRAY) {
-                if (isLoggable) {
-                    Log.v((String)StringFog.decrypt(com.kook.librelease.StringFog.decrypt("Ii0YCGsxEjdgNCA9KAguVg==")), (String)StringFog.decrypt(com.kook.librelease.StringFog.decrypt("Iwg+J2sjNF5mHiAqLBUYPWgwBl5uARoqPyo6O30gNCpqDh49LARXKmUgMzRlNxo6IC1eO3kVMAVsJFEdLAgcPQ==")));
-                }
-                return Long.MAX_VALUE;
-            }
-            long now = SystemClock.elapsedRealtime();
-            long nextReadyToRunTime = Long.MAX_VALUE;
-            ArrayList operations = new ArrayList();
-            SyncQueue syncQueue = SyncManager.this.mSyncQueue;
-            synchronized (syncQueue) {
-                if (isLoggable) {
-                    Log.v((String)StringFog.decrypt(com.kook.librelease.StringFog.decrypt("Ii0YCGsxEjdgNCA9KAguVg==")), (String)(StringFog.decrypt(com.kook.librelease.StringFog.decrypt("Lj0uCWoFMyhmHho/PxdfKmkgRTdvER4cLCo6O2EzMCRrClwpLAc2KmgmJC9oHig0DRguIGswETZsJBE3")) + SyncManager.this.mSyncQueue.getOperations().size()));
-                }
-                Iterator<SyncOperation> operationIterator = SyncManager.this.mSyncQueue.getOperations().iterator();
-                HashSet<Integer> removedUsers = new HashSet<Integer>();
-                while (operationIterator.hasNext()) {
-                    SyncOperation op = operationIterator.next();
-                    if (!SyncManager.this.containsAccountAndUser(accounts, op.account, op.userId)) {
-                        operationIterator.remove();
-                        SyncManager.this.mSyncStorageEngine.deleteFromPending(op.pendingOperation);
-                        if (!isLoggable) continue;
-                        Log.v((String)StringFog.decrypt(com.kook.librelease.StringFog.decrypt("Ii0YCGsxEjdgNCA9KAguVg==")), (String)StringFog.decrypt(com.kook.librelease.StringFog.decrypt("Pl85OHsLMARgJyQsKQcYM34wAj9lNzMrLD06J2EwPD9vDlkdPl9XO2gjLANsERoZDRcMJm4FMAJ5Dh03LQdfCW8wMyY=")));
-                        continue;
+            } else {
+                AccountAndUser[] accounts = SyncManager.this.mRunningAccounts;
+                if (accounts == SyncManager.INITIAL_ACCOUNTS_ARRAY) {
+                    if (isLoggable) {
+                        Log.v(StringFog.decrypt(com.kook.librelease.StringFog.decrypt("Ii0YCGsxEjdgNCA9KAguVg==")), StringFog.decrypt(com.kook.librelease.StringFog.decrypt("Iwg+J2sjNF5mHiAqLBUYPWgwBl5uARoqPyo6O30gNCpqDh49LARXKmUgMzRlNxo6IC1eO3kVMAVsJFEdLAgcPQ==")));
                     }
-                    int syncableState = SyncManager.this.getIsSyncable(op.account, op.userId, op.authority);
-                    if (syncableState == 0) {
-                        operationIterator.remove();
-                        SyncManager.this.mSyncStorageEngine.deleteFromPending(op.pendingOperation);
-                        if (!isLoggable) continue;
-                        Log.v((String)StringFog.decrypt(com.kook.librelease.StringFog.decrypt("Ii0YCGsxEjdgNCA9KAguVg==")), (String)StringFog.decrypt(com.kook.librelease.StringFog.decrypt("Pl85OHsLMARgJyQsKQcYM34wAj9lNzMrLD06J2EwPD9vDlkdPl9XI2wmLCtqJzAoOz1XLHlSTCl+MFA5")));
-                        continue;
-                    }
-                    VUserInfo userInfo = SyncManager.this.mUserManager.getUserInfo(op.userId);
-                    if (userInfo == null) {
-                        removedUsers.add(op.userId);
-                    }
-                    if (!isLoggable) continue;
-                    Log.v((String)StringFog.decrypt(com.kook.librelease.StringFog.decrypt("Ii0YCGsxEjdgNCA9KAguVg==")), (String)StringFog.decrypt(com.kook.librelease.StringFog.decrypt("Pl85OHsLMARgJyQsKQcYM34wAj9lNzMrLD06J2EwPD9vDlkdPl9XCWwjNCZ7ARo6IF4iOWoKAgJsJywyMz5SVg==")));
-                }
-                for (Integer user : removedUsers) {
-                    if (SyncManager.this.mUserManager.getUserInfo(user) != null) continue;
-                    SyncManager.this.onUserRemoved(user);
-                }
-            }
-            if (isLoggable) {
-                Log.v((String)StringFog.decrypt(com.kook.librelease.StringFog.decrypt("Ii0YCGsxEjdgNCA9KAguVg==")), (String)(StringFog.decrypt(com.kook.librelease.StringFog.decrypt("Ki4AKmwJIAZjHjM8Ly0iDmkzLCxoDiwgPQgADmIFMCRqHhoeKRcXKHgaLAVpJys3")) + operations.size()));
-            }
-            Collections.sort(operations);
-            if (isLoggable) {
-                Log.v((String)StringFog.decrypt(com.kook.librelease.StringFog.decrypt("Ii0YCGsxEjdgNCA9KAguVg==")), (String)StringFog.decrypt(com.kook.librelease.StringFog.decrypt("LRgYKW8FJAZ9JB08LwdbCH4wRStoASw0PQc2M2AwNyNsJyAuLBhbCmoFGgRvN1RF")));
-            }
-            int N = operations.size();
-            for (int i = 0; i < N; ++i) {
-                boolean roomAvailable;
-                SyncOperation candidate = (SyncOperation)operations.get(i);
-                boolean candidateIsInitialization = candidate.isInitialization();
-                int numInit = 0;
-                int numRegular = 0;
-                ActiveSyncContext conflict = null;
-                ActiveSyncContext longRunning = null;
-                ActiveSyncContext toReschedule = null;
-                ActiveSyncContext oldestNonExpeditedRegular = null;
-                for (ActiveSyncContext activeSyncContext : SyncManager.this.mActiveSyncContexts) {
-                    SyncOperation activeOp = activeSyncContext.mSyncOperation;
-                    if (activeOp.isInitialization()) {
-                        ++numInit;
-                    } else {
-                        ++numRegular;
-                        if (!(activeOp.isExpedited() || oldestNonExpeditedRegular != null && oldestNonExpeditedRegular.mStartTime <= activeSyncContext.mStartTime)) {
-                            oldestNonExpeditedRegular = activeSyncContext;
+
+                    return Long.MAX_VALUE;
+                } else {
+                    long now = SystemClock.elapsedRealtime();
+                    long nextReadyToRunTime = Long.MAX_VALUE;
+                    ArrayList<SyncOperation> operations = new ArrayList();
+                    int numInit;
+                    synchronized(SyncManager.this.mSyncQueue) {
+                        if (isLoggable) {
+                            Log.v(StringFog.decrypt(com.kook.librelease.StringFog.decrypt("Ii0YCGsxEjdgNCA9KAguVg==")), StringFog.decrypt(com.kook.librelease.StringFog.decrypt("Lj0uCWoFMyhmHho/PxdfKmkgRTdvER4cLCo6O2EzMCRrClwpLAc2KmgmJC9oHig0DRguIGswETZsJBE3")) + SyncManager.this.mSyncQueue.getOperations().size());
+                        }
+
+                        Iterator<SyncOperation> operationIterator = SyncManager.this.mSyncQueue.getOperations().iterator();
+                        Set<Integer> removedUsers = new HashSet();
+
+                        while(true) {
+                            if (!operationIterator.hasNext()) {
+                                Iterator var26 = removedUsers.iterator();
+
+                                while(var26.hasNext()) {
+                                    Integer user = (Integer)var26.next();
+                                    if (SyncManager.this.mUserManager.getUserInfo(user) == null) {
+                                        SyncManager.this.onUserRemoved(user);
+                                    }
+                                }
+                                break;
+                            }
+
+                            SyncOperation op = (SyncOperation)operationIterator.next();
+                            if (!SyncManager.this.containsAccountAndUser(accounts, op.account, op.userId)) {
+                                operationIterator.remove();
+                                SyncManager.this.mSyncStorageEngine.deleteFromPending(op.pendingOperation);
+                                if (isLoggable) {
+                                    Log.v(StringFog.decrypt(com.kook.librelease.StringFog.decrypt("Ii0YCGsxEjdgNCA9KAguVg==")), StringFog.decrypt(com.kook.librelease.StringFog.decrypt("Pl85OHsLMARgJyQsKQcYM34wAj9lNzMrLD06J2EwPD9vDlkdPl9XO2gjLANsERoZDRcMJm4FMAJ5Dh03LQdfCW8wMyY=")));
+                                }
+                            } else {
+                                numInit = SyncManager.this.getIsSyncable(op.account, op.userId, op.authority);
+                                if (numInit == 0) {
+                                    operationIterator.remove();
+                                    SyncManager.this.mSyncStorageEngine.deleteFromPending(op.pendingOperation);
+                                    if (isLoggable) {
+                                        Log.v(StringFog.decrypt(com.kook.librelease.StringFog.decrypt("Ii0YCGsxEjdgNCA9KAguVg==")), StringFog.decrypt(com.kook.librelease.StringFog.decrypt("Pl85OHsLMARgJyQsKQcYM34wAj9lNzMrLD06J2EwPD9vDlkdPl9XI2wmLCtqJzAoOz1XLHlSTCl+MFA5")));
+                                    }
+                                } else {
+                                    VUserInfo userInfo = SyncManager.this.mUserManager.getUserInfo(op.userId);
+                                    if (userInfo == null) {
+                                        removedUsers.add(op.userId);
+                                    }
+
+                                    if (isLoggable) {
+                                        Log.v(StringFog.decrypt(com.kook.librelease.StringFog.decrypt("Ii0YCGsxEjdgNCA9KAguVg==")), StringFog.decrypt(com.kook.librelease.StringFog.decrypt("Pl85OHsLMARgJyQsKQcYM34wAj9lNzMrLD06J2EwPD9vDlkdPl9XCWwjNCZ7ARo6IF4iOWoKAgJsJywyMz5SVg==")));
+                                    }
+                                }
+                            }
                         }
                     }
-                    if (activeOp.account.type.equals(candidate.account.type) && activeOp.authority.equals(candidate.authority) && activeOp.userId == candidate.userId && (!activeOp.allowParallelSyncs || activeOp.account.name.equals(candidate.account.name))) {
-                        conflict = activeSyncContext;
-                        continue;
-                    }
-                    if (candidateIsInitialization != activeOp.isInitialization() || activeSyncContext.mStartTime + MAX_TIME_PER_SYNC >= now) continue;
-                    longRunning = activeSyncContext;
-                }
-                if (isLoggable) {
-                    Log.v((String)StringFog.decrypt(com.kook.librelease.StringFog.decrypt("Ii0YCGsxEjdgNCA9KAguVg==")), (String)(StringFog.decrypt(com.kook.librelease.StringFog.decrypt("Li4+CGgFAix9AQo/PxhSVg==")) + (i + 1) + StringFog.decrypt(com.kook.librelease.StringFog.decrypt("PhgAPnsFSFo=")) + N + StringFog.decrypt(com.kook.librelease.StringFog.decrypt("ODo6Vg==")) + candidate));
-                    Log.v((String)StringFog.decrypt(com.kook.librelease.StringFog.decrypt("Ii0YCGsxEjdgNCA9KAguVg==")), (String)(StringFog.decrypt(com.kook.librelease.StringFog.decrypt("Pl86CGwVEhF9JwozLD0MXm8VLAZ5AVRF")) + numInit + StringFog.decrypt(com.kook.librelease.StringFog.decrypt("M186CGwVEhF9JwozLD0MAmkjEgVlETg5OBhSVg==")) + numRegular));
-                    Log.v((String)StringFog.decrypt(com.kook.librelease.StringFog.decrypt("Ii0YCGsxEjdgNCA9KAguVg==")), (String)(StringFog.decrypt(com.kook.librelease.StringFog.decrypt("Pl86DmozBi1pNzA2Kj0cDmkOIyg=")) + longRunning));
-                    Log.v((String)StringFog.decrypt(com.kook.librelease.StringFog.decrypt("Ii0YCGsxEjdgNCA9KAguVg==")), (String)(StringFog.decrypt(com.kook.librelease.StringFog.decrypt("Pl86OWozBi5gHgY5LF8HOg==")) + conflict));
-                    Log.v((String)StringFog.decrypt(com.kook.librelease.StringFog.decrypt("Ii0YCGsxEjdgNCA9KAguVg==")), (String)(StringFog.decrypt(com.kook.librelease.StringFog.decrypt("Pl86D2oFMCthJwoMKi0YWmgwTStrER4/LhgqU2IKJDBsHiQ7Pl9XVg==")) + oldestNonExpeditedRegular));
-                }
-                boolean bl = candidateIsInitialization ? numInit < MAX_SIMULTANEOUS_INITIALIZATION_SYNCS : (roomAvailable = numRegular < MAX_SIMULTANEOUS_REGULAR_SYNCS);
-                if (conflict != null) {
-                    if (candidateIsInitialization && !conflict.mSyncOperation.isInitialization() && numInit < MAX_SIMULTANEOUS_INITIALIZATION_SYNCS) {
-                        toReschedule = conflict;
-                        Log.v((String)StringFog.decrypt(com.kook.librelease.StringFog.decrypt("Ii0YCGsxEjdgNCA9KAguVg==")), (String)(StringFog.decrypt(com.kook.librelease.StringFog.decrypt("Li4+CGszNCRjDlk9PxciDmk3TQRrDjAqIwguIGYKTSxsND8pLAc2KmgnICVlERo2JAMiKGw0PD1vETAZLAg+DmUaTTdmHgY1KjkmLm4jJCtsIzwZIxgmLGIFMyNlESgiKQdfI28aDQJ7AVRF")) + conflict));
-                    } else {
-                        if (!candidate.expedited || conflict.mSyncOperation.expedited || candidateIsInitialization != conflict.mSyncOperation.isInitialization()) continue;
-                        toReschedule = conflict;
-                        Log.v((String)StringFog.decrypt(com.kook.librelease.StringFog.decrypt("Ii0YCGsxEjdgNCA9KAguVg==")), (String)(StringFog.decrypt(com.kook.librelease.StringFog.decrypt("Li4+CGszNCRjDlk9PxciDmk3TQRrDjAqIwguIGYKTSxsND8pLAc2KmgnICVlERo2JAMiKGw0PDFoNFE0LRgYLGgVMyhmHiAxKAgpOmwzLC1qESg5PQc6CGMKAjVvATAyOTpXVg==")) + conflict));
-                    }
-                } else if (!roomAvailable) {
-                    if (candidate.isExpedited() && oldestNonExpeditedRegular != null && !candidateIsInitialization) {
-                        toReschedule = oldestNonExpeditedRegular;
-                        Log.v((String)StringFog.decrypt(com.kook.librelease.StringFog.decrypt("Ii0YCGsxEjdgNCA9KAguVg==")), (String)(StringFog.decrypt(com.kook.librelease.StringFog.decrypt("Li4+CGszNCRjDlk9PxciDmk3TQRrDjAqIwguIGYKTSxsND8pLAc2KmgnICVlERo2JAMiKGw0PDFoNFE0LRgYLGgVMyhjASs8Iz0MOWkwLyhvERkrKS0uKk5TOFo=")) + oldestNonExpeditedRegular));
-                    } else {
-                        if (longRunning == null || candidateIsInitialization != longRunning.mSyncOperation.isInitialization()) continue;
-                        toReschedule = longRunning;
-                        Log.v((String)StringFog.decrypt(com.kook.librelease.StringFog.decrypt("Ii0YCGsxEjdgNCA9KAguVg==")), (String)(StringFog.decrypt(com.kook.librelease.StringFog.decrypt("Li4+CGszNCRjDlk9PxciDmk3TQRrDjAqIwguIGYKTSxsND8pLAc2KmgnICVlERo2JAMiIGpTPCRuJy83Kj4AD3sFHiVgNDsoPxhSVg==")) + longRunning));
-                    }
-                }
-                if (toReschedule != null) {
-                    this.runSyncFinishedOrCanceledLocked(null, toReschedule);
-                    SyncManager.this.scheduleSyncOperation(toReschedule.mSyncOperation);
-                }
-                SyncQueue syncQueue2 = SyncManager.this.mSyncQueue;
-                synchronized (syncQueue2) {
-                    SyncManager.this.mSyncQueue.remove(candidate);
-                }
-                this.dispatchSyncOperation(candidate);
-            }
-            return nextReadyToRunTime;
-        }
 
+                    if (isLoggable) {
+                        Log.v(StringFog.decrypt(com.kook.librelease.StringFog.decrypt("Ii0YCGsxEjdgNCA9KAguVg==")), StringFog.decrypt(com.kook.librelease.StringFog.decrypt("Ki4AKmwJIAZjHjM8Ly0iDmkzLCxoDiwgPQgADmIFMCRqHhoeKRcXKHgaLAVpJys3")) + operations.size());
+                    }
+
+                    Collections.sort(operations);
+                    if (isLoggable) {
+                        Log.v(StringFog.decrypt(com.kook.librelease.StringFog.decrypt("Ii0YCGsxEjdgNCA9KAguVg==")), StringFog.decrypt(com.kook.librelease.StringFog.decrypt("LRgYKW8FJAZ9JB08LwdbCH4wRStoASw0PQc2M2AwNyNsJyAuLBhbCmoFGgRvN1RF")));
+                    }
+
+                    int i = 0;
+
+                    for(int N = operations.size(); i < N; ++i) {
+                        SyncOperation candidate = (SyncOperation)operations.get(i);
+                        boolean candidateIsInitialization = candidate.isInitialization();
+                        numInit = 0;
+                        int numRegular = 0;
+                        ActiveSyncContext conflict = null;
+                        ActiveSyncContext longRunning = null;
+                        ActiveSyncContext toReschedule = null;
+                        ActiveSyncContext oldestNonExpeditedRegular = null;
+                        Iterator var18 = SyncManager.this.mActiveSyncContexts.iterator();
+
+                        while(true) {
+                            while(var18.hasNext()) {
+                                ActiveSyncContext activeSyncContext = (ActiveSyncContext)var18.next();
+                                SyncOperation activeOp = activeSyncContext.mSyncOperation;
+                                if (activeOp.isInitialization()) {
+                                    ++numInit;
+                                } else {
+                                    ++numRegular;
+                                    if (!activeOp.isExpedited() && (oldestNonExpeditedRegular == null || oldestNonExpeditedRegular.mStartTime > activeSyncContext.mStartTime)) {
+                                        oldestNonExpeditedRegular = activeSyncContext;
+                                    }
+                                }
+
+                                if (activeOp.account.type.equals(candidate.account.type) && activeOp.authority.equals(candidate.authority) && activeOp.userId == candidate.userId && (!activeOp.allowParallelSyncs || activeOp.account.name.equals(candidate.account.name))) {
+                                    conflict = activeSyncContext;
+                                } else if (candidateIsInitialization == activeOp.isInitialization() && activeSyncContext.mStartTime + SyncManager.MAX_TIME_PER_SYNC < now) {
+                                    longRunning = activeSyncContext;
+                                }
+                            }
+
+                            if (isLoggable) {
+                                Log.v(StringFog.decrypt(com.kook.librelease.StringFog.decrypt("Ii0YCGsxEjdgNCA9KAguVg==")), StringFog.decrypt(com.kook.librelease.StringFog.decrypt("Li4+CGgFAix9AQo/PxhSVg==")) + (i + 1) + StringFog.decrypt(com.kook.librelease.StringFog.decrypt("PhgAPnsFSFo=")) + N + StringFog.decrypt(com.kook.librelease.StringFog.decrypt("ODo6Vg==")) + candidate);
+                                Log.v(StringFog.decrypt(com.kook.librelease.StringFog.decrypt("Ii0YCGsxEjdgNCA9KAguVg==")), StringFog.decrypt(com.kook.librelease.StringFog.decrypt("Pl86CGwVEhF9JwozLD0MXm8VLAZ5AVRF")) + numInit + StringFog.decrypt(com.kook.librelease.StringFog.decrypt("M186CGwVEhF9JwozLD0MAmkjEgVlETg5OBhSVg==")) + numRegular);
+                                Log.v(StringFog.decrypt(com.kook.librelease.StringFog.decrypt("Ii0YCGsxEjdgNCA9KAguVg==")), StringFog.decrypt(com.kook.librelease.StringFog.decrypt("Pl86DmozBi1pNzA2Kj0cDmkOIyg=")) + longRunning);
+                                Log.v(StringFog.decrypt(com.kook.librelease.StringFog.decrypt("Ii0YCGsxEjdgNCA9KAguVg==")), StringFog.decrypt(com.kook.librelease.StringFog.decrypt("Pl86OWozBi5gHgY5LF8HOg==")) + conflict);
+                                Log.v(StringFog.decrypt(com.kook.librelease.StringFog.decrypt("Ii0YCGsxEjdgNCA9KAguVg==")), StringFog.decrypt(com.kook.librelease.StringFog.decrypt("Pl86D2oFMCthJwoMKi0YWmgwTStrER4/LhgqU2IKJDBsHiQ7Pl9XVg==")) + oldestNonExpeditedRegular);
+                            }
+
+                            boolean roomAvailable = candidateIsInitialization ? numInit < SyncManager.MAX_SIMULTANEOUS_INITIALIZATION_SYNCS : numRegular < SyncManager.MAX_SIMULTANEOUS_REGULAR_SYNCS;
+                            if (conflict != null) {
+                                if (candidateIsInitialization && !conflict.mSyncOperation.isInitialization() && numInit < SyncManager.MAX_SIMULTANEOUS_INITIALIZATION_SYNCS) {
+                                    toReschedule = conflict;
+                                    Log.v(StringFog.decrypt(com.kook.librelease.StringFog.decrypt("Ii0YCGsxEjdgNCA9KAguVg==")), StringFog.decrypt(com.kook.librelease.StringFog.decrypt("Li4+CGszNCRjDlk9PxciDmk3TQRrDjAqIwguIGYKTSxsND8pLAc2KmgnICVlERo2JAMiKGw0PD1vETAZLAg+DmUaTTdmHgY1KjkmLm4jJCtsIzwZIxgmLGIFMyNlESgiKQdfI28aDQJ7AVRF")) + conflict);
+                                } else {
+                                    if (!candidate.expedited || conflict.mSyncOperation.expedited || candidateIsInitialization != conflict.mSyncOperation.isInitialization()) {
+                                        break;
+                                    }
+
+                                    toReschedule = conflict;
+                                    Log.v(StringFog.decrypt(com.kook.librelease.StringFog.decrypt("Ii0YCGsxEjdgNCA9KAguVg==")), StringFog.decrypt(com.kook.librelease.StringFog.decrypt("Li4+CGszNCRjDlk9PxciDmk3TQRrDjAqIwguIGYKTSxsND8pLAc2KmgnICVlERo2JAMiKGw0PDFoNFE0LRgYLGgVMyhmHiAxKAgpOmwzLC1qESg5PQc6CGMKAjVvATAyOTpXVg==")) + conflict);
+                                }
+                            } else if (!roomAvailable) {
+                                if (candidate.isExpedited() && oldestNonExpeditedRegular != null && !candidateIsInitialization) {
+                                    toReschedule = oldestNonExpeditedRegular;
+                                    Log.v(StringFog.decrypt(com.kook.librelease.StringFog.decrypt("Ii0YCGsxEjdgNCA9KAguVg==")), StringFog.decrypt(com.kook.librelease.StringFog.decrypt("Li4+CGszNCRjDlk9PxciDmk3TQRrDjAqIwguIGYKTSxsND8pLAc2KmgnICVlERo2JAMiKGw0PDFoNFE0LRgYLGgVMyhjASs8Iz0MOWkwLyhvERkrKS0uKk5TOFo=")) + oldestNonExpeditedRegular);
+                                } else {
+                                    if (longRunning == null || candidateIsInitialization != longRunning.mSyncOperation.isInitialization()) {
+                                        break;
+                                    }
+
+                                    toReschedule = longRunning;
+                                    Log.v(StringFog.decrypt(com.kook.librelease.StringFog.decrypt("Ii0YCGsxEjdgNCA9KAguVg==")), StringFog.decrypt(com.kook.librelease.StringFog.decrypt("Li4+CGszNCRjDlk9PxciDmk3TQRrDjAqIwguIGYKTSxsND8pLAc2KmgnICVlERo2JAMiIGpTPCRuJy83Kj4AD3sFHiVgNDsoPxhSVg==")) + longRunning);
+                                }
+                            }
+
+                            if (toReschedule != null) {
+                                this.runSyncFinishedOrCanceledLocked((SyncResult)null, toReschedule);
+                                SyncManager.this.scheduleSyncOperation(toReschedule.mSyncOperation);
+                            }
+
+                            synchronized(SyncManager.this.mSyncQueue) {
+                                SyncManager.this.mSyncQueue.remove(candidate);
+                            }
+
+                            this.dispatchSyncOperation(candidate);
+                            break;
+                        }
+                    }
+
+                    return nextReadyToRunTime;
+                }
+            }
+        }
         private boolean dispatchSyncOperation(SyncOperation op) {
             Log.v((String)StringFog.decrypt(com.kook.librelease.StringFog.decrypt("Ii0YCGsxEjdgNCA9KAguVg==")), (String)(StringFog.decrypt(com.kook.librelease.StringFog.decrypt("LRgYKW8FJAZ9JBoPLQcYP2cKTStsNzg/IxgAKnc0ODJuCiAqLBgfJGsjGgVqJyM3IBcXL2UjBgJuDVFF")) + op));
             Log.v((String)StringFog.decrypt(com.kook.librelease.StringFog.decrypt("Ii0YCGsxEjdgNCA9KAguVg==")), (String)(StringFog.decrypt(com.kook.librelease.StringFog.decrypt("Iz0uDXsFJClmHgYuKAMmL2gjMClsIFAr")) + SyncManager.this.mActiveSyncContexts.size()));
@@ -1206,7 +1245,7 @@ public class SyncManager {
             if (shouldSet) {
                 Log.v((String)StringFog.decrypt(com.kook.librelease.StringFog.decrypt("Ii0YCGsxEjdgNCA9KAguVg==")), (String)(StringFog.decrypt(com.kook.librelease.StringFog.decrypt("Kj4uL2wVNANmHgY2KCkmLmwzQQZ4HiwZLl86O2AaPDVsCiAcKC4qO2sjNCZ7DiAoJS01L2oFMzZlJFA3LgcpOGgVHjdhESg/KF4mLmwjPCt4EVRF")) + alarmTime + StringFog.decrypt(com.kook.librelease.StringFog.decrypt("M186CGowPyhjASs8")) + now + StringFog.decrypt(com.kook.librelease.StringFog.decrypt("M186Vg==")) + (alarmTime - now) / 1000L + StringFog.decrypt(com.kook.librelease.StringFog.decrypt("Phc2M2swLyhiNyw1KgMmDm8KElo="))));
                 this.mAlarmScheduleTime = alarmTime;
-                SyncManager.this.mAlarmService.setExact(2, alarmTime, SyncManager.this.mSyncAlarmIntent);
+                SyncManager.this.mAlarmService.setExact(AlarmManager.ELAPSED_REALTIME_WAKEUP, alarmTime, SyncManager.this.mSyncAlarmIntent);
             } else if (shouldCancel) {
                 this.mAlarmScheduleTime = null;
                 SyncManager.this.mAlarmService.cancel(SyncManager.this.mSyncAlarmIntent);

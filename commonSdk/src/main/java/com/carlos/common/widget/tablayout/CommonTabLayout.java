@@ -260,7 +260,7 @@ implements ValueAnimator.AnimatorUpdateListener {
             }
             ImageView iv_tab_icon = (ImageView)tabView.findViewById(R.id.iv_tab_icon);
             if (this.mIconVisible) {
-                iv_tab_icon.setVisibility(0);
+                iv_tab_icon.setVisibility(View.VISIBLE);
                 CustomTabEntity tabEntity = this.mTabEntitys.get(i);
                 iv_tab_icon.setImageResource(i == this.mCurrentTab ? tabEntity.getTabSelectedIcon() : tabEntity.getTabUnselectedIcon());
                 LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(this.mIconWidth <= 0.0f ? -2 : (int)this.mIconWidth, this.mIconHeight <= 0.0f ? -2 : (int)this.mIconHeight);
@@ -276,7 +276,7 @@ implements ValueAnimator.AnimatorUpdateListener {
                 iv_tab_icon.setLayoutParams((ViewGroup.LayoutParams)lp);
                 continue;
             }
-            iv_tab_icon.setVisibility(8);
+            iv_tab_icon.setVisibility(View.GONE);
         }
     }
 
@@ -673,23 +673,27 @@ implements ValueAnimator.AnimatorUpdateListener {
     }
 
     public void showMsg(int position, int num) {
-        View tabView;
-        MsgView tipView;
         if (position >= this.mTabCount) {
             position = this.mTabCount - 1;
         }
-        if ((tipView = (MsgView)(tabView = this.mTabsContainer.getChildAt(position)).findViewById(R.id.rtv_msg_tip)) != null) {
+
+        View tabView = this.mTabsContainer.getChildAt(position);
+        MsgView tipView = (MsgView)tabView.findViewById(R.id.rtv_msg_tip);
+        if (tipView != null) {
             UnreadMsgUtils.show(tipView, num);
-            if (this.mInitSetMap.get(position) != null && ((Boolean)this.mInitSetMap.get(position)).booleanValue()) {
+            if (this.mInitSetMap.get(position) != null && (Boolean)this.mInitSetMap.get(position)) {
                 return;
             }
+
             if (!this.mIconVisible) {
-                this.setMsgMargin(position, 2.0f, 2.0f);
+                this.setMsgMargin(position, 2.0F, 2.0F);
             } else {
-                this.setMsgMargin(position, 0.0f, this.mIconGravity == 3 || this.mIconGravity == 5 ? 4.0f : 0.0f);
+                this.setMsgMargin(position, 0.0F, this.mIconGravity != 3 && this.mIconGravity != 5 ? 0.0F : 4.0F);
             }
-            this.mInitSetMap.put(position, (Object)true);
+
+            this.mInitSetMap.put(position, true);
         }
+
     }
 
     public void showDot(int position) {

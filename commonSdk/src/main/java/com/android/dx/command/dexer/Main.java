@@ -251,18 +251,24 @@ public class Main {
         return DEX_PREFIX + (i + 1) + DEX_EXTENSION;
     }
 
-    /*
-     * WARNING - Removed try catching itself - possible behaviour change.
-     */
     private static void readPathsFromFile(String fileName, Collection<String> paths) throws IOException {
-        try (BufferedReader bfr = null;){
-            String line;
+        BufferedReader bfr = null;
+
+        try {
             FileReader fr = new FileReader(fileName);
             bfr = new BufferedReader(fr);
-            while (null != (line = bfr.readLine())) {
-                paths.add(Main.fixPath(line));
+
+            String line;
+            while(null != (line = bfr.readLine())) {
+                paths.add(fixPath(line));
             }
+        } finally {
+            if (bfr != null) {
+                bfr.close();
+            }
+
         }
+
     }
 
     private byte[] mergeIncremental(byte[] update, File base) throws IOException {
@@ -304,7 +310,7 @@ public class Main {
     private boolean processAllFiles() {
         /*
          * This method has failed to decompile.  When submitting a bug report, please provide this stack trace, and (if you hold appropriate legal rights) the relevant class file.
-         * 
+         *
          * org.benf.cfr.reader.util.ConfusedCFRException: Started 2 blocks at once
          *     at org.benf.cfr.reader.bytecode.analysis.opgraph.Op04StructuredStatement.getStartingBlocks(Op04StructuredStatement.java:412)
          *     at org.benf.cfr.reader.bytecode.analysis.opgraph.Op04StructuredStatement.buildNestedBlocks(Op04StructuredStatement.java:487)

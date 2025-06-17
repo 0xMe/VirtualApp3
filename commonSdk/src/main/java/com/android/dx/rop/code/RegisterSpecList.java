@@ -9,9 +9,7 @@ import com.android.dx.rop.type.TypeList;
 import com.android.dx.util.FixedSizeList;
 import java.util.BitSet;
 
-public final class RegisterSpecList
-extends FixedSizeList
-implements TypeList {
+public final class RegisterSpecList extends FixedSizeList implements TypeList {
     public static final RegisterSpecList EMPTY = new RegisterSpecList(0);
 
     public static RegisterSpecList make(RegisterSpec spec) {
@@ -218,9 +216,8 @@ implements TypeList {
         }
 
         private void expandRegister(int regIdx, RegisterSpec registerToExpand) {
+            boolean replace = this.compatRegs == null ? true : !this.compatRegs.get(regIdx);
             RegisterSpec expandedReg;
-            boolean replace;
-            boolean bl = this.compatRegs == null ? true : (replace = !this.compatRegs.get(regIdx));
             if (replace) {
                 expandedReg = registerToExpand.withReg(this.base);
                 if (!this.duplicateFirst) {
@@ -229,6 +226,7 @@ implements TypeList {
             } else {
                 expandedReg = registerToExpand;
             }
+
             this.duplicateFirst = false;
             this.result.set0(regIdx, expandedReg);
         }
@@ -237,6 +235,7 @@ implements TypeList {
             if (this.regSpecList.isImmutable()) {
                 this.result.setImmutable();
             }
+
             return this.result;
         }
     }

@@ -86,7 +86,7 @@ implements Parcelable {
         PackageUserState state = (PackageUserState)this.userState.get(userId);
         if (state == null) {
             state = new PackageUserState();
-            this.userState.put(userId, (Object)state);
+            this.userState.put(userId, state);
         }
         return state;
     }

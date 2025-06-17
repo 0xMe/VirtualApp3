@@ -64,7 +64,7 @@ extends PersistenceLayer {
         while (N-- > 0) {
             int userId = p.readInt();
             HashMap userMap = p.readHashMap(VSConfig.class.getClassLoader());
-            configs.put(userId, (Object)userMap);
+            configs.put(userId, userMap);
         }
     }
 

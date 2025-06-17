@@ -6,6 +6,7 @@ package com.lody.virtual.helper.collection;
 import com.lody.virtual.helper.collection.MapCollections;
 import com.lody.virtual.helper.collection.SimpleArrayMap;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -85,9 +86,13 @@ implements Map<K, V> {
     @Override
     public void putAll(Map<? extends K, ? extends V> map) {
         this.ensureCapacity(this.mSize + map.size());
-        for (Map.Entry<K, V> entry : map.entrySet()) {
+        Iterator var2 = map.entrySet().iterator();
+
+        while(var2.hasNext()) {
+            Map.Entry<? extends K, ? extends V> entry = (Map.Entry)var2.next();
             this.put(entry.getKey(), entry.getValue());
         }
+
     }
 
     public boolean removeAll(Collection<?> collection) {

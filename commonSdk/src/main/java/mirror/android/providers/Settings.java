@@ -15,7 +15,6 @@ package mirror.android.providers;
 import android.annotation.TargetApi;
 import android.content.ContentResolver;
 import android.os.IInterface;
-import android.provider.Settings;
 import com.lody.virtual.StringFog;
 import mirror.RefClass;
 import mirror.RefMethod;

@@ -11,8 +11,7 @@ import com.android.dx.rop.type.TypeBearer;
 import com.android.dx.util.ToHuman;
 import java.util.concurrent.ConcurrentHashMap;
 
-public final class RegisterSpec
-implements TypeBearer,
+public final class RegisterSpec implements TypeBearer,
 ToHuman,
 Comparable<RegisterSpec> {
     public static final String PREFIX = "v";

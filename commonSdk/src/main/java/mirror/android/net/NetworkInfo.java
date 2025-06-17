@@ -8,7 +8,6 @@
  */
 package mirror.android.net;
 
-import android.net.NetworkInfo;
 import mirror.MethodParams;
 import mirror.RefBoolean;
 import mirror.RefClass;
@@ -24,8 +23,8 @@ public class NetworkInfo {
     public static RefConstructor<android.net.NetworkInfo> ctorOld;
     public static RefInt mNetworkType;
     public static RefObject<String> mTypeName;
-    public static RefObject<NetworkInfo.State> mState;
-    public static RefObject<NetworkInfo.DetailedState> mDetailedState;
+    public static RefObject<android.net.NetworkInfo.State> mState;
+    public static RefObject<android.net.NetworkInfo.DetailedState> mDetailedState;
     public static RefBoolean mIsAvailable;
 }
 

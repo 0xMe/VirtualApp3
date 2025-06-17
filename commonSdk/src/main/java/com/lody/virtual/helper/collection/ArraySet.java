@@ -322,7 +322,7 @@ Set<E> {
         return (E)old;
     }
 
-    @Override
+
     public boolean removeAll(ArraySet<? extends E> array2) {
         int N = array2.mSize;
         int originalSize = this.mSize;
@@ -345,16 +345,18 @@ Set<E> {
     }
 
     @Override
-    public <T> T[] toArray(T[] array2) {
-        if (array2.length < this.mSize) {
-            Object[] newArray = (Object[])Array.newInstance(array2.getClass().getComponentType(), this.mSize);
-            array2 = newArray;
+    public <T> T[] toArray(T[] array) {
+        if (array.length < this.mSize) {
+            T[] newArray = (T[]) Array.newInstance(array.getClass().getComponentType(), this.mSize);
+            array = newArray;
         }
-        System.arraycopy(this.mArray, 0, array2, 0, this.mSize);
-        if (array2.length > this.mSize) {
-            array2[this.mSize] = null;
+
+        System.arraycopy(this.mArray, 0, array, 0, this.mSize);
+        if (array.length > this.mSize) {
+            array[this.mSize] = null;
         }
-        return array2;
+
+        return array;
     }
 
     @Override

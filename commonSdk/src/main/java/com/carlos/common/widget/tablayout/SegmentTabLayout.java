@@ -528,7 +528,7 @@ implements ValueAnimator.AnimatorUpdateListener {
                 return;
             }
             this.setMsgMargin(position, 2.0f, 2.0f);
-            this.mInitSetMap.put(position, (Object)true);
+            this.mInitSetMap.put(position, true);
         }
     }
 
@@ -546,7 +546,7 @@ implements ValueAnimator.AnimatorUpdateListener {
             position = this.mTabCount - 1;
         }
         if ((tipView = (MsgView)(tabView = this.mTabsContainer.getChildAt(position)).findViewById(R.id.rtv_msg_tip)) != null) {
-            tipView.setVisibility(8);
+            tipView.setVisibility(View.GONE);
         }
     }
 

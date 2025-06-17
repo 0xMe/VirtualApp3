@@ -87,8 +87,9 @@ public final class Code {
     private <T> Local<T> coerce(Local<?> local, TypeId<T> expectedType) {
         if (!local.type.equals(expectedType)) {
             throw new IllegalArgumentException("requested " + expectedType + " but was " + local.type);
+        } else {
+            return (Local<T>) local;
         }
-        return local;
     }
 
     void initializeLocals() {
