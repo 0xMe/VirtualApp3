@@ -32,7 +32,7 @@ extends BinderInvocationProxy {
 
             @Override
             public boolean beforeCall(Object who, Method method, Object ... args) {
-                if (Build.VERSION.SDK_INT >= 17 && 1.isFakeLocationEnable()) {
+                if (Build.VERSION.SDK_INT >= 17 && isFakeLocationEnable()) {
                     for (int i = args.length - 1; i > 0; --i) {
                         if (!(args[i] instanceof Integer)) continue;
                         int events = (Integer)args[i];

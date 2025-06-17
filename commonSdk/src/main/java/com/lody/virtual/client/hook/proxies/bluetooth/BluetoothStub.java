@@ -1,6 +1,6 @@
 /*
  * Decompiled with CFR 0.152.
- * 
+ *
  * Could not load the following classes:
  *  android.os.Build$VERSION
  *  android.os.IInterface
@@ -63,9 +63,9 @@ extends BinderInvocationProxy {
                         @Override
                         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
                             if (StringFog.decrypt(com.kook.librelease.StringFog.decrypt("LS4uLGMVMCxhNDApIy5SVg==")).equals(method.getName())) {
-                                String mac;
-                                VDeviceConfig config = 1.getDeviceConfig();
-                                if (config.enable && !TextUtils.isEmpty((CharSequence)(mac = 1.getDeviceConfig().bluetoothMac))) {
+                                String mac = getDeviceConfig().bluetoothMac;
+                                VDeviceConfig config = getDeviceConfig();
+                                if (config.enable && !TextUtils.isEmpty((CharSequence)(getDeviceConfig().bluetoothMac))) {
                                     return mac;
                                 }
                             }

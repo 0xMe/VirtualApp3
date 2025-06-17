@@ -32,8 +32,8 @@ extends BinderInvocationProxy {
             @Override
             public Object call(Object who, Method method, Object ... args) throws Throwable {
                 int uid = (Integer)args[0];
-                if (uid == 1.getVUid()) {
-                    args[0] = 1.getRealUid();
+                if (uid == getVUid()) {
+                    args[0] = getRealUid();
                 }
                 return super.call(who, method, args);
             }

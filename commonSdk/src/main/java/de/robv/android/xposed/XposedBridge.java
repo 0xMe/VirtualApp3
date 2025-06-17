@@ -80,54 +80,53 @@ public final class XposedBridge {
      * WARNING - Removed try catching itself - possible behaviour change.
      */
     public static XC_MethodHook.Unhook hookMethod(Member hookMethod, XC_MethodHook callback) {
-        CopyOnWriteSortedSet<XC_MethodHook> callbacks;
         if (!(hookMethod instanceof Method) && !(hookMethod instanceof Constructor)) {
             throw new IllegalArgumentException("Only methods and constructors can be hooked: " + hookMethod.toString());
-        }
-        if (hookMethod.getDeclaringClass().isInterface()) {
+        } else if (hookMethod.getDeclaringClass().isInterface()) {
             throw new IllegalArgumentException("Cannot hook interfaces: " + hookMethod.toString());
-        }
-        if (Modifier.isAbstract(hookMethod.getModifiers())) {
+        } else if (Modifier.isAbstract(hookMethod.getModifiers())) {
             throw new IllegalArgumentException("Cannot hook abstract methods: " + hookMethod.toString());
-        }
-        if (callback == null) {
+        } else if (callback == null) {
             throw new IllegalArgumentException("callback should not be null!");
-        }
-        boolean newMethod = false;
-        Map<Member, CopyOnWriteSortedSet<XC_MethodHook>> map = sHookedMethodCallbacks;
-        synchronized (map) {
-            callbacks = sHookedMethodCallbacks.get(hookMethod);
-            if (callbacks == null) {
-                callbacks = new CopyOnWriteSortedSet();
-                sHookedMethodCallbacks.put(hookMethod, callbacks);
-                newMethod = true;
+        } else {
+            boolean newMethod = false;
+            CopyOnWriteSortedSet callbacks;
+            synchronized(sHookedMethodCallbacks) {
+                callbacks = (CopyOnWriteSortedSet)sHookedMethodCallbacks.get(hookMethod);
+                if (callbacks == null) {
+                    callbacks = new CopyOnWriteSortedSet();
+                    sHookedMethodCallbacks.put(hookMethod, callbacks);
+                    newMethod = true;
+                }
             }
-        }
-        callbacks.add(callback);
-        if (newMethod) {
-            Class<?> returnType;
-            Class[] parameterTypes;
-            int slot;
-            Class<?> declaringClass = hookMethod.getDeclaringClass();
-            if (runtime == 2) {
-                slot = 0;
-                parameterTypes = null;
-                returnType = null;
-            } else if (hookMethod instanceof Method) {
-                slot = XposedHelpers.getIntField(hookMethod, "slot");
-                parameterTypes = ((Method)hookMethod).getParameterTypes();
-                returnType = ((Method)hookMethod).getReturnType();
-            } else {
-                slot = XposedHelpers.getIntField(hookMethod, "slot");
-                parameterTypes = ((Constructor)hookMethod).getParameterTypes();
-                returnType = null;
+
+            callbacks.add(callback);
+            if (newMethod) {
+                Class<?> declaringClass = hookMethod.getDeclaringClass();
+                int slot;
+                Class[] parameterTypes;
+                Class returnType;
+                if (runtime == 2) {
+                    slot = 0;
+                    parameterTypes = null;
+                    returnType = null;
+                } else if (hookMethod instanceof Method) {
+                    slot = XposedHelpers.getIntField(hookMethod, "slot");
+                    parameterTypes = ((Method)hookMethod).getParameterTypes();
+                    returnType = ((Method)hookMethod).getReturnType();
+                } else {
+                    slot = XposedHelpers.getIntField(hookMethod, "slot");
+                    parameterTypes = ((Constructor)hookMethod).getParameterTypes();
+                    returnType = null;
+                }
+
+                AdditionalHookInfo additionalInfo = new AdditionalHookInfo(callbacks, parameterTypes, returnType);
+                hookMethodNative(hookMethod, declaringClass, slot, additionalInfo);
             }
-            AdditionalHookInfo additionalInfo = new AdditionalHookInfo(callbacks, parameterTypes, returnType);
-            XposedBridge.hookMethodNative(hookMethod, declaringClass, slot, additionalInfo);
+
+            Objects.requireNonNull(callback);
+            return new XC_MethodHook.Unhook(callback, hookMethod);
         }
-        XC_MethodHook xC_MethodHook = callback;
-        Objects.requireNonNull(xC_MethodHook);
-        return xC_MethodHook.new XC_MethodHook.Unhook(hookMethod);
     }
 
     /*

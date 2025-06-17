@@ -1,21 +1,21 @@
-/*
- * Decompiled with CFR 0.152.
- */
+//
+// Source code recreated from a .class file by IntelliJ IDEA
+// (powered by FernFlower decompiler)
+//
+
 package com.lody.virtual.client.hook.proxies.audio;
 
 import com.lody.virtual.StringFog;
 import com.lody.virtual.client.hook.base.BinderInvocationProxy;
 import com.lody.virtual.client.hook.base.ReplaceLastPkgMethodProxy;
 import java.lang.reflect.Method;
-import mirror.android.media.IAudioService;
+import mirror.android.media.IAudioService.Stub;
 
-public class AudioManagerStub
-extends BinderInvocationProxy {
+public class AudioManagerStub extends BinderInvocationProxy {
     public AudioManagerStub() {
-        super(IAudioService.Stub.asInterface, StringFog.decrypt(com.kook.librelease.StringFog.decrypt("LgcuPGUVGlo=")));
+        super(Stub.asInterface, StringFog.decrypt(com.kook.librelease.StringFog.decrypt("LgcuPGUVGlo=")));
     }
 
-    @Override
     protected void onBindMethods() {
         super.onBindMethods();
         this.addMethodProxy(new ReplaceLastPkgMethodProxy(StringFog.decrypt(com.kook.librelease.StringFog.decrypt("LggqMmwaLAZuNB4oLAdXPQ=="))));
@@ -25,11 +25,9 @@ extends BinderInvocationProxy {
         this.addMethodProxy(new ReplaceLastPkgMethodProxy(StringFog.decrypt(com.kook.librelease.StringFog.decrypt("LggqMmwaLAZoDiApLBcMKH0VNCRvAQ4g"))));
         this.addMethodProxy(new ReplaceLastPkgMethodProxy(StringFog.decrypt(com.kook.librelease.StringFog.decrypt("Ki4uLGcwMARiDiA3JD1fCGUjPCs="))));
         this.addMethodProxy(new ReplaceLastPkgMethodProxy(StringFog.decrypt(com.kook.librelease.StringFog.decrypt("Ki4uLGIVJANmHjAqJD1fCGUjPCs="))));
-        this.addMethodProxy(new ReplaceLastPkgMethodProxy(StringFog.decrypt(com.kook.librelease.StringFog.decrypt("Ki4uLGIVAilhNB4sKRdfDmkhPAVvEShF"))){
-
-            @Override
-            public Object call(Object who, Method method, Object ... args) throws Throwable {
-                1.replaceLastUserId(args);
+        this.addMethodProxy(new ReplaceLastPkgMethodProxy(StringFog.decrypt(com.kook.librelease.StringFog.decrypt("Ki4uLGIVAilhNB4sKRdfDmkhPAVvEShF"))) {
+            public Object call(Object who, Method method, Object... args) throws Throwable {
+                replaceLastUserId(args);
                 return super.call(who, method, args);
             }
         });
@@ -49,4 +47,3 @@ extends BinderInvocationProxy {
         this.addMethodProxy(new ReplaceLastPkgMethodProxy(StringFog.decrypt(com.kook.librelease.StringFog.decrypt("KQgcKmgVPC9hJwo/IzsiLWkzLCVjNwYqKhc2H2AaGiBsNzBF"))));
     }
 }
-

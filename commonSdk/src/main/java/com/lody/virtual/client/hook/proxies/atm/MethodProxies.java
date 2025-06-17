@@ -1,82 +1,71 @@
-/*
- * Decompiled with CFR 0.152.
- */
+//
+// Source code recreated from a .class file by IntelliJ IDEA
+// (powered by FernFlower decompiler)
+//
+
 package com.lody.virtual.client.hook.proxies.atm;
 
-import com.lody.virtual.client.hook.proxies.am.MethodProxies;
-
 public class MethodProxies {
+    public MethodProxies() {
+    }
 
-    static class GetAppTasks
-    extends MethodProxies.GetAppTasks {
+    static class GetAppTasks extends com.lody.virtual.client.hook.proxies.am.MethodProxies.GetAppTasks {
         GetAppTasks() {
         }
     }
 
-    static class OverridePendingTransitionInAtm
-    extends MethodProxies.OverridePendingTransition {
+    static class OverridePendingTransitionInAtm extends com.lody.virtual.client.hook.proxies.am.MethodProxies.OverridePendingTransition {
         OverridePendingTransitionInAtm() {
         }
     }
 
-    static class GetCallingPackageInAtm
-    extends MethodProxies.GetCallingPackage {
+    static class GetCallingPackageInAtm extends com.lody.virtual.client.hook.proxies.am.MethodProxies.GetCallingPackage {
         GetCallingPackageInAtm() {
         }
     }
 
-    static class GetTasksInAtm
-    extends MethodProxies.GetTasks {
+    static class GetTasksInAtm extends com.lody.virtual.client.hook.proxies.am.MethodProxies.GetTasks {
         GetTasksInAtm() {
         }
     }
 
-    static class StartActivityIntentSenderInAtm
-    extends MethodProxies.StartActivityIntentSender {
+    static class StartActivityIntentSenderInAtm extends com.lody.virtual.client.hook.proxies.am.MethodProxies.StartActivityIntentSender {
         StartActivityIntentSenderInAtm() {
         }
     }
 
-    static class StartActivityWithConfigInAtm
-    extends MethodProxies.StartActivityWithConfig {
+    static class StartActivityWithConfigInAtm extends com.lody.virtual.client.hook.proxies.am.MethodProxies.StartActivityWithConfig {
         StartActivityWithConfigInAtm() {
         }
     }
 
-    static class SetTaskDescriptionInAtm
-    extends MethodProxies.SetTaskDescription {
+    static class SetTaskDescriptionInAtm extends com.lody.virtual.client.hook.proxies.am.MethodProxies.SetTaskDescription {
         SetTaskDescriptionInAtm() {
         }
     }
 
-    static class StartActivityAsUserInAtm
-    extends MethodProxies.StartActivityAsUser {
+    static class StartActivityAsUserInAtm extends com.lody.virtual.client.hook.proxies.am.MethodProxies.StartActivityAsUser {
         StartActivityAsUserInAtm() {
         }
     }
 
-    static class StartActivityAndWaitInAtm
-    extends MethodProxies.StartActivityAndWait {
+    static class StartActivityAndWaitInAtm extends com.lody.virtual.client.hook.proxies.am.MethodProxies.StartActivityAndWait {
         StartActivityAndWaitInAtm() {
         }
     }
 
-    static class StartActivitiesInAtm
-    extends MethodProxies.StartActivities {
+    static class StartActivitiesInAtm extends com.lody.virtual.client.hook.proxies.am.MethodProxies.StartActivities {
         StartActivitiesInAtm() {
         }
     }
 
-    static class GetCallingActivityInAtm
-    extends MethodProxies.GetCallingActivity {
+    static class GetCallingActivityInAtm extends com.lody.virtual.client.hook.proxies.am.MethodProxies.GetCallingActivity {
         GetCallingActivityInAtm() {
         }
     }
 
-    static class StartActivityInAtm
-    extends MethodProxies.StartActivity {
+    static class StartActivityInAtm extends com.lody.virtual.client.hook.proxies.am.MethodProxies.StartActivity {
         StartActivityInAtm() {
         }
     }
 }
-

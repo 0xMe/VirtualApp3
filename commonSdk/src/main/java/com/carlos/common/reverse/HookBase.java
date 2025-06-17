@@ -3,7 +3,7 @@
  */
 package com.carlos.common.reverse;
 
-import android.compat.Compatibility;
+
 import com.kook.common.utils.HVLog;
 import com.kook.librelease.StringFog;
 import de.robv.android.xposed.XC_MethodHook;
@@ -17,7 +17,7 @@ public class HookBase {
                 Object default_callbacks = Compatibility.DEFAULT_CALLBACKS.get();
                 Object sCallbacks = Compatibility.sCallbacks.get();
                 if (sCallbacks != null) {
-                    Compatibility.setBehaviorChangeDelegate.call(Compatibility.DEFAULT_CALLBACKS, new Compatibility.BehaviorChangeDelegate(){
+                    Compatibility.setBehaviorChangeDelegate.call(Compatibility.DEFAULT_CALLBACKS, new android.compat.Compatibility.BehaviorChangeDelegate(){
 
                         @Override
                         public boolean isChangeEnabled(long changeId) {

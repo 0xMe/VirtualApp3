@@ -38,8 +38,7 @@ import com.carlos.common.imagepicker.entity.Image;
 import com.kook.librelease.R;
 import java.util.List;
 
-public class BottomPreviewAdapter
-extends RecyclerView.Adapter<CustomeHolder> {
+public class BottomPreviewAdapter extends RecyclerView.Adapter<BottomPreviewAdapter.CustomeHolder> {
     private Context context;
     private List<Image> imagesList;
     public OnItemClcikLitener onItemClcikLitener;
@@ -96,8 +95,7 @@ extends RecyclerView.Adapter<CustomeHolder> {
         this.notifyDataSetChanged();
     }
 
-    class CustomeHolder
-    extends RecyclerView.ViewHolder {
+    class CustomeHolder extends RecyclerView.ViewHolder {
         private ImageView imageView;
 
         public CustomeHolder(View itemView) {

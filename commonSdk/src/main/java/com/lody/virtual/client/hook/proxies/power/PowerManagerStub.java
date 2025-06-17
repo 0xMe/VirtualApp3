@@ -69,7 +69,7 @@ extends BinderInvocationProxy {
                 @Override
                 public Object call(Object who, Method method, Object ... args) throws Throwable {
                     if (args[3] instanceof String && this.isAppPkg((String)args[3])) {
-                        args[3] = 4.getHostPkg();
+                        args[3] = getHostPkg();
                     }
                     PowerManagerStub.this.replaceWorkSource(args);
                     return super.call(who, method, args);

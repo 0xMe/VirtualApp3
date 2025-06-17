@@ -1,16 +1,13 @@
-/*
- * Decompiled with CFR 0.152.
- * 
- * Could not load the following classes:
- *  android.location.GpsStatus
- *  android.location.LocationManager
- *  android.os.Build$VERSION
- */
+//
+// Source code recreated from a .class file by IntelliJ IDEA
+// (powered by FernFlower decompiler)
+//
+
 package com.lody.virtual.client.hook.proxies.location;
 
 import android.location.GpsStatus;
 import android.location.LocationManager;
-import android.os.Build;
+import android.os.Build.VERSION;
 import com.lody.virtual.StringFog;
 import com.lody.virtual.client.env.VirtualGPSSatalines;
 import com.lody.virtual.client.ipc.VLocationManager;
@@ -23,203 +20,228 @@ import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
 import mirror.android.location.GpsStatusL;
-import mirror.android.location.LocationManager;
+import mirror.android.location.LocationManager.GnssStatusListenerTransport;
+import mirror.android.location.LocationManager.GnssStatusListenerTransportO;
+import mirror.android.location.LocationManager.GpsStatusListenerTransport;
+import mirror.android.location.LocationManager.GpsStatusListenerTransportOPPO_R815T;
+import mirror.android.location.LocationManager.GpsStatusListenerTransportSumsungS5;
+import mirror.android.location.LocationManager.GpsStatusListenerTransportVIVO;
 
 public class MockLocationHelper {
+    public MockLocationHelper() {
+    }
+
     public static void invokeNmeaReceived(Object listener) {
         if (listener != null) {
             VirtualGPSSatalines satalines = VirtualGPSSatalines.get();
+
             try {
                 VLocation location = VLocationManager.get().getCurAppLocation();
                 if (location != null) {
-                    String date = new SimpleDateFormat(StringFog.decrypt(com.kook.librelease.StringFog.decrypt("JBZfDWoaLAN3NSgP")), Locale.US).format(new Date());
-                    String lat = MockLocationHelper.getGPSLat(location.getLatitude());
-                    String lon = MockLocationHelper.getGPSLat(location.getLongitude());
-                    String latNW = MockLocationHelper.getNorthWest(location);
-                    String lonSE = MockLocationHelper.getSouthEast(location);
-                    String $GPGGA = MockLocationHelper.checksum(String.format(StringFog.decrypt(com.kook.librelease.StringFog.decrypt("PRYmAmAxPBFOVzApOl4ML383GgN1Vig6PAQuD05SPzd+AS8bM141CHVSASR/DQISCF5eP3VTQV5/Myc7")), date, lat, latNW, lon, lonSE, satalines.getSvCount()));
-                    String $GPRMC = MockLocationHelper.checksum(String.format(StringFog.decrypt(com.kook.librelease.StringFog.decrypt("PRYmAmchEhNOVzApOhUhCHkgDSR7DjMdPhc1KEgFNzd1V1w5OTleMnxTPyN8MwU7CBUlOw==")), date, lat, latNW, lon, lonSE));
-                    if (LocationManager.GnssStatusListenerTransport.onNmeaReceived != null) {
-                        LocationManager.GnssStatusListenerTransport.onNmeaReceived.call(listener, System.currentTimeMillis(), StringFog.decrypt(com.kook.librelease.StringFog.decrypt("PRYmAmA2LFNOViMoMwNaKnU3OwF8MwU7Ol8DDUwJBTd1IzsbPCkfKH9TJwJ/ClgiCF8lPHxSOy1/MBEvM14LLn8nGQNPV1ApMwNaLXVSOwF/VycdOV4XKEk3JzY=")));
-                        LocationManager.GnssStatusListenerTransport.onNmeaReceived.call(listener, System.currentTimeMillis(), $GPGGA);
-                        LocationManager.GnssStatusListenerTransport.onNmeaReceived.call(listener, System.currentTimeMillis(), StringFog.decrypt(com.kook.librelease.StringFog.decrypt("PRYmAmQmMBdOVicoJF5aKn8xPyR8VgJAPAM5KGskTQ58VwE7My5SVg==")));
-                        LocationManager.GnssStatusListenerTransport.onNmeaReceived.call(listener, System.currentTimeMillis(), $GPRMC);
-                        LocationManager.GnssStatusListenerTransport.onNmeaReceived.call(listener, System.currentTimeMillis(), StringFog.decrypt(com.kook.librelease.StringFog.decrypt("PRYmAmA2LBFOHCMoMzlaKXpSOwF/DQU8P18DD08OTDd8V1wbOTohKHVTOyR8DQUiCQQpO3sJBSB/Mz8bOS5SVg==")));
-                    } else if (LocationManager.GpsStatusListenerTransport.onNmeaReceived != null) {
-                        LocationManager.GpsStatusListenerTransport.onNmeaReceived.call(listener, System.currentTimeMillis(), StringFog.decrypt(com.kook.librelease.StringFog.decrypt("PRYmAmA2LFNOViMoMwNaKnU3OwF8MwU7Ol8DDUwJBTd1IzsbPCkfKH9TJwJ/ClgiCF8lPHxSOy1/MBEvM14LLn8nGQNPV1ApMwNaLXVSOwF/VycdOV4XKEk3JzY=")));
-                        LocationManager.GpsStatusListenerTransport.onNmeaReceived.call(listener, System.currentTimeMillis(), $GPGGA);
-                        LocationManager.GpsStatusListenerTransport.onNmeaReceived.call(listener, System.currentTimeMillis(), StringFog.decrypt(com.kook.librelease.StringFog.decrypt("PRYmAmQmMBdOVicoJF5aKn8xPyR8VgJAPAM5KGskTQ58VwE7My5SVg==")));
-                        LocationManager.GpsStatusListenerTransport.onNmeaReceived.call(listener, System.currentTimeMillis(), $GPRMC);
-                        LocationManager.GpsStatusListenerTransport.onNmeaReceived.call(listener, System.currentTimeMillis(), StringFog.decrypt(com.kook.librelease.StringFog.decrypt("PRYmAmA2LBFOHCMoMzlaKXpSOwF/DQU8P18DD08OTDd8V1wbOTohKHVTOyR8DQUiCQQpO3sJBSB/Mz8bOS5SVg==")));
+                    String date = (new SimpleDateFormat(StringFog.decrypt(com.kook.librelease.StringFog.decrypt("JBZfDWoaLAN3NSgP")), Locale.US)).format(new Date());
+                    String lat = getGPSLat(location.getLatitude());
+                    String lon = getGPSLat(location.getLongitude());
+                    String latNW = getNorthWest(location);
+                    String lonSE = getSouthEast(location);
+                    String $GPGGA = checksum(String.format(StringFog.decrypt(com.kook.librelease.StringFog.decrypt("PRYmAmAxPBFOVzApOl4ML383GgN1Vig6PAQuD05SPzd+AS8bM141CHVSASR/DQISCF5eP3VTQV5/Myc7")), date, lat, latNW, lon, lonSE, satalines.getSvCount()));
+                    String $GPRMC = checksum(String.format(StringFog.decrypt(com.kook.librelease.StringFog.decrypt("PRYmAmchEhNOVzApOhUhCHkgDSR7DjMdPhc1KEgFNzd1V1w5OTleMnxTPyN8MwU7CBUlOw==")), date, lat, latNW, lon, lonSE));
+                    if (GnssStatusListenerTransport.onNmeaReceived != null) {
+                        GnssStatusListenerTransport.onNmeaReceived.call(listener, new Object[]{System.currentTimeMillis(), StringFog.decrypt(com.kook.librelease.StringFog.decrypt("PRYmAmA2LFNOViMoMwNaKnU3OwF8MwU7Ol8DDUwJBTd1IzsbPCkfKH9TJwJ/ClgiCF8lPHxSOy1/MBEvM14LLn8nGQNPV1ApMwNaLXVSOwF/VycdOV4XKEk3JzY="))});
+                        GnssStatusListenerTransport.onNmeaReceived.call(listener, new Object[]{System.currentTimeMillis(), $GPGGA});
+                        GnssStatusListenerTransport.onNmeaReceived.call(listener, new Object[]{System.currentTimeMillis(), StringFog.decrypt(com.kook.librelease.StringFog.decrypt("PRYmAmQmMBdOVicoJF5aKn8xPyR8VgJAPAM5KGskTQ58VwE7My5SVg=="))});
+                        GnssStatusListenerTransport.onNmeaReceived.call(listener, new Object[]{System.currentTimeMillis(), $GPRMC});
+                        GnssStatusListenerTransport.onNmeaReceived.call(listener, new Object[]{System.currentTimeMillis(), StringFog.decrypt(com.kook.librelease.StringFog.decrypt("PRYmAmA2LBFOHCMoMzlaKXpSOwF/DQU8P18DD08OTDd8V1wbOTohKHVTOyR8DQUiCQQpO3sJBSB/Mz8bOS5SVg=="))});
+                    } else if (GpsStatusListenerTransport.onNmeaReceived != null) {
+                        GpsStatusListenerTransport.onNmeaReceived.call(listener, new Object[]{System.currentTimeMillis(), StringFog.decrypt(com.kook.librelease.StringFog.decrypt("PRYmAmA2LFNOViMoMwNaKnU3OwF8MwU7Ol8DDUwJBTd1IzsbPCkfKH9TJwJ/ClgiCF8lPHxSOy1/MBEvM14LLn8nGQNPV1ApMwNaLXVSOwF/VycdOV4XKEk3JzY="))});
+                        GpsStatusListenerTransport.onNmeaReceived.call(listener, new Object[]{System.currentTimeMillis(), $GPGGA});
+                        GpsStatusListenerTransport.onNmeaReceived.call(listener, new Object[]{System.currentTimeMillis(), StringFog.decrypt(com.kook.librelease.StringFog.decrypt("PRYmAmQmMBdOVicoJF5aKn8xPyR8VgJAPAM5KGskTQ58VwE7My5SVg=="))});
+                        GpsStatusListenerTransport.onNmeaReceived.call(listener, new Object[]{System.currentTimeMillis(), $GPRMC});
+                        GpsStatusListenerTransport.onNmeaReceived.call(listener, new Object[]{System.currentTimeMillis(), StringFog.decrypt(com.kook.librelease.StringFog.decrypt("PRYmAmA2LBFOHCMoMzlaKXpSOwF/DQU8P18DD08OTDd8V1wbOTohKHVTOyR8DQUiCQQpO3sJBSB/Mz8bOS5SVg=="))});
                     }
                 }
-            }
-            catch (Throwable e) {
-                e.printStackTrace();
+            } catch (Throwable var10) {
+                var10.printStackTrace();
             }
         }
+
     }
 
     public static void fakeGpsStatusN(LocationManager locationManager) {
-        block1: {
-            if (mirror.android.location.LocationManager.mGpsStatusListeners == null) {
-                return;
+        if (mirror.android.location.LocationManager.mGpsStatusListeners != null) {
+            Map mGpsStatusListeners = (Map)mirror.android.location.LocationManager.mGpsStatusListeners.get(locationManager);
+            Iterator var2 = mGpsStatusListeners.values().iterator();
+            if (var2.hasNext()) {
+                Object listenerTransport = var2.next();
+                invokeSvStatusChanged(listenerTransport);
             }
-            Map mGpsStatusListeners = mirror.android.location.LocationManager.mGpsStatusListeners.get(locationManager);
-            Iterator iterator = mGpsStatusListeners.values().iterator();
-            if (!iterator.hasNext()) break block1;
-            Object listenerTransport = iterator.next();
-            MockLocationHelper.invokeSvStatusChanged(listenerTransport);
+
         }
     }
 
     public static void fakeGpsStatus(LocationManager locationManager) {
-        if (Build.VERSION.SDK_INT >= 24) {
-            MockLocationHelper.fakeGpsStatusN(locationManager);
-            return;
-        }
-        GpsStatus mGpsStatus = null;
-        try {
-            mGpsStatus = (GpsStatus)Reflect.on(locationManager).get(StringFog.decrypt(com.kook.librelease.StringFog.decrypt("IwYmKG82LAZ9AQovIy5SVg==")));
-        }
-        catch (Throwable throwable) {
-            // empty catch block
-        }
-        if (mGpsStatus == null) {
-            return;
-        }
-        VirtualGPSSatalines satalines = VirtualGPSSatalines.get();
-        int svCount = satalines.getSvCount();
-        float[] snrs = satalines.getSnrs();
-        int[] prns = satalines.getPrns();
-        float[] elevations = satalines.getElevations();
-        float[] azimuths = satalines.getAzimuths();
-        try {
-            if (GpsStatusL.setStatus != null) {
-                svCount = satalines.getSvCount();
-                int length = satalines.getPrns().length;
-                elevations = satalines.getElevations();
-                azimuths = satalines.getAzimuths();
-                int[] ephemerisMask = new int[length];
-                for (int i = 0; i < length; ++i) {
-                    ephemerisMask[i] = satalines.getEphemerisMask();
-                }
-                int[] almanacMask = new int[length];
-                for (int i = 0; i < length; ++i) {
-                    almanacMask[i] = satalines.getAlmanacMask();
-                }
-                int[] usedInFixMask = new int[length];
-                for (int i = 0; i < length; ++i) {
-                    usedInFixMask[i] = satalines.getUsedInFixMask();
-                }
-                GpsStatusL.setStatus.call(mGpsStatus, svCount, prns, snrs, elevations, azimuths, ephemerisMask, almanacMask, usedInFixMask);
-            } else if (mirror.android.location.GpsStatus.setStatus != null) {
-                int ephemerisMask = satalines.getEphemerisMask();
-                int almanacMask = satalines.getAlmanacMask();
-                int usedInFixMask = satalines.getUsedInFixMask();
-                mirror.android.location.GpsStatus.setStatus.call(mGpsStatus, svCount, prns, snrs, elevations, azimuths, ephemerisMask, almanacMask, usedInFixMask);
+        if (VERSION.SDK_INT >= 24) {
+            fakeGpsStatusN(locationManager);
+        } else {
+            GpsStatus mGpsStatus = null;
+
+            try {
+                mGpsStatus = (GpsStatus)Reflect.on(locationManager).get(StringFog.decrypt(com.kook.librelease.StringFog.decrypt("IwYmKG82LAZ9AQovIy5SVg==")));
+            } catch (Throwable var13) {
             }
-        }
-        catch (Exception exception) {
-            // empty catch block
+
+            if (mGpsStatus != null) {
+                VirtualGPSSatalines satalines = VirtualGPSSatalines.get();
+                int svCount = satalines.getSvCount();
+                float[] snrs = satalines.getSnrs();
+                int[] prns = satalines.getPrns();
+                float[] elevations = satalines.getElevations();
+                float[] azimuths = satalines.getAzimuths();
+
+                try {
+                    int length;
+                    int i;
+                    if (GpsStatusL.setStatus != null) {
+                        svCount = satalines.getSvCount();
+                        length = satalines.getPrns().length;
+                        elevations = satalines.getElevations();
+                        azimuths = satalines.getAzimuths();
+                        int[] ephemerisMask = new int[length];
+
+                        for(i = 0; i < length; ++i) {
+                            ephemerisMask[i] = satalines.getEphemerisMask();
+                        }
+
+                        int[] almanacMask = new int[length];
+
+                        for(int i2 = 0; i2 < length; ++i2) {
+                            almanacMask[i] = satalines.getAlmanacMask();
+                        }
+
+                        int[] usedInFixMask = new int[length];
+
+                        for(int i3 = 0; i3 < length; ++i3) {
+                            usedInFixMask[i3] = satalines.getUsedInFixMask();
+                        }
+
+                        GpsStatusL.setStatus.call(mGpsStatus, new Object[]{svCount, prns, snrs, elevations, azimuths, ephemerisMask, almanacMask, usedInFixMask});
+                    } else if (mirror.android.location.GpsStatus.setStatus != null) {
+                        length = satalines.getEphemerisMask();
+                        int almanacMask = satalines.getAlmanacMask();
+                        i = satalines.getUsedInFixMask();
+                        mirror.android.location.GpsStatus.setStatus.call(mGpsStatus, new Object[]{svCount, prns, snrs, elevations, azimuths, length, almanacMask, i});
+                    }
+                } catch (Exception var14) {
+                }
+
+            }
         }
     }
 
     public static void invokeSvStatusChanged(Object transport) {
         if (transport != null) {
             VirtualGPSSatalines satalines = VirtualGPSSatalines.get();
+
             try {
                 Class<?> aClass = transport.getClass();
-                if (aClass == LocationManager.GnssStatusListenerTransport.TYPE) {
-                    int svCount = satalines.getSvCount();
-                    int[] prnWithFlags = satalines.getPrnWithFlags();
-                    float[] snrs = satalines.getSnrs();
-                    float[] elevations = satalines.getElevations();
-                    float[] azimuths = satalines.getAzimuths();
+                int svCount;
+                float[] snrs;
+                float[] elevations;
+                float[] azimuths;
+                int[] prns;
+                if (aClass == GnssStatusListenerTransport.TYPE) {
+                    svCount = satalines.getSvCount();
+                    prns = satalines.getPrnWithFlags();
+                    snrs = satalines.getSnrs();
+                    elevations = satalines.getElevations();
+                    azimuths = satalines.getAzimuths();
                     if (BuildCompat.isOreo()) {
                         float[] carrierFreqs = satalines.getCarrierFreqs();
+
                         try {
-                            LocationManager.GnssStatusListenerTransportO.onSvStatusChanged.call(transport, svCount, prnWithFlags, snrs, elevations, azimuths, carrierFreqs);
+                            GnssStatusListenerTransportO.onSvStatusChanged.call(transport, new Object[]{svCount, prns, snrs, elevations, azimuths, carrierFreqs});
+                        } catch (NullPointerException var16) {
                         }
-                        catch (NullPointerException nullPointerException) {}
                     } else {
-                        LocationManager.GnssStatusListenerTransport.onSvStatusChanged.call(transport, svCount, prnWithFlags, snrs, elevations, azimuths);
+                        GnssStatusListenerTransport.onSvStatusChanged.call(transport, new Object[]{svCount, prns, snrs, elevations, azimuths});
                     }
-                } else if (aClass == LocationManager.GpsStatusListenerTransport.TYPE) {
-                    int svCount = satalines.getSvCount();
-                    int[] prns = satalines.getPrns();
-                    float[] snrs = satalines.getSnrs();
-                    float[] elevations = satalines.getElevations();
-                    float[] azimuths = satalines.getAzimuths();
+                } else if (aClass == GpsStatusListenerTransport.TYPE) {
+                    svCount = satalines.getSvCount();
+                    prns = satalines.getPrns();
+                    snrs = satalines.getSnrs();
+                    elevations = satalines.getElevations();
+                    azimuths = satalines.getAzimuths();
                     int ephemerisMask = satalines.getEphemerisMask();
                     int almanacMask = satalines.getAlmanacMask();
                     int usedInFixMask = satalines.getUsedInFixMask();
-                    if (LocationManager.GpsStatusListenerTransport.onSvStatusChanged != null) {
-                        LocationManager.GpsStatusListenerTransport.onSvStatusChanged.call(transport, svCount, prns, snrs, elevations, azimuths, ephemerisMask, almanacMask, usedInFixMask);
-                    } else if (LocationManager.GpsStatusListenerTransportVIVO.onSvStatusChanged != null) {
-                        LocationManager.GpsStatusListenerTransportVIVO.onSvStatusChanged.call(transport, svCount, prns, snrs, elevations, azimuths, ephemerisMask, almanacMask, usedInFixMask, new long[svCount]);
-                    } else if (LocationManager.GpsStatusListenerTransportSumsungS5.onSvStatusChanged != null) {
-                        LocationManager.GpsStatusListenerTransportSumsungS5.onSvStatusChanged.call(transport, svCount, prns, snrs, elevations, azimuths, ephemerisMask, almanacMask, usedInFixMask, new int[svCount]);
-                    } else if (LocationManager.GpsStatusListenerTransportOPPO_R815T.onSvStatusChanged != null) {
+                    if (GpsStatusListenerTransport.onSvStatusChanged != null) {
+                        GpsStatusListenerTransport.onSvStatusChanged.call(transport, new Object[]{svCount, prns, snrs, elevations, azimuths, ephemerisMask, almanacMask, usedInFixMask});
+                    } else if (GpsStatusListenerTransportVIVO.onSvStatusChanged != null) {
+                        GpsStatusListenerTransportVIVO.onSvStatusChanged.call(transport, new Object[]{svCount, prns, snrs, elevations, azimuths, ephemerisMask, almanacMask, usedInFixMask, new long[svCount]});
+                    } else if (GpsStatusListenerTransportSumsungS5.onSvStatusChanged != null) {
+                        GpsStatusListenerTransportSumsungS5.onSvStatusChanged.call(transport, new Object[]{svCount, prns, snrs, elevations, azimuths, ephemerisMask, almanacMask, usedInFixMask, new int[svCount]});
+                    } else if (GpsStatusListenerTransportOPPO_R815T.onSvStatusChanged != null) {
                         int len = prns.length;
                         int[] ephemerisMasks = new int[len];
-                        for (int i = 0; i < len; ++i) {
+
+                        for(int i = 0; i < len; ++i) {
                             ephemerisMasks[i] = satalines.getEphemerisMask();
                         }
+
                         int[] almanacMasks = new int[len];
-                        for (int i = 0; i < len; ++i) {
+
+                        for(int i = 0; i < len; ++i) {
                             almanacMasks[i] = satalines.getAlmanacMask();
                         }
+
                         int[] usedInFixMasks = new int[len];
-                        for (int i = 0; i < len; ++i) {
+
+                        for(int i = 0; i < len; ++i) {
                             usedInFixMasks[i] = satalines.getUsedInFixMask();
                         }
-                        LocationManager.GpsStatusListenerTransportOPPO_R815T.onSvStatusChanged.call(transport, svCount, prns, snrs, elevations, azimuths, ephemerisMasks, almanacMasks, usedInFixMasks, svCount);
+
+                        GpsStatusListenerTransportOPPO_R815T.onSvStatusChanged.call(transport, new Object[]{svCount, prns, snrs, elevations, azimuths, ephemerisMasks, almanacMasks, usedInFixMasks, svCount});
                     }
                 }
-            }
-            catch (Throwable e) {
-                e.printStackTrace();
+            } catch (Throwable var17) {
+                var17.printStackTrace();
             }
         }
+
     }
 
     private static String getSouthEast(VLocation location) {
-        if (location.getLongitude() > 0.0) {
-            return StringFog.decrypt(com.kook.librelease.StringFog.decrypt("JQhSVg=="));
-        }
-        return StringFog.decrypt(com.kook.librelease.StringFog.decrypt("IS5SVg=="));
+        return location.getLongitude() > 0.0 ? StringFog.decrypt(com.kook.librelease.StringFog.decrypt("JQhSVg==")) : StringFog.decrypt(com.kook.librelease.StringFog.decrypt("IS5SVg=="));
     }
 
     private static String getNorthWest(VLocation location) {
-        if (location.getLatitude() > 0.0) {
-            return StringFog.decrypt(com.kook.librelease.StringFog.decrypt("Oz5SVg=="));
-        }
-        return StringFog.decrypt(com.kook.librelease.StringFog.decrypt("Ii5SVg=="));
+        return location.getLatitude() > 0.0 ? StringFog.decrypt(com.kook.librelease.StringFog.decrypt("Oz5SVg==")) : StringFog.decrypt(com.kook.librelease.StringFog.decrypt("Ii5SVg=="));
     }
 
     public static String getGPSLat(double v) {
         int du = (int)v;
         double fen = (v - (double)du) * 60.0;
-        return du + MockLocationHelper.leftZeroPad((int)fen, 2) + StringFog.decrypt(com.kook.librelease.StringFog.decrypt("OD5SVg==")) + String.valueOf(fen).substring(2);
+        return du + leftZeroPad((int)fen, 2) + StringFog.decrypt(com.kook.librelease.StringFog.decrypt("OD5SVg==")) + String.valueOf(fen).substring(2);
     }
 
     private static String leftZeroPad(int num, int size) {
-        return MockLocationHelper.leftZeroPad(String.valueOf(num), size);
+        return leftZeroPad(String.valueOf(num), size);
     }
 
     private static String leftZeroPad(String num, int size) {
         StringBuilder sb = new StringBuilder(size);
+        int i;
         if (num == null) {
-            for (int i = 0; i < size; ++i) {
+            for(i = 0; i < size; ++i) {
                 sb.append('0');
             }
         } else {
-            for (int i = 0; i < size - num.length(); ++i) {
+            for(i = 0; i < size - num.length(); ++i) {
                 sb.append('0');
             }
+
             sb.append(num);
         }
+
         return sb.toString();
     }
 
@@ -228,11 +250,13 @@ public class MockLocationHelper {
         if (nema.startsWith(StringFog.decrypt(com.kook.librelease.StringFog.decrypt("PRhSVg==")))) {
             checkStr = nema.substring(1);
         }
+
         int sum = 0;
-        for (int i = 0; i < checkStr.length(); ++i) {
+
+        for(int i = 0; i < checkStr.length(); ++i) {
             sum ^= (byte)checkStr.charAt(i);
         }
+
         return nema + StringFog.decrypt(com.kook.librelease.StringFog.decrypt("PD5SVg==")) + String.format(StringFog.decrypt(com.kook.librelease.StringFog.decrypt("PQM5KmEFSFo=")), sum).toLowerCase();
     }
 }
-

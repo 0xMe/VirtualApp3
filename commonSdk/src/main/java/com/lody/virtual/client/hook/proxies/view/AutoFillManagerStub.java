@@ -66,7 +66,7 @@ extends BinderInvocationProxy {
 
             @Override
             public Object call(Object who, Method method, Object ... args) throws Throwable {
-                1.replaceFirstUserId(args);
+                replaceFirstUserId(args);
                 return super.call(who, method, args);
             }
         });

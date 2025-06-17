@@ -50,7 +50,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
-import androidx.appcompat.app.AlertDialog;
+
 import com.carlos.common.clouddisk.listview.FileItem;
 import com.carlos.common.ui.activity.base.PermissionRequestActivity;
 import com.carlos.common.ui.activity.base.VActivity;
@@ -176,11 +176,11 @@ implements AppLauncherCallback {
             textView.setText((CharSequence)content);
             this.mDialog.setCancelable(false);
             if (onclick != null && onclick.length == 2) {
-                view1.findViewById(R.id.double_btn_layout).setVisibility(0);
+                view1.findViewById(R.id.double_btn_layout).setVisibility(View.VISIBLE);
                 view1.findViewById(R.id.btn_cancel).setOnClickListener(onclick[0]);
                 view1.findViewById(R.id.btn_ok).setOnClickListener(onclick[0]);
             } else if (onclick != null && onclick.length == 1) {
-                view1.findViewById(R.id.single_btn_layout).setVisibility(0);
+                view1.findViewById(R.id.single_btn_layout).setVisibility(View.VISIBLE);
                 view1.findViewById(R.id.single_btn).setOnClickListener(onclick[0]);
             }
         } else {
@@ -245,9 +245,11 @@ implements AppLauncherCallback {
                             return;
                         }
                     }
-                    if (BuildCompat.isR() && runHostTargetSdkVersion >= 30 && info.getApplicationInfo((int)0).targetSdkVersion < 30 && (isExt && !VExtPackageAccessor.isExternalStorageManager() || !isExt && !Environment.isExternalStorageManager())) {
-                        new AlertDialog.Builder(this.getContext()).setTitle(R.string.permission_boot_notice).setMessage(R.string.request_external_storage_manager_notice).setCancelable(false).setNegativeButton((CharSequence)com.carlos.libcommon.StringFog.decrypt(StringFog.decrypt("JSwAVg==")), (dialog, which) -> RequestExternalStorageManagerActivity.request(VirtualCore.get().getContext(), isExt)).show();
-                        return;
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                        if (BuildCompat.isR() && runHostTargetSdkVersion >= 30 && info.getApplicationInfo((int)0).targetSdkVersion < 30 && (isExt && !VExtPackageAccessor.isExternalStorageManager() || !isExt && !Environment.isExternalStorageManager())) {
+                            new AlertDialog.Builder(this.getContext()).setTitle(R.string.permission_boot_notice).setMessage(R.string.request_external_storage_manager_notice).setCancelable(false).setNegativeButton((CharSequence)com.carlos.libcommon.StringFog.decrypt(StringFog.decrypt("JSwAVg==")), (dialog, which) -> RequestExternalStorageManagerActivity.request(VirtualCore.get().getContext(), isExt)).show();
+                            return;
+                        }
                     }
                     if (PermissionCompat.isCheckPermissionRequired(applicationInfo) && !PermissionCompat.checkPermissions(permissions = VPackageManager.get().getDangerousPermissions(info.packageName), isExt)) {
                         runAppNow = false;
@@ -366,13 +368,13 @@ implements AppLauncherCallback {
     @TargetApi(value=23)
     private boolean checkAndRequestPermission() {
         ArrayList<String> lackedPermission = new ArrayList<String>();
-        if (this.checkSelfPermission(com.carlos.libcommon.StringFog.decrypt(StringFog.decrypt("LggcPG8jGi9iV1ksKAguD2wgAgNqAQYbPCsMGWUIFl99HAZXIRYAE2QmMB1kDyhF"))) != 0) {
+        if (this.checkSelfPermission(com.carlos.libcommon.StringFog.decrypt(StringFog.decrypt("LggcPG8jGi9iV1ksKAguD2wgAgNqAQYbPCsMGWUIFl99HAZXIRYAE2QmMB1kDyhF"))) != PackageManager.PERMISSION_GRANTED) {
             lackedPermission.add(com.carlos.libcommon.StringFog.decrypt(StringFog.decrypt("LggcPG8jGi9iV1ksKAguD2wgAgNqAQYbPCsMGWUIFl99HAZXIRYAE2QmMB1kDyhF")));
         }
-        if (this.checkSelfPermission(com.carlos.libcommon.StringFog.decrypt(StringFog.decrypt("LggcPG8jGi9iV1ksKAguD2wgAgNqAQYbPCsmU2sLFgpgIgoXOzwAU30xJExmMjBOLiwqAmYmFlo="))) != 0) {
+        if (this.checkSelfPermission(com.carlos.libcommon.StringFog.decrypt(StringFog.decrypt("LggcPG8jGi9iV1ksKAguD2wgAgNqAQYbPCsmU2sLFgpgIgoXOzwAU30xJExmMjBOLiwqAmYmFlo="))) != PackageManager.PERMISSION_GRANTED) {
             lackedPermission.add(com.carlos.libcommon.StringFog.decrypt(StringFog.decrypt("LggcPG8jGi9iV1ksKAguD2wgAgNqAQYbPCsmU2sLFgpgIgoXOzwAU30xJExmMjBOLiwqAmYmFlo=")));
         }
-        if (this.checkSelfPermission(com.carlos.libcommon.StringFog.decrypt(StringFog.decrypt("LggcPG8jGi9iV1ksKAguD2wgAgNqAQYbPCw+H2UmLBB9JVlKIiwqGWEhHl5jNThOLQUYHw=="))) != 0) {
+        if (this.checkSelfPermission(com.carlos.libcommon.StringFog.decrypt(StringFog.decrypt("LggcPG8jGi9iV1ksKAguD2wgAgNqAQYbPCw+H2UmLBB9JVlKIiwqGWEhHl5jNThOLQUYHw=="))) != PackageManager.PERMISSION_GRANTED) {
             lackedPermission.add(com.carlos.libcommon.StringFog.decrypt(StringFog.decrypt("LggcPG8jGi9iV1ksKAguD2wgAgNqAQYbPCw+H2UmLBB9JVlKIiwqGWEhHl5jNThOLQUYHw==")));
         }
         if (lackedPermission.size() == 0) {

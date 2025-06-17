@@ -56,7 +56,7 @@ extends BinderInvocationProxy {
             @Override
             public Object call(Object who, Method method, Object ... args) throws Throwable {
                 if (args[args.length - 1] instanceof Integer) {
-                    args[args.length - 1] = 1.getRealUid();
+                    args[args.length - 1] = getRealUid();
                 }
                 return method.invoke(who, args);
             }
@@ -65,7 +65,7 @@ extends BinderInvocationProxy {
 
             @Override
             public Object call(Object who, Method method, Object ... args) throws Throwable {
-                2.replaceLastUserId(args);
+                replaceLastUserId(args);
                 return super.call(who, method, args);
             }
         });
@@ -73,7 +73,7 @@ extends BinderInvocationProxy {
 
             @Override
             public Object call(Object who, Method method, Object ... args) throws Throwable {
-                3.replaceLastUserId(args);
+                replaceLastUserId(args);
                 return super.call(who, method, args);
             }
         });
@@ -89,7 +89,7 @@ extends BinderInvocationProxy {
                     int userId = (Integer)args[userIdIndex];
                     return MountServiceStub.this.queryStatsForPackage(packageName, userId);
                 }
-                4.replaceLastUserId(args);
+                replaceLastUserId(args);
                 return super.call(who, method, args);
             }
         });

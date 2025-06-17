@@ -1,17 +1,8 @@
-/*
- * Decompiled with CFR 0.152.
- * 
- * Could not load the following classes:
- *  android.content.Intent
- *  android.content.pm.ActivityInfo
- *  android.os.Handler
- *  android.os.Handler$Callback
- *  android.os.IBinder
- *  android.os.IInterface
- *  android.os.Message
- *  android.os.RemoteException
- *  android.util.Log
- */
+//
+// Source code recreated from a .class file by IntelliJ IDEA
+// (powered by FernFlower decompiler)
+//
+
 package com.lody.virtual.client.hook.proxies.am;
 
 import android.content.Intent;
@@ -40,15 +31,15 @@ import mirror.android.app.ActivityManagerNative;
 import mirror.android.app.ActivityThread;
 import mirror.android.app.ClientTransactionHandler;
 import mirror.android.app.IActivityManager;
+import mirror.android.app.ActivityClient.ActivityClientControllerSingleton;
+import mirror.android.app.ActivityThread.ActivityClientRecord;
+import mirror.android.app.ActivityThread.H;
 import mirror.android.app.servertransaction.ClientTransaction;
 import mirror.android.app.servertransaction.ClientTransactionItem;
 import mirror.android.app.servertransaction.LaunchActivityItem;
 import mirror.android.app.servertransaction.TopResumedActivityChangeItem;
-import mirror.android.os.Handler;
 
-public class HCallbackStub
-implements Handler.Callback,
-IInjector {
+public class HCallbackStub implements Handler.Callback, IInjector {
     private static final int LAUNCH_ACTIVITY;
     private static final int EXECUTE_TRANSACTION;
     private static final int SCHEDULE_CRASH;
@@ -64,182 +55,200 @@ IInjector {
         return sCallback;
     }
 
-    private static android.os.Handler getH() {
-        return ActivityThread.mH.get(VirtualCore.mainThread());
+    private static Handler getH() {
+        return (Handler)ActivityThread.mH.get(VirtualCore.mainThread());
     }
 
     private static Handler.Callback getHCallback() {
         try {
-            android.os.Handler handler = HCallbackStub.getH();
-            return Handler.mCallback.get(handler);
-        }
-        catch (Throwable e) {
-            e.printStackTrace();
+            Handler handler = getH();
+            return (Handler.Callback)mirror.android.os.Handler.mCallback.get(handler);
+        } catch (Throwable var1) {
+            var1.printStackTrace();
             return null;
         }
     }
 
-    /*
-     * WARNING - Removed try catching itself - possible behaviour change.
-     */
     public boolean handleMessage(Message msg) {
         if (this.mAvoidRecurisve.beginCall()) {
             try {
+                boolean var7;
                 if (LAUNCH_ACTIVITY == msg.what) {
                     if (!this.handleLaunchActivity(msg, msg.obj)) {
-                        boolean bl = true;
-                        return bl;
+                        var7 = true;
+                        return var7;
                     }
                 } else if (BuildCompat.isPie() && EXECUTE_TRANSACTION == msg.what) {
                     if (!this.handleExecuteTransaction(msg)) {
-                        boolean bl = true;
-                        return bl;
+                        var7 = true;
+                        return var7;
                     }
                 } else if (SCHEDULE_CRASH == msg.what) {
                     String crashReason = (String)msg.obj;
-                    new RemoteException(crashReason).printStackTrace();
-                    boolean bl = false;
-                    return bl;
+                    (new RemoteException(crashReason)).printStackTrace();
+                    boolean var3 = false;
+                    return var3;
                 }
-                if (this.otherCallback != null) {
-                    boolean bl = this.otherCallback.handleMessage(msg);
-                    return bl;
+
+                if (this.otherCallback == null) {
+                    return false;
+                } else {
+                    var7 = this.otherCallback.handleMessage(msg);
+                    return var7;
                 }
-            }
-            finally {
+            } finally {
                 this.mAvoidRecurisve.finishCall();
             }
+        } else {
+            return false;
         }
-        return false;
     }
 
     private boolean handleExecuteTransaction(Message msg) {
         Object transaction = msg.obj;
         IBinder token = this.getTokenByClientTransaction(transaction);
-        Object r = ClientTransactionHandler.getActivityClient.call(VirtualCore.mainThread(), token);
-        List<Object> activityCallbacks = ClientTransaction.mActivityCallbacks.get(transaction);
-        if (activityCallbacks == null || activityCallbacks.isEmpty()) {
-            return true;
-        }
-        Object item = activityCallbacks.get(0);
-        if (item == null) {
-            return true;
-        }
-        if (r == null) {
-            if (item.getClass() != LaunchActivityItem.TYPE) {
+        Object r = ClientTransactionHandler.getActivityClient.call(VirtualCore.mainThread(), new Object[]{token});
+        List<Object> activityCallbacks = (List)ClientTransaction.mActivityCallbacks.get(transaction);
+        if (activityCallbacks != null && !activityCallbacks.isEmpty()) {
+            Object item = activityCallbacks.get(0);
+            if (item == null) {
+                return true;
+            } else if (r == null) {
+                return item.getClass() != LaunchActivityItem.TYPE ? true : this.handleLaunchActivity(msg, item);
+            } else {
+                if (BuildCompat.isQ() && TopResumedActivityChangeItem.TYPE != null && item.getClass() == TopResumedActivityChangeItem.TYPE) {
+                    try {
+                        if (TopResumedActivityChangeItem.mOnTop.get(item) == ActivityClientRecord.isTopResumedActivity.get(r)) {
+                            Log.e(TAG, StringFog.decrypt(com.kook.librelease.StringFog.decrypt("Jgg2LGUaOC9mERk8LBdfKn4wTSVsJx4/IxgAKksaPDdlNAoqLz01JGwjNCB7Diw6DRcYJWIaRSZ7J1RF")) + TopResumedActivityChangeItem.mOnTop.get(item));
+                            return false;
+                        }
+                    } catch (Throwable var8) {
+                        return false;
+                    }
+                }
+
                 return true;
             }
-            return this.handleLaunchActivity(msg, item);
+        } else {
+            return true;
         }
-        if (BuildCompat.isQ() && TopResumedActivityChangeItem.TYPE != null && item.getClass() == TopResumedActivityChangeItem.TYPE) {
-            try {
-                if (TopResumedActivityChangeItem.mOnTop.get(item) == ActivityThread.ActivityClientRecord.isTopResumedActivity.get(r)) {
-                    Log.e((String)TAG, (String)(StringFog.decrypt(com.kook.librelease.StringFog.decrypt("Jgg2LGUaOC9mERk8LBdfKn4wTSVsJx4/IxgAKksaPDdlNAoqLz01JGwjNCB7Diw6DRcYJWIaRSZ7J1RF")) + TopResumedActivityChangeItem.mOnTop.get(item)));
-                    return false;
-                }
-            }
-            catch (Throwable e) {
-                return false;
-            }
-        }
-        return true;
     }
 
     private IBinder getTokenByClientTransaction(Object transaction) {
         IBinder token = null;
         if (ClientTransaction.mActivityToken == null) {
-            List<Object> items;
-            if (ClientTransaction.getTransactionItems != null && (items = ClientTransaction.getTransactionItems.call(transaction, new Object[0])) != null && !items.isEmpty()) {
-                Object item = items.get(0);
-                token = ClientTransactionItem.getActivityToken.call(item, new Object[0]);
+            List items;
+            Object mLifecycleStateRequest;
+            if (ClientTransaction.getTransactionItems != null && (items = (List)ClientTransaction.getTransactionItems.call(transaction, new Object[0])) != null && !items.isEmpty()) {
+                mLifecycleStateRequest = items.get(0);
+                token = (IBinder)ClientTransactionItem.getActivityToken.call(mLifecycleStateRequest, new Object[0]);
             }
+
             if (token == null) {
-                Object mLifecycleStateRequest = ClientTransaction.mLifecycleStateRequest.get(transaction);
+                mLifecycleStateRequest = ClientTransaction.mLifecycleStateRequest.get(transaction);
                 if (mLifecycleStateRequest == null) {
-                    List<Object> activityCallbacks = ClientTransaction.mActivityCallbacks.get(transaction);
-                    if (activityCallbacks != null && !activityCallbacks.isEmpty()) {
-                        return ClientTransactionItem.getActivityToken.call(activityCallbacks.get(0), new Object[0]);
-                    }
-                    return token;
+                    List<Object> activityCallbacks = (List)ClientTransaction.mActivityCallbacks.get(transaction);
+                    return activityCallbacks != null && !activityCallbacks.isEmpty() ? (IBinder)ClientTransactionItem.getActivityToken.call(activityCallbacks.get(0), new Object[0]) : token;
+                } else {
+                    return (IBinder)ClientTransactionItem.getActivityToken.call(mLifecycleStateRequest, new Object[0]);
                 }
-                return ClientTransactionItem.getActivityToken.call(mLifecycleStateRequest, new Object[0]);
+            } else {
+                return token;
             }
-            return token;
+        } else {
+            return (IBinder)ClientTransaction.mActivityToken.get(transaction);
         }
-        return ClientTransaction.mActivityToken.get(transaction);
     }
 
     private boolean handleLaunchActivity(Message msg, Object r) {
-        Intent stubIntent = BuildCompat.isPie() ? LaunchActivityItem.mIntent.get(r) : ActivityThread.ActivityClientRecord.intent.get(r);
+        Intent stubIntent;
+        if (BuildCompat.isPie()) {
+            stubIntent = (Intent)LaunchActivityItem.mIntent.get(r);
+        } else {
+            stubIntent = (Intent)ActivityClientRecord.intent.get(r);
+        }
+
         ShadowActivityInfo saveInstance = new ShadowActivityInfo(stubIntent);
         if (saveInstance.intent == null) {
             return true;
-        }
-        Intent intent = saveInstance.intent;
-        IBinder token = BuildCompat.isPie() ? ClientTransaction.mActivityToken.get(msg.obj) : this.getTokenByClientTransaction(msg.obj);
-        ActivityInfo info = saveInstance.info;
-        if (info == null) {
-            return true;
-        }
-        if (VClient.get().getClientConfig() == null) {
-            InstalledAppInfo installedAppInfo = VirtualCore.get().getInstalledAppInfo(info.packageName, 0);
-            if (installedAppInfo == null) {
+        } else {
+            Intent intent = saveInstance.intent;
+            IBinder token;
+            if (BuildCompat.isPie()) {
+                token = (IBinder)ClientTransaction.mActivityToken.get(msg.obj);
+            } else {
+                token = this.getTokenByClientTransaction(msg.obj);
+            }
+
+            ActivityInfo info = saveInstance.info;
+            if (info == null) {
+                return true;
+            } else if (VClient.get().getClientConfig() == null) {
+                InstalledAppInfo installedAppInfo = VirtualCore.get().getInstalledAppInfo(info.packageName, 0);
+                if (installedAppInfo == null) {
+                    return true;
+                } else {
+                    VActivityManager.get().processRestarted(info.packageName, info.processName, saveInstance.userId);
+                    getH().sendMessageAtFrontOfQueue(Message.obtain(msg));
+                    return false;
+                }
+            } else {
+                VClient.get().bindApplication(info.packageName, info.processName);
+                int taskId = (Integer)IActivityManager.getTaskForActivity.call(ActivityManagerNative.getDefault.call(new Object[0]), new Object[]{token, false});
+                VActivityManager.get().onActivityCreate(saveInstance.virtualToken, token, taskId);
+                ClassLoader appClassLoader = VClient.get().getClassLoader(info.applicationInfo);
+                ComponentUtils.unpackFillIn(intent, appClassLoader);
+                if (BuildCompat.isPie()) {
+                    if (BuildCompat.isS() && ActivityThread.getLaunchingActivity != null) {
+                        Object activityClientRecord = ActivityThread.getLaunchingActivity.call(VirtualCore.mainThread(), new Object[]{token});
+                        if (activityClientRecord != null) {
+                            Object compatInfo = ActivityClientRecord.compatInfo.get(activityClientRecord);
+                            Object loadedApk = ActivityThread.getPackageInfoNoCheck.call(VirtualCore.mainThread(), new Object[]{info.applicationInfo, compatInfo});
+                            ActivityClientRecord.intent.set(activityClientRecord, intent);
+                            ActivityClientRecord.activityInfo.set(activityClientRecord, info);
+                            ActivityClientRecord.packageInfo.set(activityClientRecord, loadedApk);
+                        }
+                    }
+
+                    if (BuildCompat.isS() && LaunchActivityItem.mActivityClientController != null) {
+                        IInterface activityClientController = (IInterface)LaunchActivityItem.mActivityClientController.get(r);
+                        if (activityClientController != null) {
+                            ActivityClientControllerSingleton.mKnownInstance.set(ActivityClient.INTERFACE_SINGLETON.get(), ActivityClientControllerStub.getProxyInterface());
+                        }
+                    }
+
+                    LaunchActivityItem.mIntent.set(r, intent);
+                    LaunchActivityItem.mInfo.set(r, info);
+                } else {
+                    ActivityClientRecord.intent.set(r, intent);
+                    ActivityClientRecord.activityInfo.set(r, info);
+                }
+
                 return true;
             }
-            VActivityManager.get().processRestarted(info.packageName, info.processName, saveInstance.userId);
-            HCallbackStub.getH().sendMessageAtFrontOfQueue(Message.obtain((Message)msg));
-            return false;
         }
-        VClient.get().bindApplication(info.packageName, info.processName);
-        int taskId = IActivityManager.getTaskForActivity.call(ActivityManagerNative.getDefault.call(new Object[0]), token, false);
-        VActivityManager.get().onActivityCreate(saveInstance.virtualToken, token, taskId);
-        ClassLoader appClassLoader = VClient.get().getClassLoader(info.applicationInfo);
-        ComponentUtils.unpackFillIn(intent, appClassLoader);
-        if (BuildCompat.isPie()) {
-            IInterface activityClientController;
-            Object activityClientRecord;
-            if (BuildCompat.isS() && ActivityThread.getLaunchingActivity != null && (activityClientRecord = ActivityThread.getLaunchingActivity.call(VirtualCore.mainThread(), token)) != null) {
-                Object compatInfo = ActivityThread.ActivityClientRecord.compatInfo.get(activityClientRecord);
-                Object loadedApk = ActivityThread.getPackageInfoNoCheck.call(VirtualCore.mainThread(), info.applicationInfo, compatInfo);
-                ActivityThread.ActivityClientRecord.intent.set(activityClientRecord, intent);
-                ActivityThread.ActivityClientRecord.activityInfo.set(activityClientRecord, info);
-                ActivityThread.ActivityClientRecord.packageInfo.set(activityClientRecord, loadedApk);
-            }
-            if (BuildCompat.isS() && LaunchActivityItem.mActivityClientController != null && (activityClientController = LaunchActivityItem.mActivityClientController.get(r)) != null) {
-                ActivityClient.ActivityClientControllerSingleton.mKnownInstance.set(ActivityClient.INTERFACE_SINGLETON.get(), ActivityClientControllerStub.getProxyInterface());
-            }
-            LaunchActivityItem.mIntent.set(r, intent);
-            LaunchActivityItem.mInfo.set(r, info);
-        } else {
-            ActivityThread.ActivityClientRecord.intent.set(r, intent);
-            ActivityThread.ActivityClientRecord.activityInfo.set(r, info);
-        }
-        return true;
     }
 
-    @Override
     public void inject() {
-        this.otherCallback = HCallbackStub.getHCallback();
-        Handler.mCallback.set(HCallbackStub.getH(), this);
+        this.otherCallback = getHCallback();
+        mirror.android.os.Handler.mCallback.set(getH(), this);
     }
 
-    @Override
     public boolean isEnvBad() {
-        boolean envBad;
-        Handler.Callback callback = HCallbackStub.getHCallback();
-        boolean bl = envBad = callback != this;
+        Handler.Callback callback = getHCallback();
+        boolean envBad = callback != this;
         if (callback != null && envBad) {
             VLog.d(TAG, StringFog.decrypt(com.kook.librelease.StringFog.decrypt("JBY2P2oFHip9DigxPxcAOWoJTSpoAS8dPQgACmMaLDV5HiwqKT4iJmgFLD17CgE3")) + callback, new Object[0]);
         }
+
         return envBad;
     }
 
     static {
-        SCHEDULE_CRASH = ActivityThread.H.SCHEDULE_CRASH.get();
-        LAUNCH_ACTIVITY = BuildCompat.isPie() ? -1 : ActivityThread.H.LAUNCH_ACTIVITY.get();
-        EXECUTE_TRANSACTION = BuildCompat.isPie() ? ActivityThread.H.EXECUTE_TRANSACTION.get() : -1;
+        SCHEDULE_CRASH = H.SCHEDULE_CRASH.get();
+        LAUNCH_ACTIVITY = BuildCompat.isPie() ? -1 : H.LAUNCH_ACTIVITY.get();
+        EXECUTE_TRANSACTION = BuildCompat.isPie() ? H.EXECUTE_TRANSACTION.get() : -1;
         TAG = HCallbackStub.class.getSimpleName();
         sCallback = new HCallbackStub();
     }
 }
-

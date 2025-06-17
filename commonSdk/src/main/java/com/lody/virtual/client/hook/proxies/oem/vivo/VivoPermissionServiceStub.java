@@ -37,9 +37,9 @@ extends BinderInvocationProxy {
             @Override
             public Object call(Object who, Method method, Object ... args) throws Throwable {
                 if (args[1] instanceof String) {
-                    args[1] = 1.getHostPkg();
+                    args[1] = getHostPkg();
                 }
-                1.replaceLastUserId(args);
+                replaceLastUserId(args);
                 return super.call(who, method, args);
             }
         });

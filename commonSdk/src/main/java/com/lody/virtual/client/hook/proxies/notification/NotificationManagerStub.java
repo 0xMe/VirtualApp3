@@ -73,7 +73,7 @@ extends MethodInvocationProxy<MethodInvocationStub<IInterface>> {
                     public Object call(Object who, Method method, Object ... args) throws Throwable {
                         args[0] = VirtualCore.get().getHostPkg();
                         args[1] = VirtualCore.get().getHostPkg();
-                        1.replaceLastUserId(args);
+                        replaceLastUserId(args);
                         return super.call(who, method, args);
                     }
                 });
@@ -92,7 +92,7 @@ extends MethodInvocationProxy<MethodInvocationStub<IInterface>> {
                     public Object call(Object who, Method method, Object ... args) throws Throwable {
                         args[0] = VirtualCore.get().getHostPkg();
                         args[2] = VirtualCore.get().getHostPkg();
-                        2.replaceLastUserId(args);
+                        replaceLastUserId(args);
                         return super.call(who, method, args);
                     }
                 });

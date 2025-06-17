@@ -40,8 +40,7 @@ import com.kook.librelease.StringFog;
 import java.io.File;
 import java.util.ArrayList;
 
-public class FolderAdapter
-extends RecyclerView.Adapter<ViewHolder> {
+public class FolderAdapter extends RecyclerView.Adapter<FolderAdapter.ViewHolder> {
     private Context mContext;
     private ArrayList<Folder> mFolders;
     private LayoutInflater mInflater;
@@ -65,7 +64,7 @@ extends RecyclerView.Adapter<ViewHolder> {
         final Folder folder = this.mFolders.get(position);
         ArrayList<Image> images = folder.getImages();
         holder.tvFolderName.setText((CharSequence)folder.getName());
-        holder.ivSelect.setVisibility(this.mSelectItem == position ? 0 : 8);
+        holder.ivSelect.setVisibility(this.mSelectItem == position ? View.VISIBLE : View.GONE);
         if (images != null && !images.isEmpty()) {
             holder.tvFolderSize.setText((CharSequence)(images.size() + com.carlos.libcommon.StringFog.decrypt(StringFog.decrypt("BxsBOA=="))));
             Glide.with((Context)this.mContext).load(new File(images.get(0).getPath())).apply(new RequestOptions().diskCacheStrategy(DiskCacheStrategy.NONE)).into(holder.ivImage);

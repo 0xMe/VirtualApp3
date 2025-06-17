@@ -3,13 +3,11 @@
  */
 package de.robv.android.xposed;
 
-import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.callbacks.IXUnhook;
 import de.robv.android.xposed.callbacks.XCallback;
 import java.lang.reflect.Member;
 
-public abstract class XC_MethodHook
-extends XCallback {
+public abstract class XC_MethodHook extends XCallback {
     public XC_MethodHook() {
     }
 
@@ -31,12 +29,13 @@ extends XCallback {
         this.afterHookedMethod(param);
     }
 
-    public class Unhook
-    implements IXUnhook<XC_MethodHook> {
+    public static class Unhook implements IXUnhook<XC_MethodHook> {
         private final Member hookMethod;
+        private final XC_MethodHook mCallback;
 
-        Unhook(Member hookMethod) {
+        Unhook(XC_MethodHook callback, Member hookMethod) {
             this.hookMethod = hookMethod;
+            this.mCallback = callback;
         }
 
         public Member getHookedMethod() {
@@ -45,17 +44,16 @@ extends XCallback {
 
         @Override
         public XC_MethodHook getCallback() {
-            return XC_MethodHook.this;
+            return mCallback;
         }
 
         @Override
         public void unhook() {
-            XposedBridge.unhookMethod(this.hookMethod, XC_MethodHook.this);
+            XposedBridge.unhookMethod(this.hookMethod, mCallback);
         }
     }
 
-    public static final class MethodHookParam
-    extends XCallback.Param {
+    public static final class MethodHookParam extends XCallback.Param {
         public Member method;
         public Object thisObject;
         public Object[] args;

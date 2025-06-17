@@ -33,7 +33,7 @@ extends BinderInvocationProxy {
 
             @Override
             public Object call(Object who, Method method, Object ... args) throws Throwable {
-                1.replaceLastUserId(args);
+                replaceLastUserId(args);
                 final IInterface ISession = (IInterface)super.call(who, method, args);
                 return SessionManagerStub.CreateProxy(ISession, new InvocationHandler(){
 

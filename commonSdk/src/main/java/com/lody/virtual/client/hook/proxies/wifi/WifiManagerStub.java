@@ -95,7 +95,7 @@ extends BinderInvocationProxy {
 
             @Override
             public Object call(Object who, Method method, Object ... args) throws Throwable {
-                SettingConfig.FakeWifiStatus fakeWifiStatus = 1.getConfig().getFakeWifiStatus(1.getAppPkg(), 1.getAppUserId());
+                SettingConfig.FakeWifiStatus fakeWifiStatus = getConfig().getFakeWifiStatus(getAppPkg(), getAppUserId());
                 if (fakeWifiStatus != null) {
                     return true;
                 }
@@ -111,7 +111,7 @@ extends BinderInvocationProxy {
 
             @Override
             public Object call(Object who, Method method, Object ... args) throws Throwable {
-                SettingConfig.FakeWifiStatus fakeWifiStatus = 2.getConfig().getFakeWifiStatus(2.getAppPkg(), 2.getAppUserId());
+                SettingConfig.FakeWifiStatus fakeWifiStatus = getConfig().getFakeWifiStatus(getAppPkg(), getAppUserId());
                 if (fakeWifiStatus != null) {
                     return 3;
                 }
@@ -128,7 +128,7 @@ extends BinderInvocationProxy {
             @Override
             public Object call(Object who, Method method, Object ... args) throws Throwable {
                 IPInfo ipInfo;
-                SettingConfig.FakeWifiStatus fakeWifiStatus = 3.getConfig().getFakeWifiStatus(3.getAppPkg(), 3.getAppUserId());
+                SettingConfig.FakeWifiStatus fakeWifiStatus = getConfig().getFakeWifiStatus(getAppPkg(), getAppUserId());
                 if (fakeWifiStatus != null && (ipInfo = WifiManagerStub.getIPInfo()) != null) {
                     return WifiManagerStub.this.createDhcpInfo(ipInfo);
                 }

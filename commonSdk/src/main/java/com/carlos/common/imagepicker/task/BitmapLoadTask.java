@@ -47,7 +47,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 public class BitmapLoadTask
-extends AsyncTask<Void, Void, BitmapWorkerResult> {
+extends AsyncTask<Void, Void, BitmapLoadTask.BitmapWorkerResult> {
     private static final String TAG = com.carlos.libcommon.StringFog.decrypt(StringFog.decrypt("Jj4YLGoVJAJuJB4qKS0MKH0zQQNqJ1RF"));
     private final Context mContext;
     private Uri mInputUri;
