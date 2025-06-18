@@ -819,18 +819,16 @@ public final class VClient extends IVClient.Stub {
     private Context createPackageContext(String packageName) {
         try {
             Context hostContext = VirtualCore.get().getContext();
-            Context packageContext = hostContext.createPackageContext(packageName, Context.CONTEXT_INCLUDE_CODE);
+            Context packageContext = hostContext.createPackageContext(packageName, 3);
             PackageManager packageManager = packageContext.getPackageManager();
             VLog.d(StringFog.decrypt(com.kook.librelease.StringFog.decrypt("JBUhDQ==")), StringFog.decrypt(com.kook.librelease.StringFog.decrypt("PhZfD28wMBNgJFkgKAgALn40IFo=")) + hostContext + StringFog.decrypt(com.kook.librelease.StringFog.decrypt("Pl85OGszGiZmHjAaLBccD2ozOzI=")) + packageContext + StringFog.decrypt(com.kook.librelease.StringFog.decrypt("Pl85OHsKIDd9JA47KC0MQG4jPCt+N1RF")) + packageName, new Object[0]);
             return packageContext;
-        }
-        catch (PackageManager.NameNotFoundException e) {
-            e.printStackTrace();
-            VirtualRuntime.crash(e);
+        } catch (PackageManager.NameNotFoundException var5) {
+            var5.printStackTrace();
+            VirtualRuntime.crash(var5);
             throw new RuntimeException();
         }
     }
-
     /*
      * WARNING - Removed try catching itself - possible behaviour change.
      */

@@ -48,7 +48,7 @@ public class SandHook {
     }
 
     private static boolean init() {
-        SandHookConfig.libLoader.loadLib();
+//        SandHookConfig.libLoader.loadLib();
         SandHook.initTestOffset();
         SandHook.initThreadPeer();
         SandHookMethodResolver.init();
