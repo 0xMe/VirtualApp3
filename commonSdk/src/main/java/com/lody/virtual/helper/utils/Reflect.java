@@ -1,8 +1,3 @@
-//
-// Source code recreated from a .class file by IntelliJ IDEA
-// (powered by FernFlower decompiler)
-//
-
 package com.lody.virtual.helper.utils;
 
 import com.lody.virtual.StringFog;
@@ -54,16 +49,14 @@ public class Reflect {
             return null;
         } else {
             if (accessible instanceof Member) {
-                Member member = (Member)accessible;
+                Member member = (Member) accessible;
                 if (Modifier.isPublic(member.getModifiers()) && Modifier.isPublic(member.getDeclaringClass().getModifiers())) {
                     return accessible;
                 }
             }
-
             if (!accessible.isAccessible()) {
                 accessible.setAccessible(true);
             }
-
             return accessible;
         }
     }
@@ -79,7 +72,7 @@ public class Reflect {
 
     private static Reflect on(Constructor<?> constructor, Object... args) throws ReflectException {
         try {
-            return on(((Constructor)accessible(constructor)).newInstance(args));
+            return on(((Constructor) accessible(constructor)).newInstance(args));
         } catch (Exception var3) {
             throw new ReflectException(var3);
         }
@@ -100,7 +93,7 @@ public class Reflect {
     }
 
     private static Object unwrap(Object object) {
-        return object instanceof Reflect ? ((Reflect)object).get() : object;
+        return object instanceof Reflect ? ((Reflect) object).get() : object;
     }
 
     private static Class<?>[] types(Object... values) {
@@ -109,11 +102,10 @@ public class Reflect {
         } else {
             Class<?>[] result = new Class[values.length];
 
-            for(int i = 0; i < values.length; ++i) {
+            for (int i = 0; i < values.length; ++i) {
                 Object value = values[i];
                 result[i] = value == null ? NULL.class : value.getClass();
             }
-
             return result;
         }
     }
@@ -142,40 +134,31 @@ public class Reflect {
                 if (Boolean.TYPE == type) {
                     return Boolean.class;
                 }
-
                 if (Integer.TYPE == type) {
                     return Integer.class;
                 }
-
                 if (Long.TYPE == type) {
                     return Long.class;
                 }
-
                 if (Short.TYPE == type) {
                     return Short.class;
                 }
-
                 if (Byte.TYPE == type) {
                     return Byte.class;
                 }
-
                 if (Double.TYPE == type) {
                     return Double.class;
                 }
-
                 if (Float.TYPE == type) {
                     return Float.class;
                 }
-
                 if (Character.TYPE == type) {
                     return Character.class;
                 }
-
                 if (Void.TYPE == type) {
                     return Void.class;
                 }
             }
-
             return type;
         }
     }
@@ -189,24 +172,21 @@ public class Reflect {
                 if (Boolean.class == type) {
                     return false;
                 }
-
                 if (Number.class.isAssignableFrom(type)) {
                     return 0;
                 }
-
                 if (Character.class == type) {
                     return '\u0000';
                 }
-
                 if (Void.class == type) {
                     return null;
                 }
             }
-
             return null;
         }
     }
 
+    @SuppressWarnings("unchecked")
     public <T> T get() {
         return (T) this.object;
     }
@@ -246,13 +226,12 @@ public class Reflect {
 
     private Field field0(String name) throws ReflectException {
         Class<?> type = this.type();
-
         try {
             return type.getField(name);
         } catch (NoSuchFieldException var6) {
-            while(true) {
+            while (true) {
                 try {
-                    return (Field)accessible(type.getDeclaredField(name));
+                    return (Field) accessible(type.getDeclaredField(name));
                 } catch (NoSuchFieldException var5) {
                     type = type.getSuperclass();
                     if (type == null) {
@@ -264,14 +243,13 @@ public class Reflect {
     }
 
     public Map<String, Reflect> fields() {
-        Map<String, Reflect> result = new LinkedHashMap();
+        Map<String, Reflect> result = new LinkedHashMap<>();
         Class<?> type = this.type();
-
         do {
             Field[] var3 = type.getDeclaredFields();
             int var4 = var3.length;
 
-            for(int var5 = 0; var5 < var4; ++var5) {
+            for (int var5 = 0; var5 < var4; ++var5) {
                 Field field = var3[var5];
                 if (!this.isClass ^ Modifier.isStatic(field.getModifiers())) {
                     String name = field.getName();
@@ -280,16 +258,17 @@ public class Reflect {
                     }
                 }
             }
-
             type = type.getSuperclass();
-        } while(type != null);
+        } while (type != null);
 
         return result;
     }
 
+    // --------- 修复无限递归 call(String name) -----------
     public Reflect call(String name) throws ReflectException {
-        return this.call(name);
+        return this.call(name, new Object[0]);
     }
+    // -----------------------------------------------------
 
     public Reflect call(String name, Object... args) throws ReflectException {
         Class<?>[] types = types(args);
@@ -309,11 +288,10 @@ public class Reflect {
 
     public Method exactMethod(String name, Class<?>[] types) throws NoSuchMethodException {
         Class<?> type = this.type();
-
         try {
             return type.getMethod(name, types);
         } catch (NoSuchMethodException var7) {
-            while(true) {
+            while (true) {
                 try {
                     return type.getDeclaredMethod(name, types);
                 } catch (NoSuchMethodException var6) {
@@ -333,7 +311,7 @@ public class Reflect {
 
         int var6;
         Method method;
-        for(var6 = 0; var6 < var5; ++var6) {
+        for (var6 = 0; var6 < var5; ++var6) {
             method = var4[var6];
             if (this.isSimilarSignature(method, name, types)) {
                 return method;
@@ -344,26 +322,30 @@ public class Reflect {
             var4 = type.getDeclaredMethods();
             var5 = var4.length;
 
-            for(var6 = 0; var6 < var5; ++var6) {
+            for (var6 = 0; var6 < var5; ++var6) {
                 method = var4[var6];
                 if (this.isSimilarSignature(method, name, types)) {
                     return method;
                 }
             }
-
             type = type.getSuperclass();
-        } while(type != null);
+        } while (type != null);
 
-        throw new NoSuchMethodException(StringFog.decrypt(com.kook.librelease.StringFog.decrypt("Oz4fOG8zAiNjDlE7IzkmD2kgBiBlJy8r")) + name + StringFog.decrypt(com.kook.librelease.StringFog.decrypt("PhcmCWwFRChhHiAqLwdXL34zSFo=")) + Arrays.toString(types) + StringFog.decrypt(com.kook.librelease.StringFog.decrypt("Phg2D2wVHixLHiw/Pxc+DWUjMCx4EQYbPQcqM2EaLyM=")) + this.type() + StringFog.decrypt(com.kook.librelease.StringFog.decrypt("Mz5SVg==")));
+        throw new NoSuchMethodException(StringFog.decrypt(com.kook.librelease.StringFog.decrypt("Oz4fOG8zAiNjDlE7IzkmD2kgBiBlJy8r")) + name
+                + StringFog.decrypt(com.kook.librelease.StringFog.decrypt("PhcmCWwFRChhHiAqLwdXL34zSFo=")) + Arrays.toString(types)
+                + StringFog.decrypt(com.kook.librelease.StringFog.decrypt("Phg2D2wVHixLHiw/Pxc+DWUjMCx4EQYbPQcqM2EaLyM=")) + this.type()
+                + StringFog.decrypt(com.kook.librelease.StringFog.decrypt("Mz5SVg==")));
     }
 
     private boolean isSimilarSignature(Method possiblyMatchingMethod, String desiredMethodName, Class<?>[] desiredParamTypes) {
         return possiblyMatchingMethod.getName().equals(desiredMethodName) && this.match(possiblyMatchingMethod.getParameterTypes(), desiredParamTypes);
     }
 
+    // ------- 修复无限递归 create() -------
     public Reflect create() throws ReflectException {
-        return this.create();
+        return this.create(new Object[0]);
     }
+    // -----------------------------------
 
     public Reflect create(Object... args) throws ReflectException {
         Class<?>[] types = types(args);
@@ -372,46 +354,42 @@ public class Reflect {
             Constructor<?> constructor = this.type().getDeclaredConstructor(types);
             return on(constructor, args);
         } catch (NoSuchMethodException var8) {
-            Constructor[] var4 = this.type().getDeclaredConstructors();
+            Constructor<?>[] var4 = this.type().getDeclaredConstructors();
             int var5 = var4.length;
 
-            for(int var6 = 0; var6 < var5; ++var6) {
+            for (int var6 = 0; var6 < var5; ++var6) {
                 Constructor<?> constructor = var4[var6];
                 if (this.match(constructor.getParameterTypes(), types)) {
                     return on(constructor, args);
                 }
             }
-
             throw new ReflectException(var8);
         }
     }
 
+    @SuppressWarnings("unchecked")
     public <P> P as(Class<P> proxyType) {
         final boolean isMap = this.object instanceof Map;
         InvocationHandler handler = new InvocationHandler() {
             public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
                 String name = method.getName();
-
                 try {
                     return Reflect.on(Reflect.this.object).call(name, args).get();
                 } catch (ReflectException var8) {
                     if (isMap) {
-                        Map<String, Object> map = (Map)Reflect.this.object;
+                        Map<String, Object> map = (Map) Reflect.this.object;
                         int length = args == null ? 0 : args.length;
                         if (length == 0 && name.startsWith(StringFog.decrypt(com.kook.librelease.StringFog.decrypt("LS4uLA==")))) {
                             return map.get(Reflect.property(name.substring(3)));
                         }
-
                         if (length == 0 && name.startsWith(StringFog.decrypt(com.kook.librelease.StringFog.decrypt("LAc2Vg==")))) {
                             return map.get(Reflect.property(name.substring(2)));
                         }
-
                         if (length == 1 && name.startsWith(StringFog.decrypt(com.kook.librelease.StringFog.decrypt("Ki4uLA==")))) {
                             map.put(Reflect.property(name.substring(3)), args[0]);
                             return null;
                         }
                     }
-
                     throw var8;
                 }
             }
@@ -421,12 +399,11 @@ public class Reflect {
 
     private boolean match(Class<?>[] declaredTypes, Class<?>[] actualTypes) {
         if (declaredTypes.length == actualTypes.length) {
-            for(int i = 0; i < actualTypes.length; ++i) {
+            for (int i = 0; i < actualTypes.length; ++i) {
                 if (actualTypes[i] != NULL.class && !wrapper(declaredTypes[i]).isAssignableFrom(wrapper(actualTypes[i]))) {
                     return false;
                 }
             }
-
             return true;
         } else {
             return false;
@@ -438,7 +415,7 @@ public class Reflect {
     }
 
     public boolean equals(Object obj) {
-        return obj instanceof Reflect && this.object.equals(((Reflect)obj).get());
+        return obj instanceof Reflect && this.object.equals(((Reflect) obj).get());
     }
 
     public String toString() {
@@ -446,25 +423,25 @@ public class Reflect {
     }
 
     public Class<?> type() {
-        return this.isClass ? (Class)this.object : this.object.getClass();
+        return this.isClass ? (Class) this.object : this.object.getClass();
     }
 
     public static String getMethodDetails(Method method) {
         StringBuilder sb = new StringBuilder(40);
-        sb.append(Modifier.toString(method.getModifiers())).append(" ").append(method.getReturnType().getName()).append(" ").append(method.getName()).append(StringFog.decrypt(com.kook.librelease.StringFog.decrypt("PBhSVg==")));
+        sb.append(Modifier.toString(method.getModifiers())).append(" ")
+                .append(method.getReturnType().getName()).append(" ")
+                .append(method.getName()).append(StringFog.decrypt(com.kook.librelease.StringFog.decrypt("PBhSVg==")));
         Class<?>[] parameters = method.getParameterTypes();
-        Class[] var3 = parameters;
+        Class<?>[] var3 = parameters;
         int var4 = parameters.length;
-
-        for(int var5 = 0; var5 < var4; ++var5) {
+        for (int var5 = 0; var5 < var4; ++var5) {
             Class<?> parameter = var3[var5];
-            sb.append(parameter.getName()).append(StringFog.decrypt(com.kook.librelease.StringFog.decrypt("M186Vg==")));
+            sb.append(parameter.getName())
+                    .append(StringFog.decrypt(com.kook.librelease.StringFog.decrypt("M186Vg==")));
         }
-
         if (parameters.length > 0) {
             sb.delete(sb.length() - 2, sb.length());
         }
-
         sb.append(StringFog.decrypt(com.kook.librelease.StringFog.decrypt("PAhSVg==")));
         return sb.toString();
     }
@@ -477,14 +454,13 @@ public class Reflect {
         Method[] var7 = type.getDeclaredMethods();
         int var8 = var7.length;
 
-        for(int var9 = 0; var9 < var8; ++var9) {
+        for (int var9 = 0; var9 < var8; ++var9) {
             Method method = var7[var9];
             if (this.isSimilarSignature(method, name, types)) {
                 bestMethod = method;
                 level = 2;
                 break;
             }
-
             if (this.matchObjectMethod(method, name, types)) {
                 bestMethod = method;
                 level = 1;
@@ -492,20 +468,22 @@ public class Reflect {
                 bestMethod = method;
             }
         }
-
         if (bestMethod != null) {
             if (level == 0) {
                 args = new Object[0];
             }
-
             if (level == 1) {
                 Object[] args2 = new Object[]{args};
                 args = args2;
             }
-
             return on(bestMethod, this.object, args);
         } else {
-            throw new ReflectException(StringFog.decrypt(com.kook.librelease.StringFog.decrypt("Iz4fOGoVNAZjHh4wPxc+DWUjMCx4ESQcKSo6Vg==")) + name, new NoSuchMethodException(StringFog.decrypt(com.kook.librelease.StringFog.decrypt("Oz4fOGsjNANmVyQ3KAg2Mm8FASg=")) + name + StringFog.decrypt(com.kook.librelease.StringFog.decrypt("PhcmCWwFRChhHiAqLwdXL34zSFo=")) + Arrays.toString(types) + StringFog.decrypt(com.kook.librelease.StringFog.decrypt("Phg2D2wVHixLHiw/Pxc+DWUjMCx4EQYbPQcqM2EaLyM=")) + this.type() + StringFog.decrypt(com.kook.librelease.StringFog.decrypt("Mz5SVg=="))));
+            throw new ReflectException(StringFog.decrypt(com.kook.librelease.StringFog.decrypt("Iz4fOGoVNAZjHh4wPxc+DWUjMCx4ESQcKSo6Vg==")) + name,
+                    new NoSuchMethodException(
+                            StringFog.decrypt(com.kook.librelease.StringFog.decrypt("Oz4fOGsjNANmVyQ3KAg2Mm8FASg=")) + name +
+                                    StringFog.decrypt(com.kook.librelease.StringFog.decrypt("PhcmCWwFRChhHiAqLwdXL34zSFo=")) + Arrays.toString(types) +
+                                    StringFog.decrypt(com.kook.librelease.StringFog.decrypt("Phg2D2wVHixLHiw/Pxc+DWUjMCx4EQYbPQcqM2EaLyM=")) + this.type() +
+                                    StringFog.decrypt(com.kook.librelease.StringFog.decrypt("Mz5SVg=="))));
         }
     }
 
@@ -514,18 +492,17 @@ public class Reflect {
             Map<String, Reflect> fields = this.fields();
             if (fields != null) {
                 StringBuilder out = new StringBuilder();
-                Iterator var3 = fields.entrySet().iterator();
+                Iterator<Map.Entry<String, Reflect>> var3 = fields.entrySet().iterator();
 
-                while(var3.hasNext()) {
-                    Map.Entry<String, Reflect> entry = (Map.Entry)var3.next();
-                    String name = (String)entry.getKey();
-                    Reflect reflect = (Reflect)entry.getValue();
+                while (var3.hasNext()) {
+                    Map.Entry<String, Reflect> entry = var3.next();
+                    String name = entry.getKey();
+                    Reflect reflect = entry.getValue();
                     String value = reflect.object == null ? StringFog.decrypt(com.kook.librelease.StringFog.decrypt("Iz0uDmoFSFo=")) : reflect.object.toString();
                     out.append(name + StringFog.decrypt(com.kook.librelease.StringFog.decrypt("Pl4HOA==")) + value);
                     out.append('\n');
                 }
-
-                VLog.e(this.isClass ? ((Class)this.object).getSimpleName() : this.object.getClass().getSimpleName(), out.toString());
+                VLog.e(this.isClass ? ((Class) this.object).getSimpleName() : this.object.getClass().getSimpleName(), out.toString());
             }
         }
     }

@@ -40,6 +40,9 @@ import com.lody.virtual.client.core.SettingConfig;
 import com.lody.virtual.client.core.VirtualCore;
 import com.lody.virtual.helper.compat.BuildCompat;
 import com.lody.virtual.helper.utils.VLog;
+import com.orhanobut.logger.AndroidLogAdapter;
+import com.orhanobut.logger.Logger;
+import com.orhanobut.logger.PrettyFormatStrategy;
 
 public class App
 extends MultiApplication {
@@ -180,6 +183,9 @@ extends MultiApplication {
     public void onCreate() {
         super.onCreate();
         this.lazyInjectInit();
+
+        Logger.addLogAdapter(new AndroidLogAdapter(PrettyFormatStrategy.newBuilder().tag("com.carlos").build()));
+
         if (this.mAppComponentDelegate == null) {
             this.mAppComponentDelegate = new AppComponentDelegate((Context)this);
         }

@@ -209,7 +209,11 @@ implements AppLauncherCallback {
             this.bottomSheetDialog.setContentView((View)this.bottomSheetLayout);
         }
         this.bottomSheetLayout.beginShow(packageName);
-        this.bottomSheetDialog.show();
+        try {
+            this.bottomSheetDialog.show();
+        } catch (Exception e) {
+
+        }
         this.launchMirrorApp(userId, packageName, appName);
     }
 

@@ -62,6 +62,7 @@ public class HCallbackStub implements Handler.Callback, IInjector {
     private static Handler.Callback getHCallback() {
         try {
             Handler handler = getH();
+
             return (Handler.Callback)mirror.android.os.Handler.mCallback.get(handler);
         } catch (Throwable var1) {
             var1.printStackTrace();
