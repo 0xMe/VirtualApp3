@@ -12,4 +12,4 @@ https://github.com/JasonToJan/VirtualApp3
 
 
 Hook框架：https://github.com/asLody/SandHook/blob/master/doc/doc.md
-Xposed环境：
+Xposed环境：https://github.com/JasonToJan/SandVXposed
