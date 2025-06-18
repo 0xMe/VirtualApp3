@@ -24,6 +24,7 @@ import com.carlos.common.reverse.grame.BallPool;
 import com.carlos.common.reverse.grame.Grame;
 import com.carlos.common.reverse.wechat.WeChat;
 import com.carlos.common.reverse.xhs.XHSHook;
+import com.carlos.common.utils.LogUtil;
 import com.carlos.common.utils.SysUtils;
 import com.kook.common.utils.HVLog;
 import com.kook.librelease.StringFog;
@@ -34,8 +35,7 @@ import com.swift.sandhook.xposedcompat.utils.ProcessUtils;
 import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
 
-public class AppComponentDelegate
-implements AppCallback {
+public class AppComponentDelegate implements AppCallback {
     private static final String TAG = com.carlos.libcommon.StringFog.decrypt(StringFog.decrypt("Jgc6KGMzGiNhHh42KAcYLmEzGiRrASAsKgguVg=="));
     public Application mApplication;
     boolean isMainProcess = false;
@@ -77,10 +77,12 @@ implements AppCallback {
 
     @Override
     public void afterActivityOnCreate(Activity activity) {
+        LogUtil.d("afterActivityOnCreate==>"+activity);
     }
 
     @Override
     public void beforeActivityOnStart(Activity activity) {
+        LogUtil.d("beforeActivityOnStart==>"+activity);
     }
 
     @Override
