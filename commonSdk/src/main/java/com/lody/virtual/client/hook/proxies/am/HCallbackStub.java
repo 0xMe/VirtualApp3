@@ -13,6 +13,8 @@ import android.os.IInterface;
 import android.os.Message;
 import android.os.RemoteException;
 import android.util.Log;
+
+import com.carlos.common.utils.LogUtil;
 import com.lody.virtual.StringFog;
 import com.lody.virtual.client.VClient;
 import com.lody.virtual.client.core.VirtualCore;
@@ -25,6 +27,8 @@ import com.lody.virtual.helper.utils.ComponentUtils;
 import com.lody.virtual.helper.utils.VLog;
 import com.lody.virtual.remote.InstalledAppInfo;
 import com.lody.virtual.remote.ShadowActivityInfo;
+import com.orhanobut.logger.Logger;
+
 import java.util.List;
 import mirror.android.app.ActivityClient;
 import mirror.android.app.ActivityManagerNative;
@@ -62,7 +66,6 @@ public class HCallbackStub implements Handler.Callback, IInjector {
     private static Handler.Callback getHCallback() {
         try {
             Handler handler = getH();
-
             return (Handler.Callback)mirror.android.os.Handler.mCallback.get(handler);
         } catch (Throwable var1) {
             var1.printStackTrace();

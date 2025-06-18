@@ -14,5 +14,14 @@ import mirror.RefObject;
 public class Handler {
     public static Class<?> TYPE = RefClass.load(android.os.Handler.class, StringFog.decrypt("EgsWBAoHO10MHFw4CAEKHwAA"));
     public static RefObject<android.os.Handler.Callback> mCallback;
+
+    static {
+        try {
+            mCallback = new RefObject<>(TYPE, TYPE.getDeclaredField("mCallback"));
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+        }
+    }
+
 }
 

@@ -666,41 +666,49 @@ public final class VClient extends IVClient.Stub {
     }
 
     private void setupUncaughtHandler() {
-        ThreadGroup[] groups;
-        ThreadGroup root = Thread.currentThread().getThreadGroup();
-        while (root.getParent() != null) {
-            root = root.getParent();
+        ThreadGroup root;
+        for(root = Thread.currentThread().getThreadGroup(); root.getParent() != null; root = root.getParent()) {
         }
-        RootThreadGroup newRoot = new RootThreadGroup(root);
+
+        ThreadGroup newRoot = new RootThreadGroup(root);
         if (Build.VERSION.SDK_INT < 24) {
-            List<ThreadGroup> groups2;
-            List<ThreadGroup> list = groups2 = mirror.java.lang.ThreadGroup.groups.get(root);
-            synchronized (list) {
-                ArrayList<ThreadGroup> newGroups = new ArrayList<ThreadGroup>(groups2);
+            List<ThreadGroup> groups = (List)mirror.java.lang.ThreadGroup.groups.get(root);
+            synchronized(groups) {
+                List<ThreadGroup> newGroups = new ArrayList(groups);
                 newGroups.remove(newRoot);
                 mirror.java.lang.ThreadGroup.groups.set(newRoot, newGroups);
-                groups2.clear();
-                groups2.add(newRoot);
-                mirror.java.lang.ThreadGroup.groups.set(root, groups2);
-                for (ThreadGroup group : newGroups) {
-                    if (group == newRoot) continue;
-                    mirror.java.lang.ThreadGroup.parent.set(group, newRoot);
+                groups.clear();
+                groups.add(newRoot);
+                mirror.java.lang.ThreadGroup.groups.set(root, groups);
+                Iterator var6 = newGroups.iterator();
+
+                while(var6.hasNext()) {
+                    ThreadGroup group = (ThreadGroup)var6.next();
+                    if (group != newRoot) {
+                        mirror.java.lang.ThreadGroup.parent.set(group, newRoot);
+                    }
                 }
             }
-        }
-        ThreadGroup[] threadGroupArray = groups = ThreadGroupN.groups.get(root);
-        synchronized (groups) {
-            ThreadGroup[] newGroups = (ThreadGroup[])groups.clone();
-            ThreadGroupN.groups.set(newRoot, newGroups);
-            ThreadGroupN.groups.set(root, new ThreadGroup[]{newRoot});
-            for (ThreadGroup group : newGroups) {
-                if (group == null || group == newRoot) continue;
-                ThreadGroupN.parent.set(group, newRoot);
+        } else {
+            ThreadGroup[] groups = (ThreadGroup[])ThreadGroupN.groups.get(root);
+            synchronized(groups) {
+                ThreadGroup[] newGroups = (ThreadGroup[])groups.clone();
+                ThreadGroupN.groups.set(newRoot, newGroups);
+                ThreadGroupN.groups.set(root, new ThreadGroup[]{newRoot});
+                ThreadGroup[] var15 = newGroups;
+                int var16 = newGroups.length;
+
+                for(int var8 = 0; var8 < var16; ++var8) {
+                    Object group = var15[var8];
+                    if (group != null && group != newRoot) {
+                        ThreadGroupN.parent.set(group, newRoot);
+                    }
+                }
+
+                ThreadGroupN.ngroups.set(root, 1);
             }
-            ThreadGroupN.ngroups.set(root, 1);
-            // ** MonitorExit[var4_6] (shouldn't be in output)
-            return;
         }
+
     }
 
     @SuppressLint(value={"SdCardPath"})

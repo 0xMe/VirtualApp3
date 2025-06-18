@@ -11,6 +11,7 @@ else()
     project(sandhook)
     #set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/../jniLibs/${ANDROID_ABI})
 endif()
+project(sandhook)
 ENABLE_LANGUAGE(ASM)
 
 add_definitions(-std=c++11)

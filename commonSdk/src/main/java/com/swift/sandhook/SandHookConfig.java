@@ -1,36 +1,65 @@
-/*
- * Decompiled with CFR 0.152.
- * 
- * Could not load the following classes:
- *  android.os.Build$VERSION
- */
 package com.swift.sandhook;
 
+import android.annotation.SuppressLint;
 import android.os.Build;
+import android.os.Process;
+
+import com.carlos.common.utils.LogUtil;
+
 
 public class SandHookConfig {
-    public static volatile int SDK_INT = SandHookConfig.getSdkInt();
-    public static volatile boolean DEBUG = true;
-    public static volatile boolean compiler = SDK_INT < 29;
-    public static volatile ClassLoader initClassLoader;
-    public static volatile int curUser;
-    public static volatile boolean delayHook;
 
-    public static int getSdkInt() {
-        try {
-            if (Build.VERSION.PREVIEW_SDK_INT > 0) {
-                return Build.VERSION.SDK_INT + 1;
+    public volatile static int SDK_INT = Build.VERSION.SDK_INT;
+    //Debug status of hook target process
+    public volatile static boolean DEBUG = true;
+    //Enable compile with jit
+    public volatile static boolean compiler = SDK_INT < 29;
+    public volatile static ClassLoader initClassLoader;
+    public volatile static int curUser = 0;
+    public volatile static boolean delayHook = false;//是否hook native
+
+    public volatile static String libSandHookPath;
+
+    private static final String LIB_NAME = "sandhook";
+    private static final String LIB_NAME_64 = "sandhook_64";
+
+    public volatile static LibLoader libLoader = new LibLoader() {
+        @SuppressLint("UnsafeDynamicallyLoadedCode")
+        @Override
+        public void loadLib() {
+
+            if (SandHookConfig.libSandHookPath == null) {
+                //System.loadLibrary("sandhook");
+                if (is64bit()) {
+                    LogUtil.d("loadLib=="+LIB_NAME_64);
+                    System.loadLibrary(LIB_NAME_64);
+                } else {
+                    LogUtil.d("loadLib=="+LIB_NAME);
+                    System.loadLibrary(LIB_NAME);
+                }
+            } else {
+                LogUtil.d("loadLib=="+SandHookConfig.libSandHookPath);
+                System.load(SandHookConfig.libSandHookPath);
             }
         }
-        catch (Throwable throwable) {
-            // empty catch block
+    };
+
+    public static boolean is64bit() {
+        try {
+            Class.forName("dalvik.system.VMRuntime");
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
         }
-        return Build.VERSION.SDK_INT;
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+            return false;
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            return Process.is64Bit();
+        }
+        return false;//VMRuntime.is64Bit.call(VMRuntime.getRuntime.call());
     }
 
-    static {
-        curUser = 0;
-        delayHook = true;
+    public interface LibLoader {
+        void loadLib();
     }
 }
-

@@ -26,6 +26,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class SandHook {
+
     static Map<Member, HookWrapper.HookEntity> globalHookEntityMap = new ConcurrentHashMap<Member, HookWrapper.HookEntity>();
     static Map<Method, HookWrapper.HookEntity> globalBackupMap = new ConcurrentHashMap<Method, HookWrapper.HookEntity>();
     private static HookModeCallBack hookModeCallBack;
@@ -47,6 +48,7 @@ public class SandHook {
     }
 
     private static boolean init() {
+        SandHookConfig.libLoader.loadLib();
         SandHook.initTestOffset();
         SandHook.initThreadPeer();
         SandHookMethodResolver.init();
