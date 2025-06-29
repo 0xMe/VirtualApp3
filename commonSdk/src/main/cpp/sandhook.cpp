@@ -155,12 +155,20 @@ bool doHookWithInline(JNIEnv* env,
 extern "C"
 JNIEXPORT jboolean JNICALL
 Java_com_swift_sandhook_SandHook_initNative(JNIEnv *env, jclass type, jint sdk, jboolean debug) {
+    LOGE("JNI initNative");
     SDK_INT = sdk;
     DEBUG = debug;
     SandHook::CastCompilerOptions::init(env);
     initHideApi(env);
+    LOGE("JNI CastArtMethod init 1");
     SandHook::CastArtMethod::init(env);
+    LOGE("JNI CastArtMethod init 2");
+
+    LOGE("JNI trampolineManager init 1");
     trampolineManager.init(SandHook::CastArtMethod::entryPointQuickCompiled->getOffset());
+    LOGE("JNI trampolineManager init 2");
+
+    LOGE("JNI initNative finished...");
     return JNI_TRUE;
 
 }
@@ -532,6 +540,7 @@ static bool registerNativeMethods(JNIEnv *env, const char *className, JNINativeM
 }
 
 JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *vm, void *reserved) {
+    LOGE("JNI Loaded start");
 
     const char* CLASS_SAND_HOOK = "com/swift/sandhook/SandHook";
     const char* CLASS_NEVER_CALL = "com/swift/sandhook/ClassNeverCall";
@@ -552,7 +561,7 @@ JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *vm, void *reserved) {
         return -1;
     }
 
-    LOGW("JNI Loaded");
+    LOGE("JNI Loaded end");
 
     return JNI_VERSION_1_6;
 }
@@ -572,6 +581,6 @@ JNIEXPORT bool JNI_Load_Ex(JNIEnv* env, jclass classSandHook, jclass classNeverC
         return false;
     }
 
-    LOGW("JNI Loaded");
+    LOGW("JNI Loaded 003");
     return true;
 }

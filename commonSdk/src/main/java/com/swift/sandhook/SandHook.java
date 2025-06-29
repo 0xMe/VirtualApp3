@@ -3,6 +3,7 @@
  */
 package com.swift.sandhook;
 
+import com.carlos.common.utils.LogUtil;
 import com.swift.sandhook.ArtMethodSizeTest;
 import com.swift.sandhook.HookLog;
 import com.swift.sandhook.PendingHookHandler;
@@ -48,10 +49,11 @@ public class SandHook {
     }
 
     private static boolean init() {
-//        SandHookConfig.libLoader.loadLib();
+        SandHookConfig.libLoader.loadLib();
         SandHook.initTestOffset();
         SandHook.initThreadPeer();
         SandHookMethodResolver.init();
+        LogUtil.d("这里开始初始化...sandbox");
         return SandHook.initNative(SandHookConfig.SDK_INT, SandHookConfig.DEBUG);
     }
 

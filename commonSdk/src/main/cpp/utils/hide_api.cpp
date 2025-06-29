@@ -69,6 +69,7 @@ extern "C" {
 
     void initHideApi(JNIEnv* env) {
 
+        LOGE("initHide Api start ...");
         env->GetJavaVM(&jvm);
 
         if (BYTE_POINT == 8) {
@@ -183,6 +184,8 @@ extern "C" {
         }
 
         runtime_instance_ = *reinterpret_cast<void**>(getSymCompat(art_lib_path, "_ZN3art7Runtime9instance_E"));
+
+        LOGE("initHide Api end ...");
     }
 
     bool canCompile() {

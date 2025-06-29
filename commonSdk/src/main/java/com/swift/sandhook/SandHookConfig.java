@@ -21,7 +21,7 @@ public class SandHookConfig {
     public volatile static String libSandHookPath;
 
     private static final String LIB_NAME = "sandhook";
-    private static final String LIB_NAME_64 = "sandhook_64";
+    private static final String LIB_NAME_64 = "sandhook";
 
     public volatile static LibLoader libLoader = new LibLoader() {
         @SuppressLint("UnsafeDynamicallyLoadedCode")

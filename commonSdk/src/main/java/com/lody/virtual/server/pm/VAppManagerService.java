@@ -55,6 +55,7 @@ import com.lody.virtual.server.pm.parser.PackageParserEx;
 import com.lody.virtual.server.pm.parser.VPackage;
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -470,8 +471,44 @@ public class VAppManagerService extends IAppManager.Stub {
                                             } else {
                                                 sharedLibraryFiles.add(entry.path);
                                                 if (BuildCompat.isS()) {
-                                                    sharedLibraryInfo = new SharedLibraryInfo(entry.path, (String)null, (List)null, entry.name, -1L, 0, new VersionedPackage(StringFog.decrypt(com.kook.librelease.StringFog.decrypt("LggcPG8jGi9iEVRF")), 0L), (List)null, (List)null, false);
-                                                    sharedLibraryInfoList.add(sharedLibraryInfo);
+//                                                    sharedLibraryInfo = new SharedLibraryInfo(entry.path, (String)null, (List)null, entry.name, -1L, 0, new VersionedPackage(StringFog.decrypt(com.kook.librelease.StringFog.decrypt("LggcPG8jGi9iEVRF")), 0L), (List)null, (List)null, false);
+//                                                    sharedLibraryInfoList.add(sharedLibraryInfo);
+
+                                                    try {
+                                                        // 构造函数参数类型
+                                                        Constructor<SharedLibraryInfo> constructor = SharedLibraryInfo.class.getDeclaredConstructor(
+                                                                String.class,                     // path
+                                                                String.class,                     // packageName
+                                                                List.class,                       // codePaths
+                                                                String.class,                     // name
+                                                                long.class,                       // version
+                                                                int.class,                        // type
+                                                                VersionedPackage.class,           // declaringPackage
+                                                                List.class,                       // dependentPackages
+                                                                List.class,                       // dependencies
+                                                                boolean.class                     // isNative
+                                                        );
+                                                        // 绕过限制
+                                                        constructor.setAccessible(true);
+
+                                                        SharedLibraryInfo info = constructor.newInstance(
+                                                                entry.path,
+                                                                null,                                // packageName
+                                                                null,                                // codePaths
+                                                                entry.name,
+                                                                -1L,                                 // version
+                                                                0,                                   // type
+                                                                new VersionedPackage(StringFog.decrypt(com.kook.librelease.StringFog.decrypt("LggcPG8jGi9iEVRF")), 0L),
+                                                                null,                                // dependentPackages
+                                                                null,                                // dependencies
+                                                                false                                // isNative
+                                                        );
+
+                                                        sharedLibraryInfoList.add(info);
+
+                                                    } catch (Exception e) {
+                                                        e.printStackTrace();
+                                                    }
                                                 }
                                             }
                                         }
@@ -486,8 +523,46 @@ public class VAppManagerService extends IAppManager.Stub {
                                             } else {
                                                 sharedLibraryFiles.add(entry.path);
                                                 if (BuildCompat.isS()) {
-                                                    sharedLibraryInfo = new SharedLibraryInfo(entry.path, (String)null, (List)null, entry.name, -1L, 0, new VersionedPackage(StringFog.decrypt(com.kook.librelease.StringFog.decrypt("LggcPG8jGi9iEVRF")), 0L), (List)null, (List)null, false);
-                                                    sharedLibraryInfoList.add(sharedLibraryInfo);
+//                                                    sharedLibraryInfo = new SharedLibraryInfo(entry.path, (String)null, (List)null, entry.name, -1L, 0, new VersionedPackage(StringFog.decrypt(com.kook.librelease.StringFog.decrypt("LggcPG8jGi9iEVRF")), 0L), (List)null, (List)null, false);
+//                                                    sharedLibraryInfoList.add(sharedLibraryInfo);
+
+                                                    try {
+                                                        Constructor<SharedLibraryInfo> constructor =
+                                                                SharedLibraryInfo.class.getDeclaredConstructor(
+                                                                        String.class,
+                                                                        String.class,
+                                                                        List.class,
+                                                                        String.class,
+                                                                        long.class,
+                                                                        int.class,
+                                                                        VersionedPackage.class,
+                                                                        List.class,
+                                                                        List.class,
+                                                                        boolean.class
+                                                                );
+                                                        constructor.setAccessible(true);
+
+                                                        sharedLibraryInfo = constructor.newInstance(
+                                                                entry.path,
+                                                                null,
+                                                                null,
+                                                                entry.name,
+                                                                -1L,
+                                                                0,
+                                                                new VersionedPackage(
+                                                                        StringFog.decrypt(com.kook.librelease.StringFog.decrypt("LggcPG8jGi9iEVRF")),
+                                                                        0L
+                                                                ),
+                                                                null,
+                                                                null,
+                                                                false
+                                                        );
+
+                                                        sharedLibraryInfoList.add(sharedLibraryInfo);
+
+                                                    } catch (Exception e) {
+                                                        e.printStackTrace();
+                                                    }
                                                 }
                                             }
                                         }

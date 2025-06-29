@@ -10,7 +10,7 @@ public class LogUtil {
     // 是否允许日志输出
     private static boolean isDebug = true;
     // 全局TAG
-    private static String globalTag = "com.carlos";
+    private static String globalTag = "com.carlos##";
 
     private LogUtil() {
         // 防止实例化

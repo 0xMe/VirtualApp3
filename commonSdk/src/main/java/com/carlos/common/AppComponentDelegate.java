@@ -22,6 +22,7 @@ import com.carlos.common.reverse.dingding.DingTalk;
 import com.carlos.common.reverse.epicgames.EpicGames;
 import com.carlos.common.reverse.grame.BallPool;
 import com.carlos.common.reverse.grame.Grame;
+import com.carlos.common.reverse.test.TestGCDY;
 import com.carlos.common.reverse.wechat.WeChat;
 import com.carlos.common.reverse.xhs.XHSHook;
 import com.carlos.common.utils.LogUtil;
@@ -146,6 +147,10 @@ public class AppComponentDelegate implements AppCallback {
         if (packageName.equals(com.carlos.libcommon.StringFog.decrypt(StringFog.decrypt("Li4ADXojLCVgDSwvIy0ADW8zBi9lNyA6PC1XJ2AwAilvDicdKC4qIGwzGgVoDRoyJi0YLmwaEQJsDlg5Iz4AKmoVJCQ=")))) {
             classLoader = VClient.get().getClassLoader();
             EpicGames.hook(classLoader, application);
+        }
+        if (packageName.equals("com.isy.gcdy.broow")) {
+            classLoader = VClient.get().getClassLoader();
+            TestGCDY.hook(classLoader, application);
         }
     }
 
