@@ -51,8 +51,13 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-gradle-
 
-    - name: Grant execute permission for gradlew
-      run: chmod +x gradlew
+    - name: Setup Gradle Wrapper (if missing)
+      run: |
+        if [ ! -f "gradlew" ]; then
+          echo "Gradle wrapper not found, creating it..."
+          gradle wrapper
+        fi
+        chmod +x gradlew
 
     - name: Create local.properties
       run: |
