@@ -5,6 +5,27 @@ on:
     branches: [ main, develop ]
   pull_request:
     branches: [ main, develop ]
+  workflow_dispatch:
+    inputs:
+      build_type:
+        description: 'Build type to run'
+        required: true
+        default: 'debug'
+        type: choice
+        options:
+        - debug
+        - release
+        - both
+      run_tests:
+        description: 'Run tests'
+        required: false
+        default: true
+        type: boolean
+      upload_artifacts:
+        description: 'Upload APK artifacts'
+        required: false
+        default: true
+        type: boolean
 
 jobs:
   build:
