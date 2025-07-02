@@ -93,26 +93,30 @@ jobs:
 
     - name: Run tests
       run: ./gradlew test
+      if: github.event.inputs.run_tests != 'false'
 
-    - name: Build APK
+    - name: Build Debug APK
       run: ./gradlew assembleDebug
+      if: github.event.inputs.build_type == 'debug' || github.event.inputs.build_type == 'both' || github.event.inputs.build_type == ''
 
-    - name: Build Release APK (if needed)
+    - name: Build Release APK
       run: ./gradlew assembleRelease
+      if: github.event.inputs.build_type == 'release' || github.event.inputs.build_type == 'both'
       continue-on-error: true
 
-    - name: Upload APK
-      uses: actions/upload-artifact@v3
+    - name: Upload Debug APK
+      uses: actions/upload-artifact@v4
       with:
-        name: app-debug
+        name: app-debug-${{ github.run_number }}
         path: app/build/outputs/apk/debug/*.apk
+      if: (github.event.inputs.upload_artifacts != 'false') && (github.event.inputs.build_type == 'debug' || github.event.inputs.build_type == 'both' || github.event.inputs.build_type == '')
 
     - name: Upload Release APK
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
-        name: app-release
+        name: app-release-${{ github.run_number }}
         path: app/build/outputs/apk/release/*.apk
-      if: success()
+      if: success() && (github.event.inputs.upload_artifacts != 'false') && (github.event.inputs.build_type == 'release' || github.event.inputs.build_type == 'both')
 
   # Optional: Add a job for running lint checks
   lint:
